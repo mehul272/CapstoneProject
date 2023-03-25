@@ -104,7 +104,7 @@ function UploadFile() {
         </div>
 
         <div className="col-md-7">
-          <h2 className="alert alert-success">List of Uploaded Files</h2>
+          <h2 className="alert alert-success">List of Uploaded Files & Download </h2>
 
           <table className="table table-bordered mt-4">
             <thead>
