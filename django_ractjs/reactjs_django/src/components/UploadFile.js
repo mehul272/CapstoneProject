@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 
 function UploadFile() {
@@ -8,9 +8,7 @@ function UploadFile() {
 
   let api = "http://127.0.0.1:8000/api";
 
-  const saveFile = () => {
-    console.log("Button clicked");
-
+  const saveFile = async () => {
     let formData = new FormData();
     formData.append("pdf", filename);
 
@@ -20,16 +18,11 @@ function UploadFile() {
       },
     };
 
-    console.log(formData);
-    axios
-      .post(api + "/files/", formData, axiosConfig)
-      .then((response) => {
-        console.log(response);
-        setstatus("File Uploaded Successfully");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    await axios({
+      method: "post",
+      url: "http://127.0.0.1:8000/api/files/",
+      data: formData,
+    }).then((response) => {});
   };
 
   const getFiles = () => {
@@ -44,11 +37,10 @@ function UploadFile() {
   };
 
   const forceDownload = (response, title) => {
-    console.log(response);
     const url = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement("a");
     link.href = url;
-    link.setAttribute("download", title + ".pdf");
+    link.setAttribute("download", title + ".csv");
     document.body.appendChild(link);
     link.click();
   };
@@ -65,9 +57,31 @@ function UploadFile() {
       .catch((error) => console.log(error));
   };
 
+  const extractionStart = async (url, title) => {
+    console.log("My URL: ", url);
+    console.log("My title: ", title);
+
+    await axios
+    .get(api + "/upload-files-data1/", url)
+    .then((response) => {
+      console.log(response);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+
+    await axios
+      .get(api + `/upload-files-data/${title}/`, url)
+      .then((response) => {
+        console.log("Finally: ",response.data.success);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   useEffect(() => {
     getFiles();
-    console.log(files);
   }, []);
 
   return (
@@ -111,6 +125,7 @@ function UploadFile() {
               <tr>
                 <th scope="col">File Title</th>
                 <th scope="col">Download</th>
+                <th scope="col">Do Extraction</th>
               </tr>
             </thead>
             <tbody>
@@ -126,6 +141,12 @@ function UploadFile() {
                         className="btn btn-success"
                       >
                         DownLoad
+                      </button>
+                      <button
+                        onClick={() => extractionStart(file.pdf, file.id)}
+                        className="btn btn-danger"
+                      >
+                        Do Extraction
                       </button>
                     </td>
                   </tr>

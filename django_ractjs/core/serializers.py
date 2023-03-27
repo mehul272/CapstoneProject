@@ -5,3 +5,4 @@ class FilesSerializer(serializers.ModelSerializer):
     class Meta:
         model= Files
         fields = ['id','pdf']
+
