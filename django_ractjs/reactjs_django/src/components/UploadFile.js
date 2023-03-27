@@ -93,7 +93,7 @@ function UploadFile() {
           <form>
             <div className="form-group">
               <label htmlFor="exampleFormControlFile1" className="float-left">
-                Browse A File To Upload
+                Browse A File To Upload and Enjoy
               </label>
               <input
                 type="file"
@@ -118,7 +118,7 @@ function UploadFile() {
         </div>
 
         <div className="col-md-7">
-          <h2 className="alert alert-success">List of Uploaded Files</h2>
+          <h2 className="alert alert-success">List of Uploaded Files & Download </h2>
 
           <table className="table table-bordered mt-4">
             <thead>
