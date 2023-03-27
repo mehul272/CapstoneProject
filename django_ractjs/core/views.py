@@ -8,6 +8,9 @@ import csv
 from django.http import JsonResponse
 from django.contrib import admin
 from django.core.files.storage import default_storage
+import json
+import csv
+import pandas as pd
 # Create your views here.
 
 
@@ -18,7 +21,6 @@ class FilesViewSet(viewsets.ModelViewSet):
 
 @api_view(['GET'])
 def upload_files_data(request, title):
-    print("hi")
 
     files = Files.objects.get(id=title)
 
@@ -30,8 +32,6 @@ def upload_files_data(request, title):
         lines = contents.split('\n')
         header_row = lines[0]
         column_names = header_row.split(',')
-        
-        print(column_names)
 
         return JsonResponse({"success": column_names})
 
@@ -41,7 +41,31 @@ def upload_files_data1(request):
 
     print(request)
 
-    print("hi")
-    print(request)
-
     return JsonResponse({"success": False})
+
+
+@api_view(['GET'])
+def filter_files_data(request, title):
+
+    files = Files.objects.get(id=title)
+
+    file_path = files.pdf.path
+
+    string_array_str = request.GET.get('stringArray')
+    string_array = json.loads(string_array_str)
+
+    data = []
+    
+    with open(file_path, newline='') as csvfile:
+
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            data.append(row)
+
+        df = pd.DataFrame(data)
+        filtered_df = df[string_array]
+        filtered_data = filtered_df.to_dict('records')
+        
+    print(filtered_df)        
+
+    return JsonResponse({'result': filtered_data})

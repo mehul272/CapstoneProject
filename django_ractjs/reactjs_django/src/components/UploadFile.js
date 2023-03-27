@@ -58,22 +58,28 @@ function UploadFile() {
   };
 
   const extractionStart = async (url, title) => {
-    console.log("My URL: ", url);
-    console.log("My title: ", title);
 
     await axios
-    .get(api + "/upload-files-data1/", url)
-    .then((response) => {
-      console.log(response);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+      .get(api + "/upload-files-data1/", url)
+      .then((response) => {
+      })
+      .catch((error) => {
+        console.log(error);
+      });
 
     await axios
       .get(api + `/upload-files-data/${title}/`, url)
       .then((response) => {
-        console.log("Finally: ",response.data.success);
+
+        axios
+          .get(
+            api + `/filter-files-data/${title}`,
+            { params: { stringArray: JSON.stringify(response.data.success) } },
+            url
+          )
+          .then((res) => {
+            console.log("Done: ",res.data.result);
+          });
       })
       .catch((error) => {
         console.log(error);
@@ -118,7 +124,9 @@ function UploadFile() {
         </div>
 
         <div className="col-md-7">
-          <h2 className="alert alert-success">List of Uploaded Files & Download </h2>
+          <h2 className="alert alert-success">
+            List of Uploaded Files & Download{" "}
+          </h2>
 
           <table className="table table-bordered mt-4">
             <thead>
