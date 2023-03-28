@@ -19,11 +19,12 @@ export function Extraction({
 
   const handleFilterColumnNames = (event, option) => {
     const isChecked = event.target.checked;
+    const isIncluded = columnNamesArray.includes(option);
 
-    if (isChecked) {
+    if (isChecked && !isIncluded) {
       columnNamesArray.push(option);
-    } else {
-      //Code to be written
+    } else if(!isChecked) {
+      columnNamesArray.splice(columnNamesArray.indexOf(option), 1);
     }
 
     setColumnNamesArray(columnNamesArray);
