@@ -1,10 +1,16 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
+import { Extraction } from "./Extraction";
 
 function UploadFile() {
   const [filename, setFilename] = useState("");
   const [files, setFiles] = useState([{}]);
   const [status, setstatus] = useState("");
+  const [fileData, setFileData] = useState({ title: 0, url: "" });
+
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+
+  const [columnNames, setColumnNames] = useState([]);
 
   let api = "http://127.0.0.1:8000/api";
 
@@ -57,21 +63,18 @@ function UploadFile() {
       .catch((error) => console.log(error));
   };
 
+  const handleUpdateModal = (value) => {
+    setShowUpdateModal(value);
+  };
+
   const extractionStart = async (url, title) => {
+    handleUpdateModal(true);
 
     await axios
       .get(api + `/upload-files-data/${title}/`, url)
       .then((response) => {
-
-        axios
-          .get(
-            api + `/filter-files-data/${title}`,
-            { params: { stringArray: JSON.stringify(response.data.success) } },
-            url
-          )
-          .then((res) => {
-            console.log("Done: ",res.data.result);
-          });
+        setColumnNames(response.data.success);
+        setFileData({ title: title, url: url });
       })
       .catch((error) => {
         console.log(error);
@@ -148,6 +151,13 @@ function UploadFile() {
                       >
                         Do Extraction
                       </button>
+                      <Extraction
+                        showModal={showUpdateModal}
+                        updateModal={(value) => handleUpdateModal(value)}
+                        columnNames={columnNames}
+                        title={fileData.title}
+                        url={fileData.url}
+                      />
                     </td>
                   </tr>
                 );
