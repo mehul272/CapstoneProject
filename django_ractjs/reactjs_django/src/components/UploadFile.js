@@ -60,14 +60,6 @@ function UploadFile() {
   const extractionStart = async (url, title) => {
 
     await axios
-      .get(api + "/upload-files-data1/", url)
-      .then((response) => {
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-
-    await axios
       .get(api + `/upload-files-data/${title}/`, url)
       .then((response) => {
 
