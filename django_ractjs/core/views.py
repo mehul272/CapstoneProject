@@ -52,10 +52,13 @@ def filter_files_data(request, title):
     file_path = files.pdf.path
 
     string_array_str = request.GET.get('stringArray')
+
+    no_of_rows = request.GET.get('numRows')
+
     string_array = json.loads(string_array_str)
 
     data = []
-    
+
     with open(file_path, newline='') as csvfile:
 
         reader = csv.DictReader(csvfile)
@@ -63,9 +66,10 @@ def filter_files_data(request, title):
             data.append(row)
 
         df = pd.DataFrame(data)
-        filtered_df = df[string_array]
+        filtered_df = df[string_array].head(int(no_of_rows))
+
         filtered_data = filtered_df.to_dict('records')
-        
-    print(filtered_df)        
+
+    print(filtered_df)
 
     return JsonResponse({'result': filtered_data})
