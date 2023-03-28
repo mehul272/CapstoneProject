@@ -2,23 +2,22 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 
 export function ViewData({ data }) {
-  const columnNames1 = new Set(data.flatMap((obj) => Object.keys(obj)));
+  const columnNames = new Set(data.flatMap((obj) => Object.keys(obj)));
 
-  console.log(columnNames1);
   return (
     <div>
       <table>
         <thead>
           <tr>
-            {columnNames1.forEach((column) => (
+            {Array.from(columnNames).map((column) => (
               <th>{column}</th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {data.forEach((row) => (
+          {data.map((row) => (
             <tr>
-              {columnNames1.forEach((column) => (
+              {Array.from(columnNames).map((column) => (
                 <td>{row[column]}</td>
               ))}
             </tr>

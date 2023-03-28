@@ -56,9 +56,6 @@ export function Extraction({
       )
       .then((res) => {
         setData(res.data.result);
-      })
-      .then(() => {
-        updateModal(false);
       });
   };
 
@@ -71,13 +68,13 @@ export function Extraction({
       <Modal
         show={showModal}
         centered
-        size="lg"
+        size="xl"
         data-toggle="modal"
         data-keyboard="false"
         data-backdrop="static"
         onHide={handleClose}
       >
-        <Modal.Header>Update</Modal.Header>
+        <Modal.Header>EXtraction</Modal.Header>
         <Modal.Body>
           <>
             {columnNames.map((option, index) => (
@@ -95,6 +92,8 @@ export function Extraction({
               options={PER_PAGE_PAGINATION_OPTIONS}
               className="lg-my-0 w-1 h-25"
             />
+            <h1>My data</h1>
+            <ViewData data={data} />
           </>
         </Modal.Body>
         <Modal.Footer>
@@ -110,7 +109,6 @@ export function Extraction({
           </Button>
         </Modal.Footer>
       </Modal>
-      <ViewData data={data} />
     </>
   );
 }
