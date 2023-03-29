@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 export function ViewData({ data }) {
   const columnNames = new Set(data.flatMap((obj) => Object.keys(obj)));
 
+  console.log("My Data: ", data);
+
   return (
     <div>
       <table>

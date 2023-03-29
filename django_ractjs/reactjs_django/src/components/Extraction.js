@@ -1,5 +1,5 @@
 import { Button, Form, Modal, Row, Col, InputGroup } from "react-bootstrap";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { ViewData } from "./viewData";
 import Select from "react-select";
@@ -32,7 +32,10 @@ export function Extraction({
 
   const [numRows, setNumRows] = useState(20);
 
-  const handleClose = () => updateModal(false);
+  const handleClose = () => {
+    updateModal(false);
+    setData([]);
+  };
 
   let api = "http://127.0.0.1:8000/api";
 
