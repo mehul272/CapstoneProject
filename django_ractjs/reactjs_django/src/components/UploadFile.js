@@ -139,12 +139,14 @@ function UploadFile() {
                     <td>
                       <a href="" target="_blank"></a>
 
-                      {/* <button
+                      <button
                         onClick={() => downloadWithAxios(file.pdf, file.id)}
                         className="btn btn-success"
                       >
                         DownLoad
-                      </button> */}
+                      </button>
+                    </td>
+                    <td>
                       <button
                         onClick={() => extractionStart(file.pdf, file.id)}
                         className="btn btn-danger"
