@@ -76,6 +76,24 @@ export function Extraction({
     xlsx.writeFile(workBook, "ConvertedJsonToExcel.xlsx");
   };
 
+  const handleExportToJSON = () => {
+    const fileName = "data.json";
+
+    const blob = new Blob([JSON.stringify(data, null, 2)], {
+      type: "application/json",
+    });
+
+    const downloadLink = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = downloadLink;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+
+    document.body.removeChild(link);
+    URL.revokeObjectURL(downloadLink);
+  };
+
   const headers = columnNamesArray.map(headersToKeyValue);
 
   const csvLink = {
@@ -124,6 +142,13 @@ export function Extraction({
                 disabled={isSaving}
               >
                 Export to Excel
+              </Button>
+              <Button
+                variant="primary"
+                onClick={handleExportToJSON}
+                disabled={isSaving}
+              >
+                Export to JSON
               </Button>
             </div>
           </>
