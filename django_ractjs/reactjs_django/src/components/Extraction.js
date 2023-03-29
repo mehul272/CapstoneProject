@@ -7,12 +7,12 @@ import { CSVLink } from "react-csv";
 
 const xlsx = require("xlsx");
 
-const stringToOption = (item) => ({ value: item, label: item });
+const stringToOptions = (item) => ({ value: item, label: item });
 
 const headersToKeyValue = (item) => ({ label: item, key: item });
 
 const PER_PAGE_PAGINATION_OPTIONS = ["10", "20", "40", "100"].map(
-  stringToOption
+  stringToOptions
 );
 
 export function Extraction({
@@ -23,6 +23,8 @@ export function Extraction({
   url,
 }) {
   const [isSaving, setIsSaving] = useState(false);
+
+  const [fileDownloading, setFileDownloading] = useState(false);
 
   const [columnNamesArray, setColumnNamesArray] = useState([]);
 
@@ -68,7 +70,7 @@ export function Extraction({
     setNumRows(event.value);
   };
 
-  const handleExportToExcel = () => {
+  const handleExportToExcel = async () => {
     let workBook = xlsx.utils.book_new();
     let workSheet = xlsx.utils.json_to_sheet(data);
 
@@ -76,7 +78,7 @@ export function Extraction({
     xlsx.writeFile(workBook, "ConvertedJsonToExcel.xlsx");
   };
 
-  const handleExportToJSON = () => {
+  const handleExportToJSON = async () => {
     const fileName = "ConvertedJson.json";
 
     const blob = new Blob([JSON.stringify(data, null, 2)], {
@@ -126,16 +128,27 @@ export function Extraction({
                 {option}
               </div>
             ))}
-            <Select
-              name="invoicePerPage"
-              defaultValue={20}
-              onChange={(e) => handleRowSelect(e)}
-              options={PER_PAGE_PAGINATION_OPTIONS}
-              className="lg-my-0 w-1 h-25"
-            />
             <div>
-              <h1>My data</h1>
+              <Select
+                name="invoicePerPage"
+                defaultValue={PER_PAGE_PAGINATION_OPTIONS[1]}
+                onChange={(e) => handleRowSelect(e)}
+                options={PER_PAGE_PAGINATION_OPTIONS}
+                className="lg-my-0 w-1 h-25"
+              />
+              <Button
+                variant="primary"
+                onClick={handleExtraction}
+                disabled={isSaving}
+              >
+                Extract Data from Files
+              </Button>
+            </div>
+
+            <div>
+              <h1>Display</h1>
               <ViewData data={data} />
+
               <CSVLink {...csvLink}>Export to CSV</CSVLink>
 
               <Button
@@ -158,13 +171,6 @@ export function Extraction({
         <Modal.Footer>
           <Button variant="bordered" onClick={handleClose} disabled={isSaving}>
             Cancel
-          </Button>
-          <Button
-            variant="primary"
-            onClick={handleExtraction}
-            disabled={isSaving}
-          >
-            Extract
           </Button>
         </Modal.Footer>
       </Modal>
