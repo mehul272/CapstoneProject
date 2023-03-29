@@ -8,7 +8,7 @@ export function ViewData({ data }) {
 
   return (
     <div>
-      <table>
+      <table className="table table-bordered mt-4">
         <thead>
           <tr>
             {Array.from(columnNames).map((column) => (
