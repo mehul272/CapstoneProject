@@ -3,8 +3,13 @@ import { useState } from "react";
 import axios from "axios";
 import { ViewData } from "./viewData";
 import Select from "react-select";
+import { CSVLink } from "react-csv";
+
+const xlsx = require("xlsx");
 
 const stringToOption = (item) => ({ value: item, label: item });
+
+const headersToKeyValue = (item) => ({ label: item, key: item });
 
 const PER_PAGE_PAGINATION_OPTIONS = ["10", "20", "40", "100"].map(
   stringToOption
@@ -63,6 +68,22 @@ export function Extraction({
     setNumRows(event.value);
   };
 
+  const handleExportToExcel = () => {
+    let workBook = xlsx.utils.book_new();
+    let workSheet = xlsx.utils.json_to_sheet(data);
+
+    xlsx.utils.book_append_sheet(workBook, workSheet);
+    xlsx.writeFile(workBook, "ConvertedJsonToExcel.xlsx");
+  };
+
+  const headers = columnNamesArray.map(headersToKeyValue);
+
+  const csvLink = {
+    filename: "ExtractedFile.csv",
+    headers: headers,
+    data: data,
+  };
+
   return (
     <>
       <Modal
@@ -92,8 +113,19 @@ export function Extraction({
               options={PER_PAGE_PAGINATION_OPTIONS}
               className="lg-my-0 w-1 h-25"
             />
-            <h1>My data</h1>
-            <ViewData data={data} />
+            <div>
+              <h1>My data</h1>
+              <ViewData data={data} />
+              <CSVLink {...csvLink}>Export to CSV</CSVLink>
+
+              <Button
+                variant="primary"
+                onClick={handleExportToExcel}
+                disabled={isSaving}
+              >
+                Export to Excel
+              </Button>
+            </div>
           </>
         </Modal.Body>
         <Modal.Footer>
