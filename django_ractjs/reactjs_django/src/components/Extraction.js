@@ -11,7 +11,7 @@ const stringToOptions = (item) => ({ value: item, label: item });
 
 const headersToKeyValue = (item) => ({ label: item, key: item });
 
-const PER_PAGE_PAGINATION_OPTIONS = ["10", "20", "40", "100"].map(
+const PER_PAGE_PAGINATION_OPTIONS = ["10", "20", "40", "All"].map(
   stringToOptions
 );
 
@@ -30,7 +30,7 @@ export function Extraction({
 
   const [data, setData] = useState([]);
 
-  const [numRows, setNumRows] = useState(20);
+  const [numRows, setNumRows] = useState("20");
 
   const handleClose = () => {
     updateModal(false);
@@ -149,8 +149,13 @@ export function Extraction({
             </div>
 
             <div>
-              <h1>Display</h1>
-              <ViewData data={data} />
+              {numRows === "All" ? (
+                <h1>First 40 Data to Display</h1>
+              ) : (
+                <h1>Display {numRows} rows of the File</h1>
+              )}
+
+              <ViewData data={data} numRows={numRows} />
 
               <CSVLink {...csvLink}>Export to CSV</CSVLink>
 

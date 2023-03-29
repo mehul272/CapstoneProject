@@ -1,10 +1,10 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 
-export function ViewData({ data }) {
+export function ViewData({ data, numRows }) {
   const columnNames = new Set(data.flatMap((obj) => Object.keys(obj)));
 
-  console.log("My Data: ", data);
+  const tableData = numRows === "All" ? data.slice(0, 40) : data;
 
   return (
     <div>
@@ -17,7 +17,7 @@ export function ViewData({ data }) {
           </tr>
         </thead>
         <tbody>
-          {data.map((row) => (
+          {tableData.map((row) => (
             <tr>
               {Array.from(columnNames).map((column) => (
                 <td>{row[column]}</td>
