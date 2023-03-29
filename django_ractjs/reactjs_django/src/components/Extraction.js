@@ -28,7 +28,7 @@ export function Extraction({
 
   const [data, setData] = useState([]);
 
-  const [numRows, setNumRows] = useState(0);
+  const [numRows, setNumRows] = useState(20);
 
   const handleClose = () => updateModal(false);
 
@@ -77,7 +77,7 @@ export function Extraction({
   };
 
   const handleExportToJSON = () => {
-    const fileName = "data.json";
+    const fileName = "ConvertedJson.json";
 
     const blob = new Blob([JSON.stringify(data, null, 2)], {
       type: "application/json",
@@ -90,6 +90,7 @@ export function Extraction({
     document.body.appendChild(link);
     link.click();
 
+    // cleaning the document and url after download
     document.body.removeChild(link);
     URL.revokeObjectURL(downloadLink);
   };
@@ -97,7 +98,7 @@ export function Extraction({
   const headers = columnNamesArray.map(headersToKeyValue);
 
   const csvLink = {
-    filename: "ExtractedFile.csv",
+    filename: "ConvertedJsonToCSV.csv",
     headers: headers,
     data: data,
   };
@@ -127,6 +128,7 @@ export function Extraction({
             ))}
             <Select
               name="invoicePerPage"
+              defaultValue={20}
               onChange={(e) => handleRowSelect(e)}
               options={PER_PAGE_PAGINATION_OPTIONS}
               className="lg-my-0 w-1 h-25"
