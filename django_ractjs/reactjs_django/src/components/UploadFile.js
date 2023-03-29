@@ -1,10 +1,16 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
+import { Extraction } from "./Extraction";
 
 function UploadFile() {
   const [filename, setFilename] = useState("");
   const [files, setFiles] = useState([{}]);
   const [status, setstatus] = useState("");
+  const [fileData, setFileData] = useState({ title: 0, url: "" });
+
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+
+  const [columnNames, setColumnNames] = useState([]);
 
   let api = "http://127.0.0.1:8000/api";
 
@@ -57,23 +63,18 @@ function UploadFile() {
       .catch((error) => console.log(error));
   };
 
-  const extractionStart = async (url, title) => {
-    console.log("My URL: ", url);
-    console.log("My title: ", title);
+  const handleUpdateModal = (value) => {
+    setShowUpdateModal(value);
+  };
 
-    await axios
-    .get(api + "/upload-files-data1/", url)
-    .then((response) => {
-      console.log(response);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+  const extractionStart = async (url, title) => {
+    handleUpdateModal(true);
 
     await axios
       .get(api + `/upload-files-data/${title}/`, url)
       .then((response) => {
-        console.log("Finally: ",response.data.success);
+        setColumnNames(response.data.success);
+        setFileData({ title: title, url: url });
       })
       .catch((error) => {
         console.log(error);
@@ -118,7 +119,9 @@ function UploadFile() {
         </div>
 
         <div className="col-md-7">
-          <h2 className="alert alert-success">List of Uploaded Files & Download </h2>
+          <h2 className="alert alert-success">
+            List of Uploaded Files & Download{" "}
+          </h2>
 
           <table className="table table-bordered mt-4">
             <thead>
@@ -136,18 +139,25 @@ function UploadFile() {
                     <td>
                       <a href="" target="_blank"></a>
 
-                      <button
+                      {/* <button
                         onClick={() => downloadWithAxios(file.pdf, file.id)}
                         className="btn btn-success"
                       >
                         DownLoad
-                      </button>
+                      </button> */}
                       <button
                         onClick={() => extractionStart(file.pdf, file.id)}
                         className="btn btn-danger"
                       >
                         Do Extraction
                       </button>
+                      <Extraction
+                        showModal={showUpdateModal}
+                        updateModal={(value) => handleUpdateModal(value)}
+                        columnNames={columnNames}
+                        title={fileData.title}
+                        url={fileData.url}
+                      />
                     </td>
                   </tr>
                 );
