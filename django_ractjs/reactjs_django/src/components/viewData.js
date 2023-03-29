@@ -1,12 +1,14 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 
-export function ViewData({ data }) {
+export function ViewData({ data, numRows }) {
   const columnNames = new Set(data.flatMap((obj) => Object.keys(obj)));
+
+  const tableData = numRows === "All" ? data.slice(0, 40) : data;
 
   return (
     <div>
-      <table>
+      <table className="table table-bordered mt-4">
         <thead>
           <tr>
             {Array.from(columnNames).map((column) => (
@@ -15,7 +17,7 @@ export function ViewData({ data }) {
           </tr>
         </thead>
         <tbody>
-          {data.map((row) => (
+          {tableData.map((row) => (
             <tr>
               {Array.from(columnNames).map((column) => (
                 <td>{row[column]}</td>

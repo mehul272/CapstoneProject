@@ -89,7 +89,7 @@ function UploadFile() {
     <div className="container-fluid">
       <div className="row">
         <div className="col-md-4">
-          <h2 className="alert alert-success">File Upload Section</h2>
+          <h2 className="alert">File Upload Section</h2>
 
           <form>
             <div className="form-group">
@@ -119,7 +119,7 @@ function UploadFile() {
         </div>
 
         <div className="col-md-7">
-          <h2 className="alert alert-success">
+          <h2 className="alert">
             List of Uploaded Files & Download{" "}
           </h2>
 
@@ -139,12 +139,14 @@ function UploadFile() {
                     <td>
                       <a href="" target="_blank"></a>
 
-                      {/* <button
+                      <button
                         onClick={() => downloadWithAxios(file.pdf, file.id)}
                         className="btn btn-success"
                       >
                         DownLoad
-                      </button> */}
+                      </button>
+                    </td>
+                    <td>
                       <button
                         onClick={() => extractionStart(file.pdf, file.id)}
                         className="btn btn-danger"

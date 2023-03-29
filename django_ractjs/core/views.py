@@ -66,7 +66,13 @@ def filter_files_data(request, title):
             data.append(row)
 
         df = pd.DataFrame(data)
-        filtered_df = df[string_array].head(int(no_of_rows))
+
+        print(no_of_rows)
+
+        if no_of_rows != "All":
+            filtered_df = df[string_array].head(int(no_of_rows))
+        else:
+            filtered_df = df[string_array]
 
         filtered_data = filtered_df.to_dict('records')
 

@@ -1,13 +1,18 @@
 import { Button, Form, Modal, Row, Col, InputGroup } from "react-bootstrap";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { ViewData } from "./viewData";
 import Select from "react-select";
+import { CSVLink } from "react-csv";
 
-const stringToOption = (item) => ({ value: item, label: item });
+const xlsx = require("xlsx");
 
-const PER_PAGE_PAGINATION_OPTIONS = ["10", "20", "40", "100"].map(
-  stringToOption
+const stringToOptions = (item) => ({ value: item, label: item });
+
+const headersToKeyValue = (item) => ({ label: item, key: item });
+
+const PER_PAGE_PAGINATION_OPTIONS = ["10", "20", "40", "All"].map(
+  stringToOptions
 );
 
 export function Extraction({
@@ -19,13 +24,18 @@ export function Extraction({
 }) {
   const [isSaving, setIsSaving] = useState(false);
 
+  const [fileDownloading, setFileDownloading] = useState(false);
+
   const [columnNamesArray, setColumnNamesArray] = useState([]);
 
   const [data, setData] = useState([]);
 
-  const [numRows, setNumRows] = useState(0);
+  const [numRows, setNumRows] = useState("20");
 
-  const handleClose = () => updateModal(false);
+  const handleClose = () => {
+    updateModal(false);
+    setData([]);
+  };
 
   let api = "http://127.0.0.1:8000/api";
 
@@ -63,6 +73,41 @@ export function Extraction({
     setNumRows(event.value);
   };
 
+  const handleExportToExcel = async () => {
+    let workBook = xlsx.utils.book_new();
+    let workSheet = xlsx.utils.json_to_sheet(data);
+
+    xlsx.utils.book_append_sheet(workBook, workSheet);
+    xlsx.writeFile(workBook, "ConvertedJsonToExcel.xlsx");
+  };
+
+  const handleExportToJSON = async () => {
+    const fileName = "ConvertedJson.json";
+
+    const blob = new Blob([JSON.stringify(data, null, 2)], {
+      type: "application/json",
+    });
+
+    const downloadLink = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = downloadLink;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+
+    // cleaning the document and url after download
+    document.body.removeChild(link);
+    URL.revokeObjectURL(downloadLink);
+  };
+
+  const headers = columnNamesArray.map(headersToKeyValue);
+
+  const csvLink = {
+    filename: "ConvertedJsonToCSV.csv",
+    headers: headers,
+    data: data,
+  };
+
   return (
     <>
       <Modal
@@ -86,26 +131,54 @@ export function Extraction({
                 {option}
               </div>
             ))}
-            <Select
-              name="invoicePerPage"
-              onChange={(e) => handleRowSelect(e)}
-              options={PER_PAGE_PAGINATION_OPTIONS}
-              className="lg-my-0 w-1 h-25"
-            />
-            <h1>My data</h1>
-            <ViewData data={data} />
+            <div>
+              <Select
+                name="invoicePerPage"
+                defaultValue={PER_PAGE_PAGINATION_OPTIONS[1]}
+                onChange={(e) => handleRowSelect(e)}
+                options={PER_PAGE_PAGINATION_OPTIONS}
+                className="lg-my-0 w-1 h-25"
+              />
+              <Button
+                variant="primary"
+                onClick={handleExtraction}
+                disabled={isSaving}
+              >
+                Extract Data from Files
+              </Button>
+            </div>
+
+            <div>
+              {numRows === "All" ? (
+                <h1>First 40 Data to Display</h1>
+              ) : (
+                <h1>Display {numRows} rows of the File</h1>
+              )}
+
+              <ViewData data={data} numRows={numRows} />
+
+              <CSVLink {...csvLink}>Export to CSV</CSVLink>
+
+              <Button
+                variant="primary"
+                onClick={handleExportToExcel}
+                disabled={isSaving}
+              >
+                Export to Excel
+              </Button>
+              <Button
+                variant="primary"
+                onClick={handleExportToJSON}
+                disabled={isSaving}
+              >
+                Export to JSON
+              </Button>
+            </div>
           </>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="bordered" onClick={handleClose} disabled={isSaving}>
             Cancel
-          </Button>
-          <Button
-            variant="primary"
-            onClick={handleExtraction}
-            disabled={isSaving}
-          >
-            Extract
           </Button>
         </Modal.Footer>
       </Modal>
