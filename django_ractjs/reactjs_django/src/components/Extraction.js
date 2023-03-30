@@ -15,6 +15,7 @@ export function Extraction({
   updateModal,
   columnNames,
   title,
+  isTransformation,
   url,
 }) {
   const [isSaving, setIsSaving] = useState(false);
@@ -32,6 +33,11 @@ export function Extraction({
   const handleClose = () => {
     updateModal(false);
     setData([]);
+  };
+
+  const handleDoTransformation = () => {
+    updateModal(false);
+    isTransformation(true);
   };
 
   let api = "http://127.0.0.1:8000/api";
@@ -144,6 +150,14 @@ export function Extraction({
         <Modal.Footer>
           <Button variant="bordered" onClick={handleClose} disabled={isSaving}>
             Cancel
+          </Button>
+
+          <Button
+            variant="bordered"
+            onClick={handleDoTransformation}
+            disabled={isSaving}
+          >
+            Start the Transformation
           </Button>
         </Modal.Footer>
       </Modal>

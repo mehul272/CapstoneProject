@@ -1,6 +1,14 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { Extraction } from "./Extraction";
+import { Tranformation } from "./Transformation";
+
+//UploadFile ---> Parent Component(Transformation(props Bool,Data))
+
+//Extraction --> Child (props --> Bool, Data)
+//Transformation --> Child
+
+//create a state
 
 function UploadFile() {
   const [filename, setFilename] = useState("");
@@ -9,8 +17,8 @@ function UploadFile() {
   const [fileData, setFileData] = useState({ title: 0, url: "" });
 
   const [showUpdateModal, setShowUpdateModal] = useState(false);
-
   const [columnNames, setColumnNames] = useState([]);
+  const [doTransformation, setDoTransformation] = useState(false);
 
   let api = "http://127.0.0.1:8000/api";
 
@@ -119,9 +127,7 @@ function UploadFile() {
         </div>
 
         <div className="col-md-7">
-          <h2 className="alert">
-            List of Uploaded Files & Download{" "}
-          </h2>
+          <h2 className="alert">List of Uploaded Files & Download </h2>
 
           <table className="table table-bordered mt-4">
             <thead>
@@ -156,6 +162,7 @@ function UploadFile() {
                       <Extraction
                         showModal={showUpdateModal}
                         updateModal={(value) => handleUpdateModal(value)}
+                        isTransformation={(value) => setDoTransformation(value)}
                         columnNames={columnNames}
                         title={fileData.title}
                         url={fileData.url}
@@ -168,6 +175,7 @@ function UploadFile() {
           </table>
         </div>
       </div>
+      {doTransformation && <Tranformation />}
     </div>
   );
 }
