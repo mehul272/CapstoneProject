@@ -1,27 +1,27 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import '../src/resources/css/bootstrap.min.css'
-import App from './App';
-import reportWebVitals from './reportWebVitals';
-import {Route, BrowserRouter,Routes} from 'react-router-dom';
-import UploadFile from './components/UploadFile'
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import "../src/resources/css/bootstrap.min.css";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
+import { Route, BrowserRouter, Routes } from "react-router-dom";
+import UploadFile from "./components/UploadFile";
+import { Tranformation } from "./components/Transformation";
 
 
-function Router(){
-  return(
-<BrowserRouter>
-    <Routes>
-      <Route exact path="/" element={<UploadFile />} />
-      <Route exact path="/app" element={<App />} />
-    </Routes>
-</BrowserRouter>
+function Router() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route exact path="/" element={<UploadFile />} />
+        <Route exact path="/app" element={<App />} />
+        <Route exact path="/transform" element={<Tranformation />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
-
-
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <Router />

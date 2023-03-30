@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { ViewData } from "./viewData";
 import Select from "react-select";
+import { useNavigate } from "react-router-dom";
 
 const stringToOptions = (item) => ({ value: item, label: item });
 
@@ -15,9 +16,10 @@ export function Extraction({
   updateModal,
   columnNames,
   title,
-  isTransformation,
   url,
 }) {
+  let navigate = useNavigate();
+
   const [isSaving, setIsSaving] = useState(false);
 
   const [fileDownloading, setFileDownloading] = useState(false);
@@ -37,7 +39,7 @@ export function Extraction({
 
   const handleDoTransformation = () => {
     updateModal(false);
-    isTransformation(true);
+    navigate("transform");
   };
 
   let api = "http://127.0.0.1:8000/api";
