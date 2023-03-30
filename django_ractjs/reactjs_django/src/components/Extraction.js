@@ -5,7 +5,7 @@ import { ViewData } from "./viewData";
 import Select from "react-select";
 import { useNavigate } from "react-router-dom";
 
-const stringToOptions = (item) => ({ value: item, label: item });
+export const stringToOptions = (item) => ({ value: item, label: item });
 
 const PER_PAGE_PAGINATION_OPTIONS = ["10", "20", "40", "All"].map(
   stringToOptions
@@ -88,9 +88,11 @@ export function Extraction({
       });
   };
 
-  const handleRowSelect = (event) => {
+  const handleRowSelect = async (event) => {
+    console.log("Hello World: ", event.value);
+    await updateNumRows(event.value);
+
     setNumRows(event.value);
-    updateNumRows(event.value);
   };
 
   const handleFileNameChange = (event) => {

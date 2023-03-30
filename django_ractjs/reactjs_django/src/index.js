@@ -10,9 +10,9 @@ import { Transformation } from "./components/Transformation";
 
 function Router() {
   const [columnNames, setColumnNames] = useState([]);
-  const [numRows, setNumRows] = useState("");
-  const [title, setTitle] = useState("");
-  const [fileName, setFileName] = useState("");
+  const [numRows, setNumRows] = useState("20");
+  const [title, setTitle] = useState(0);
+  const [fileName, setFileName] = useState("Extracted");
   const [data, setData] = useState([]);
 
   return (

@@ -19,15 +19,13 @@ class FilesViewSet(viewsets.ModelViewSet):
     serializer_class = FilesSerializer
 
 
-def get_file_data(request, title):
+def get_file_data(request, title, no_of_rows):
 
     files = Files.objects.get(id=title)
 
     file_path = files.pdf.path
 
     string_array_str = request.GET.get('stringArray')
-
-    no_of_rows = request.GET.get('numRows')
 
     string_array = json.loads(string_array_str)
 
@@ -77,11 +75,11 @@ def upload_files_data1(request):
 @api_view(['GET'])
 def filter_files_data(request, title):
 
-    filtered_df = get_file_data(request, title)
+    no_of_rows = int(request.GET.get('numRows'))
+
+    filtered_df = get_file_data(request, title, no_of_rows)
 
     filtered_data = filtered_df.to_dict('records')
-
-    print(filtered_df)
 
     return JsonResponse({'result': filtered_data})
 
@@ -89,10 +87,17 @@ def filter_files_data(request, title):
 @api_view(['GET'])
 def start_transformation(request, title):
 
-    filtered_df = get_file_data(request, title)
+    transformationType = request.GET.get('transformation')
+    columns_str = request.GET.get('stringArray')
+
+    columns = json.loads(columns_str)
+
+    no_of_rows = int(request.GET.get('numRows'))
+
+    filtered_df = get_file_data(request, title, no_of_rows)
+
+    for col in columns:
+        filtered_df[col] = filtered_df[col].astype(int) * 10
 
     filtered_data = filtered_df.to_dict('records')
-
-    print(filtered_df)
-
     return JsonResponse({'result': filtered_data})
