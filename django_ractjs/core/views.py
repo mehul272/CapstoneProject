@@ -19,6 +19,36 @@ class FilesViewSet(viewsets.ModelViewSet):
     serializer_class = FilesSerializer
 
 
+def get_file_data(request, title):
+
+    files = Files.objects.get(id=title)
+
+    file_path = files.pdf.path
+
+    string_array_str = request.GET.get('stringArray')
+
+    no_of_rows = request.GET.get('numRows')
+
+    string_array = json.loads(string_array_str)
+
+    data = []
+
+    with open(file_path, newline='') as csvfile:
+
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            data.append(row)
+
+        df = pd.DataFrame(data)
+
+        if no_of_rows != "All":
+            filtered_df = df[string_array].head(int(no_of_rows))
+        else:
+            filtered_df = df[string_array]
+
+    return filtered_df
+
+
 @api_view(['GET'])
 def upload_files_data(request, title):
 
@@ -47,34 +77,21 @@ def upload_files_data1(request):
 @api_view(['GET'])
 def filter_files_data(request, title):
 
-    files = Files.objects.get(id=title)
+    filtered_df = get_file_data(request, title)
 
-    file_path = files.pdf.path
+    filtered_data = filtered_df.to_dict('records')
 
-    string_array_str = request.GET.get('stringArray')
+    print(filtered_df)
 
-    no_of_rows = request.GET.get('numRows')
+    return JsonResponse({'result': filtered_data})
 
-    string_array = json.loads(string_array_str)
 
-    data = []
+@api_view(['GET'])
+def start_transformation(request, title):
 
-    with open(file_path, newline='') as csvfile:
+    filtered_df = get_file_data(request, title)
 
-        reader = csv.DictReader(csvfile)
-        for row in reader:
-            data.append(row)
-
-        df = pd.DataFrame(data)
-
-        print(no_of_rows)
-
-        if no_of_rows != "All":
-            filtered_df = df[string_array].head(int(no_of_rows))
-        else:
-            filtered_df = df[string_array]
-
-        filtered_data = filtered_df.to_dict('records')
+    filtered_data = filtered_df.to_dict('records')
 
     print(filtered_df)
 

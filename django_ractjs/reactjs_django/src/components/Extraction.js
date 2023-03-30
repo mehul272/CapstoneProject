@@ -3,13 +3,8 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { ViewData } from "./viewData";
 import Select from "react-select";
-import { CSVLink } from "react-csv";
-
-const xlsx = require("xlsx");
 
 const stringToOptions = (item) => ({ value: item, label: item });
-
-const headersToKeyValue = (item) => ({ label: item, key: item });
 
 const PER_PAGE_PAGINATION_OPTIONS = ["10", "20", "40", "All"].map(
   stringToOptions
@@ -20,6 +15,7 @@ export function Extraction({
   updateModal,
   columnNames,
   title,
+  isTransformation,
   url,
 }) {
   const [isSaving, setIsSaving] = useState(false);
@@ -32,9 +28,16 @@ export function Extraction({
 
   const [numRows, setNumRows] = useState("20");
 
+  const [fileName, setFileName] = useState("");
+
   const handleClose = () => {
     updateModal(false);
     setData([]);
+  };
+
+  const handleDoTransformation = () => {
+    updateModal(false);
+    isTransformation(true);
   };
 
   let api = "http://127.0.0.1:8000/api";
@@ -73,41 +76,6 @@ export function Extraction({
     setNumRows(event.value);
   };
 
-  const handleExportToExcel = async () => {
-    let workBook = xlsx.utils.book_new();
-    let workSheet = xlsx.utils.json_to_sheet(data);
-
-    xlsx.utils.book_append_sheet(workBook, workSheet);
-    xlsx.writeFile(workBook, "ConvertedJsonToExcel.xlsx");
-  };
-
-  const handleExportToJSON = async () => {
-    const fileName = "ConvertedJson.json";
-
-    const blob = new Blob([JSON.stringify(data, null, 2)], {
-      type: "application/json",
-    });
-
-    const downloadLink = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = downloadLink;
-    link.download = fileName;
-    document.body.appendChild(link);
-    link.click();
-
-    // cleaning the document and url after download
-    document.body.removeChild(link);
-    URL.revokeObjectURL(downloadLink);
-  };
-
-  const headers = columnNamesArray.map(headersToKeyValue);
-
-  const csvLink = {
-    filename: "ConvertedJsonToCSV.csv",
-    headers: headers,
-    data: data,
-  };
-
   return (
     <>
       <Modal
@@ -139,6 +107,21 @@ export function Extraction({
                 options={PER_PAGE_PAGINATION_OPTIONS}
                 className="lg-my-0 w-1 h-25"
               />
+              <form>
+                <div className="form-group">
+                  <label
+                    htmlFor="exampleFormControlFile1"
+                    className="float-left"
+                  >
+                    File Name
+                  </label>
+                  <input
+                    type="text"
+                    onChange={(e) => setFileName(e.target.value)}
+                    className="form-control"
+                  />
+                </div>
+              </form>
               <Button
                 variant="primary"
                 onClick={handleExtraction}
@@ -155,30 +138,26 @@ export function Extraction({
                 <h1>Display {numRows} rows of the File</h1>
               )}
 
-              <ViewData data={data} numRows={numRows} />
-
-              <CSVLink {...csvLink}>Export to CSV</CSVLink>
-
-              <Button
-                variant="primary"
-                onClick={handleExportToExcel}
-                disabled={isSaving}
-              >
-                Export to Excel
-              </Button>
-              <Button
-                variant="primary"
-                onClick={handleExportToJSON}
-                disabled={isSaving}
-              >
-                Export to JSON
-              </Button>
+              <ViewData
+                data={data}
+                numRows={numRows}
+                columnNamesArray={columnNamesArray}
+                fileName={fileName}
+              />
             </div>
           </>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="bordered" onClick={handleClose} disabled={isSaving}>
             Cancel
+          </Button>
+
+          <Button
+            variant="bordered"
+            onClick={handleDoTransformation}
+            disabled={isSaving}
+          >
+            Start the Transformation
           </Button>
         </Modal.Footer>
       </Modal>
