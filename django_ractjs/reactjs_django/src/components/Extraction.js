@@ -16,6 +16,10 @@ export function Extraction({
   updateModal,
   columnNames,
   title,
+  updateColumnNames,
+  updateFileName,
+  updateNumRows,
+  updateData,
   url,
 }) {
   let navigate = useNavigate();
@@ -55,6 +59,7 @@ export function Extraction({
     }
 
     setColumnNamesArray(columnNamesArray);
+    updateColumnNames(columnNamesArray);
   };
 
   const handleExtraction = async () => {
@@ -71,11 +76,18 @@ export function Extraction({
       )
       .then((res) => {
         setData(res.data.result);
+        updateData(res.data.result)
       });
   };
 
   const handleRowSelect = (event) => {
     setNumRows(event.value);
+    updateNumRows(event.value);
+  };
+
+  const handleFileNameChange = (event) => {
+    updateFileName(event.target.value);
+    setFileName(event.target.value);
   };
 
   return (
@@ -119,7 +131,7 @@ export function Extraction({
                   </label>
                   <input
                     type="text"
-                    onChange={(e) => setFileName(e.target.value)}
+                    onChange={(e) => handleFileNameChange(e)}
                     className="form-control"
                   />
                 </div>

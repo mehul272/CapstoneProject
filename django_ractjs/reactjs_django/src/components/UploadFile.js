@@ -8,7 +8,13 @@ import { Extraction } from "./Extraction";
 
 //create a state
 
-function UploadFile() {
+function UploadFile({
+  updateColumnNames,
+  updateNumRows,
+  updateTitle,
+  updateFileName,
+  updateData
+}) {
   const [filename, setFilename] = useState("");
   const [files, setFiles] = useState([{}]);
   const [status, setstatus] = useState("");
@@ -84,6 +90,7 @@ function UploadFile() {
       .catch((error) => {
         console.log(error);
       });
+    await updateTitle(title);
   };
 
   useEffect(() => {
@@ -162,6 +169,10 @@ function UploadFile() {
                         columnNames={columnNames}
                         title={fileData.title}
                         url={fileData.url}
+                        updateColumnNames={updateColumnNames}
+                        updateFileName={updateFileName}
+                        updateNumRows={updateNumRows}
+                        updateData={updateData}
                       />
                     </td>
                   </tr>

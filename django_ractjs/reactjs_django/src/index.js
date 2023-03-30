@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import "../src/resources/css/bootstrap.min.css";
@@ -6,16 +6,45 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { Route, BrowserRouter, Routes } from "react-router-dom";
 import UploadFile from "./components/UploadFile";
-import { Tranformation } from "./components/Transformation";
-
+import { Transformation } from "./components/Transformation";
 
 function Router() {
+  const [columnNames, setColumnNames] = useState([]);
+  const [numRows, setNumRows] = useState("");
+  const [title, setTitle] = useState("");
+  const [fileName, setFileName] = useState("");
+  const [data, setData] = useState([]);
+
   return (
     <BrowserRouter>
       <Routes>
-        <Route exact path="/" element={<UploadFile />} />
+        <Route
+          exact
+          path="/"
+          element={
+            <UploadFile
+              updateColumnNames={(value) => setColumnNames(value)}
+              updateNumRows={(value) => setNumRows(value)}
+              updateTitle={(value) => setTitle(value)}
+              updateFileName={(value) => setFileName(value)}
+              updateData={(value) => setData(value)}
+            />
+          }
+        />
         <Route exact path="/app" element={<App />} />
-        <Route exact path="/transform" element={<Tranformation />} />
+        <Route
+          exact
+          path="/transform"
+          element={
+            <Transformation
+              columnNames={columnNames}
+              numRows={numRows}
+              fileName={fileName}
+              title={title}
+              data={data}
+            />
+          }
+        />
       </Routes>
     </BrowserRouter>
   );
