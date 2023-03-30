@@ -34,7 +34,7 @@ export function Extraction({
 
   const [numRows, setNumRows] = useState("20");
 
-  const [fileName, setFileName] = useState("");
+  const [fileName, setFileName] = useState("ExtractedFile");
 
   const handleClose = () => {
     updateModal(false);
@@ -42,6 +42,14 @@ export function Extraction({
   };
 
   const handleDoTransformation = () => {
+    if (
+      !window.confirm(
+        `Are you sure you want to start the Transformation Process?`
+      )
+    ) {
+      return;
+    }
+
     updateModal(false);
     navigate("transform");
   };
@@ -76,7 +84,7 @@ export function Extraction({
       )
       .then((res) => {
         setData(res.data.result);
-        updateData(res.data.result)
+        updateData(res.data.result);
       });
   };
 
@@ -131,6 +139,7 @@ export function Extraction({
                   </label>
                   <input
                     type="text"
+                    value={fileName}
                     onChange={(e) => handleFileNameChange(e)}
                     className="form-control"
                   />
