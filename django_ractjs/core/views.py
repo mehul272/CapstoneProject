@@ -75,7 +75,7 @@ def upload_files_data1(request):
 @api_view(['GET'])
 def filter_files_data(request, title):
 
-    no_of_rows = int(request.GET.get('numRows'))
+    no_of_rows = request.GET.get('numRows')
 
     filtered_df = get_file_data(request, title, no_of_rows)
 
@@ -92,7 +92,7 @@ def start_transformation(request, title):
 
     columns = json.loads(columns_str)
 
-    no_of_rows = int(request.GET.get('numRows'))
+    no_of_rows = request.GET.get('numRows')
 
     filtered_df = get_file_data(request, title, no_of_rows)
 
