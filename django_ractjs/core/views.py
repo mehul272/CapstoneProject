@@ -11,6 +11,10 @@ from django.core.files.storage import default_storage
 import json
 import csv
 import pandas as pd
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import LabelEncoder
+
+import numpy as np
 # Create your views here.
 
 
@@ -96,8 +100,30 @@ def start_transformation(request, title):
 
     filtered_df = get_file_data(request, title, no_of_rows)
 
-    for col in columns:
-        filtered_df[col] = filtered_df[col].astype(int) * 10
+    # Tranformation Steps:
+
+    # Imputer in data for Missing Values
+
+    if isinstance(filtered_df, list):
+        filtered_df = pd.DataFrame(filtered_df)
+        
+    #Drop empty columns
+    filtered_df = filtered_df.dropna()
+
+    #Drop Duplicate Columns
+    filtered_df = filtered_df.drop_duplicates()
+
+    #Covert String name from Lower Case
+    for col in filtered_df.columns:
+        if filtered_df[col].dtype == 'object':
+            filtered_df[col] = filtered_df[col].str.lower()
+
+    filtered_df = filtered_df.reset_index(drop=True)
+    
+    print(filtered_df)
+
+    # for col in columns:
+    #     filtered_df[col] = filtered_df[col].astype(int) * 10
 
     filtered_data = filtered_df.to_dict('records')
     return JsonResponse({'result': filtered_data})
