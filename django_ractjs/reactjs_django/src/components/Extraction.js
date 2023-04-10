@@ -3,8 +3,9 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { ViewData } from "./viewData";
 import Select from "react-select";
+import { useNavigate } from "react-router-dom";
 
-const stringToOptions = (item) => ({ value: item, label: item });
+export const stringToOptions = (item) => ({ value: item, label: item });
 
 const PER_PAGE_PAGINATION_OPTIONS = ["10", "20", "40", "All"].map(
   stringToOptions
@@ -15,9 +16,14 @@ export function Extraction({
   updateModal,
   columnNames,
   title,
-  isTransformation,
+  updateColumnNames,
+  updateFileName,
+  updateNumRows,
+  updateData,
   url,
 }) {
+  let navigate = useNavigate();
+
   const [isSaving, setIsSaving] = useState(false);
 
   const [fileDownloading, setFileDownloading] = useState(false);
@@ -28,7 +34,7 @@ export function Extraction({
 
   const [numRows, setNumRows] = useState("20");
 
-  const [fileName, setFileName] = useState("");
+  const [fileName, setFileName] = useState("ExtractedFile");
 
   const handleClose = () => {
     updateModal(false);
@@ -36,8 +42,16 @@ export function Extraction({
   };
 
   const handleDoTransformation = () => {
+    if (
+      !window.confirm(
+        `Are you sure you want to start the Transformation Process?`
+      )
+    ) {
+      return;
+    }
+
     updateModal(false);
-    isTransformation(true);
+    navigate("transform");
   };
 
   let api = "http://127.0.0.1:8000/api";
@@ -53,6 +67,7 @@ export function Extraction({
     }
 
     setColumnNamesArray(columnNamesArray);
+    updateColumnNames(columnNamesArray);
   };
 
   const handleExtraction = async () => {
@@ -69,11 +84,20 @@ export function Extraction({
       )
       .then((res) => {
         setData(res.data.result);
+        updateData(res.data.result);
       });
   };
 
-  const handleRowSelect = (event) => {
+  const handleRowSelect = async (event) => {
+    console.log("Hello World: ", event.value);
+    await updateNumRows(event.value);
+
     setNumRows(event.value);
+  };
+
+  const handleFileNameChange = (event) => {
+    updateFileName(event.target.value);
+    setFileName(event.target.value);
   };
 
   return (
@@ -117,7 +141,8 @@ export function Extraction({
                   </label>
                   <input
                     type="text"
-                    onChange={(e) => setFileName(e.target.value)}
+                    value={fileName}
+                    onChange={(e) => handleFileNameChange(e)}
                     className="form-control"
                   />
                 </div>

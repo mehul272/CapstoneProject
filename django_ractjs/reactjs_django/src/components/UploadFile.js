@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { Extraction } from "./Extraction";
+<<<<<<< HEAD
 import { Tranformation } from "./Transformation";
 
 
+=======
+>>>>>>> f6fbee72879ab9ca73bff23b4954bb68b8c248ba
 //UploadFile ---> Parent Component(Transformation(props Bool,Data))
 
 //Extraction --> Child (props --> Bool, Data)
@@ -11,7 +14,13 @@ import { Tranformation } from "./Transformation";
 
 //create a state
 
-function UploadFile() {
+function UploadFile({
+  updateColumnNames,
+  updateNumRows,
+  updateTitle,
+  updateFileName,
+  updateData
+}) {
   const [filename, setFilename] = useState("");
   const [files, setFiles] = useState([{}]);
   const [status, setstatus] = useState("");
@@ -19,7 +28,6 @@ function UploadFile() {
 
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [columnNames, setColumnNames] = useState([]);
-  const [doTransformation, setDoTransformation] = useState(false);
 
   let api = "http://127.0.0.1:8000/api";
 
@@ -88,6 +96,7 @@ function UploadFile() {
       .catch((error) => {
         console.log(error);
       });
+    await updateTitle(title);
   };
 
   useEffect(() => {
@@ -163,10 +172,13 @@ function UploadFile() {
                       <Extraction
                         showModal={showUpdateModal}
                         updateModal={(value) => handleUpdateModal(value)}
-                        isTransformation={(value) => setDoTransformation(value)}
                         columnNames={columnNames}
                         title={fileData.title}
                         url={fileData.url}
+                        updateColumnNames={updateColumnNames}
+                        updateFileName={updateFileName}
+                        updateNumRows={updateNumRows}
+                        updateData={updateData}
                       />
                     </td>
                   </tr>
@@ -176,7 +188,6 @@ function UploadFile() {
           </table>
         </div>
       </div>
-      {doTransformation && <Tranformation />}
     </div>
   );
 }
