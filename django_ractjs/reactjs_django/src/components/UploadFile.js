@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { Extraction } from "./Extraction";
+import AppNavbar from './Navbar';
 //UploadFile ---> Parent Component(Transformation(props Bool,Data))
 
 //Extraction --> Child (props --> Bool, Data)
@@ -99,6 +100,7 @@ function UploadFile({
 
   return (
     <div className="container-fluid">
+       <AppNavbar />
       <div className="row">
         <div className="col-md-4">
           <h2 className="alert">File Upload Section</h2>

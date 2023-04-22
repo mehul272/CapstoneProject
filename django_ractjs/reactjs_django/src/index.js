@@ -7,6 +7,8 @@ import reportWebVitals from "./reportWebVitals";
 import { Route, BrowserRouter, Routes } from "react-router-dom";
 import UploadFile from "./components/UploadFile";
 import { Transformation } from "./components/Transformation";
+import HomePage from "./components/HomePage";
+import Login from "./components/Login";
 
 function Router() {
   const [columnNames, setColumnNames] = useState([]);
@@ -18,9 +20,23 @@ function Router() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route
+      <Route
           exact
           path="/"
+          element={
+            <HomePage/>
+          }
+        />
+      <Route
+          exact
+          path="/Login"
+          element={
+            <Login/>
+          }
+        />
+        <Route
+          exact
+          path="/extract"
           element={
             <UploadFile
               updateColumnNames={(value) => setColumnNames(value)}
