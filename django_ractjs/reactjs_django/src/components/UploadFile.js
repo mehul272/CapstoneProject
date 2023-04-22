@@ -1,12 +1,10 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { Extraction } from "./Extraction";
-<<<<<<< HEAD
 import { Tranformation } from "./Transformation";
+import '../resources/css/UploadFile.css'
 
 
-=======
->>>>>>> f6fbee72879ab9ca73bff23b4954bb68b8c248ba
 //UploadFile ---> Parent Component(Transformation(props Bool,Data))
 
 //Extraction --> Child (props --> Bool, Data)
