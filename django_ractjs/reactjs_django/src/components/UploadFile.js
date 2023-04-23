@@ -100,7 +100,7 @@ function UploadFile({
 
   return (
     <div className="container-fluid">
-       <AppNavbar />
+       
       <div className="row">
         <div className="col-md-4">
           <h2 className="alert">File Upload Section</h2>

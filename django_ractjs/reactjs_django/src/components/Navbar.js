@@ -13,10 +13,11 @@ function AppNavbar() {
         <Nav className="ml-auto">
         
           <Nav.Link href="Login">Login/SignUp</Nav.Link>
-          <Nav.Link href="#architecture">Architecture</Nav.Link>
-          <Nav.Link href="#docs">Documentations</Nav.Link>
+          <Nav.Link href="docs">Documentations</Nav.Link>
+          <Nav.Link href="#Standardization">Standardization</Nav.Link>
           <Nav.Link href="https://github.com/mehul272/CapstoneProject/tree/main">GitHub</Nav.Link>
           <Nav.Link href="#contact">Contact Us</Nav.Link>
+          <Nav.Link href="#devepolers">Developers</Nav.Link>
         </Nav>
       </Navbar.Collapse>
     </Navbar>

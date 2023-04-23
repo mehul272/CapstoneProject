@@ -9,6 +9,7 @@ import UploadFile from "./components/UploadFile";
 import { Transformation } from "./components/Transformation";
 import HomePage from "./components/HomePage";
 import Login from "./components/Login";
+import Documentation from "./components/DocPDF";
 
 function Router() {
   const [columnNames, setColumnNames] = useState([]);
@@ -32,6 +33,13 @@ function Router() {
           path="/Login"
           element={
             <Login/>
+          }
+        />
+        <Route
+          exact
+          path="/docs"
+          element={
+            <Documentation/>
           }
         />
         <Route

@@ -1,6 +1,8 @@
 import AppNavbar from './Navbar';
 import React, { useState } from "react";
 import ImageCarousel from "./ImageCarousel";
+import { useNavigate } from 'react-router-dom';
+
 
 function HomePage() {
 
@@ -14,9 +16,13 @@ function HomePage() {
 
     const [loggedIn, setLoggedIn] = useState(false);
 
+    const navigate = useNavigate();
+
+
     function handleLogin() {
+        navigate('/extract');
         // handle user login logic here
-        setLoggedIn(true);
+       // setLoggedIn(true);
     }
 
     const buttonStyle = {
