@@ -11,8 +11,44 @@ from django.core.files.storage import default_storage
 import json
 import csv
 import pandas as pd
-# Create your views here.
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import LabelEncoder
+import numpy as np
 
+
+def transform_dataframe(df):
+    # Remove duplicate rows
+    df = df.drop_duplicates()
+
+    # Replace missing values with the mean of each column
+    numeric_cols = df.select_dtypes(include=np.number).columns.tolist()
+    df[numeric_cols] = df[numeric_cols].fillna(df[numeric_cols].mean())
+
+    # Rename columns to lower case
+    df = df.rename(columns=lambda x: x.lower())
+
+    # Convert string columns to uppercase
+    str_cols = df.select_dtypes(include='object').columns
+    df[str_cols] = df[str_cols].apply(lambda x: x.str.upper())
+
+    # Remove columns with all missing values
+    df = df.dropna(how='all', axis=1)
+
+    # Convert a categorical column to numeric
+    cat_col = 'category_col'
+    if cat_col in df.columns:
+        df[cat_col] = pd.Categorical(df[cat_col])
+        df[cat_col] = df[cat_col].cat.codes
+
+    # Normalize numeric columns
+    num_cols = df.select_dtypes(include=[np.number]).columns
+        
+    df[num_cols] = (df[num_cols] - df[num_cols].mean()) / df[num_cols].std()
+
+    # replace null values with 'N/A'
+    df.replace(['', ' ', None, np.nan], 'N/A', inplace=True, regex=True)
+
+    return df
 
 class FilesViewSet(viewsets.ModelViewSet):
     queryset = Files.objects.all()
@@ -96,8 +132,11 @@ def start_transformation(request, title):
 
     filtered_df = get_file_data(request, title, no_of_rows)
 
-    for col in columns:
-        filtered_df[col] = filtered_df[col].astype(int) * 10
+    # Tranformation Steps:
+
+    filtered_df = transform_dataframe(filtered_df)
+    filtered_df = filtered_df.reset_index(drop=True)
 
     filtered_data = filtered_df.to_dict('records')
+
     return JsonResponse({'result': filtered_data})

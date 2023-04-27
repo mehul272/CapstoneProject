@@ -30,6 +30,17 @@ INSTALLED_APPS = [
     'corsheaders',
 ]
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'etlDB',
+        'USER': 'root',
+        'PASSWORD': 'Password@123',
+        'HOST': 'localhost',
+        'PORT': '3306',
+    }
+}
+
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
