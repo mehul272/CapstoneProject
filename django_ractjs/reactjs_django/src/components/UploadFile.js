@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { Extraction } from "./Extraction";
+import AppNavbar from './Navbar';
 import { Tranformation } from "./Transformation";
 import '../resources/css/UploadFile.css';
 import HeaderPart from "./Header";
@@ -117,6 +118,7 @@ function UploadFile({
     <HeaderPart/>
     
     <div className="container-fluid">
+       
     
       <div className="row">
         <div className="col-md-4">
