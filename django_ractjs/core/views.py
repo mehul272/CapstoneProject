@@ -14,50 +14,20 @@ import pandas as pd
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import LabelEncoder
 
-import numpy as np
-# Create your views here.
-
-
 def data_validation(df):
-    validation_results = pd.DataFrame(columns=[
-                                      'column_name', 'null_count', 'duplicate_count', 'invalid_type_count', 'outlier_count', 'inconsistent_count'])
-
-    for column in df.columns:
-        # Check for missing values
-        null_count = df[column].isnull().sum()
-
-        # Check for duplicates
-        duplicate_count = df.duplicated(subset=[column]).sum()
-
-        # Check for invalid data types
-        invalid_type_count = 0
-        if df[column].dtype not in [np.int64, np.float64]:
-            invalid_type_count = df[column].apply(
-                lambda x: isinstance(x, str)).sum()
-
-        # Check for outliers
-        Q1 = df[column].quantile(0.25)
-        Q3 = df[column].quantile(0.75)
-        IQR = Q3 - Q1
-        outlier_count = ((df[column] < (Q1 - 1.5 * IQR)) |
-                         (df[column] > (Q3 + 1.5 * IQR))).sum()
-
-        # Check for inconsistent data
-        inconsistent_count = 0
-        if df[column].dtype == np.object:
-            inconsistent_count = df[column].str.contains(
-                '^[a-zA-Z0-9]+$').sum()
-
-        validation_results = validation_results.append({
-            'column_name': column,
-            'null_count': null_count,
-            'duplicate_count': duplicate_count,
-            'invalid_type_count': invalid_type_count,
-            'outlier_count': outlier_count,
-            'inconsistent_count': inconsistent_count
-        }, ignore_index=True)
-
-    return validation_results
+    
+    # replace null values with 'N/A'
+    df.replace(['', ' ', None, np.nan], 'N/A', inplace=True, regex=True)
+    
+    df = pd.get_dummies(df, dummy_na=True)
+    
+    numeric_columns = df.select_dtypes(include=np.number).columns
+    
+    print(numeric_columns)
+    
+    df[numeric_columns] = (df[numeric_columns] - df[numeric_columns].mean()) / df[numeric_columns].std()
+    
+    return df
 
 
 class FilesViewSet(viewsets.ModelViewSet):
@@ -143,9 +113,10 @@ def start_transformation(request, title):
     filtered_df = get_file_data(request, title, no_of_rows)
 
     # Tranformation Steps:
-    
+
     new_Data = data_validation(filtered_df)
 
+    print("New Data: ", new_Data)
 
     # Imputer in data for Missing Values
 
@@ -166,11 +137,11 @@ def start_transformation(request, title):
     filtered_df = filtered_df.reset_index(drop=True)
 
     print(filtered_df)
-    
 
     print(new_Data)
     # for col in columns:
     #     filtered_df[col] = filtered_df[col].astype(int) * 10
 
     filtered_data = filtered_df.to_dict('records')
+    
     return JsonResponse({'result': filtered_data})
