@@ -13,22 +13,42 @@ import csv
 import pandas as pd
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import LabelEncoder
+import numpy as np
 
-def data_validation(df):
-    
+
+def transform_dataframe(df):
+    # Remove duplicate rows
+    df = df.drop_duplicates()
+
+    # Replace missing values with the mean of each column
+    numeric_cols = df.select_dtypes(include=np.number).columns.tolist()
+    df[numeric_cols] = df[numeric_cols].fillna(df[numeric_cols].mean())
+
+    # Rename columns to lower case
+    df = df.rename(columns=lambda x: x.lower())
+
+    # Convert string columns to uppercase
+    str_cols = df.select_dtypes(include='object').columns
+    df[str_cols] = df[str_cols].apply(lambda x: x.str.upper())
+
+    # Remove columns with all missing values
+    df = df.dropna(how='all', axis=1)
+
+    # Convert a categorical column to numeric
+    cat_col = 'category_col'
+    if cat_col in df.columns:
+        df[cat_col] = pd.Categorical(df[cat_col])
+        df[cat_col] = df[cat_col].cat.codes
+
+    # Normalize numeric columns
+    num_cols = df.select_dtypes(include=[np.number]).columns
+        
+    df[num_cols] = (df[num_cols] - df[num_cols].mean()) / df[num_cols].std()
+
     # replace null values with 'N/A'
     df.replace(['', ' ', None, np.nan], 'N/A', inplace=True, regex=True)
-    
-    df = pd.get_dummies(df, dummy_na=True)
-    
-    numeric_columns = df.select_dtypes(include=np.number).columns
-    
-    print(numeric_columns)
-    
-    df[numeric_columns] = (df[numeric_columns] - df[numeric_columns].mean()) / df[numeric_columns].std()
-    
-    return df
 
+    return df
 
 class FilesViewSet(viewsets.ModelViewSet):
     queryset = Files.objects.all()
@@ -114,34 +134,9 @@ def start_transformation(request, title):
 
     # Tranformation Steps:
 
-    new_Data = data_validation(filtered_df)
-
-    print("New Data: ", new_Data)
-
-    # Imputer in data for Missing Values
-
-    if isinstance(filtered_df, list):
-        filtered_df = pd.DataFrame(filtered_df)
-
-    # Drop empty columns
-    filtered_df = filtered_df.dropna()
-
-    # Drop Duplicate Columns
-    filtered_df = filtered_df.drop_duplicates()
-
-    # Covert String name from Lower Case
-    for col in filtered_df.columns:
-        if filtered_df[col].dtype == 'object':
-            filtered_df[col] = filtered_df[col].str.lower()
-
+    filtered_df = transform_dataframe(filtered_df)
     filtered_df = filtered_df.reset_index(drop=True)
 
-    print(filtered_df)
-
-    print(new_Data)
-    # for col in columns:
-    #     filtered_df[col] = filtered_df[col].astype(int) * 10
-
     filtered_data = filtered_df.to_dict('records')
-    
+
     return JsonResponse({'result': filtered_data})

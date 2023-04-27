@@ -6,3 +6,6 @@ class Files(models.Model):
 
     def __str__(self):
         return self.pdf
+    
+class NewTable(models.Model):
+    pass
