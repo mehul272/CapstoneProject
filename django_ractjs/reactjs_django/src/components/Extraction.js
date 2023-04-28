@@ -51,7 +51,7 @@ export function Extraction({
     }
 
     updateModal(false);
-    navigate("transform");
+    navigate("/transform");
   };
 
   let api = "http://127.0.0.1:8000/api";

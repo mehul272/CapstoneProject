@@ -14,7 +14,7 @@ function HomePage() {
       
       ];
 
-    const [loggedIn, setLoggedIn] = useState(false);
+    const [loggedIn, setLoggedIn] = useState(true);
 
     const navigate = useNavigate();
 
@@ -43,7 +43,7 @@ function HomePage() {
                 <div>
                     <ImageCarousel images={images} interval={5000} />
                 </div>
-                <div style={{ textAlign: 'center', marginTop: '38rem' }}>
+                <div style={{ textAlign: 'center', marginTop: '50rem' }}>
                      <button  style={buttonStyle} disabled={!loggedIn} onClick={handleLogin}>
                         {loggedIn ? 'Lets See the ETL In Action' : 'Login to See the pipiline in Action'}
                     </button>
