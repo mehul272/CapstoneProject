@@ -20,6 +20,7 @@ export function Transformation({
   fileName,
   title,
   data,
+  updateLoadComplete
 }) {
   let api = "http://127.0.0.1:8000/api";
 
@@ -84,6 +85,7 @@ export function Transformation({
     if (!window.confirm(`Are you sure you want to start the Loading?`)) {
       return;
     }
+    navigate("/load");
 
     await axios
       .get(api + `/start-loading`, {
@@ -92,7 +94,7 @@ export function Transformation({
         },
       })
       .then((res) => {
-        navigate("/load");
+        updateLoadComplete(false)
       });
 
     setShowModal(false);

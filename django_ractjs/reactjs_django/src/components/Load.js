@@ -11,14 +11,21 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Load = () => {
+const Load = (loadComeplete) => {
   const classes = useStyles();
+
+  console.log("hi", loadComeplete);
+
   return (
     <>
       <h1>Loading...</h1>
-      <Backdrop className={classes.backdrop} open>
-        <CircularProgress color="inherit" />
-      </Backdrop>
+      {loadComeplete.loadComeplete ? (
+        loadComeplete.loadComeplete
+      ) : (
+        <Backdrop className={classes.backdrop} open>
+          <CircularProgress color="inherit" />
+        </Backdrop>
+      )}
     </>
   );
 };

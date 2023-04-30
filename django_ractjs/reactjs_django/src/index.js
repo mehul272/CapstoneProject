@@ -18,6 +18,7 @@ function Router() {
   const [title, setTitle] = useState(0);
   const [fileName, setFileName] = useState("Extracted");
   const [data, setData] = useState([]);
+  const [loadComplete, setLoadComplete] = useState(true);
 
   return (
     <BrowserRouter>
@@ -49,10 +50,15 @@ function Router() {
               fileName={fileName}
               title={title}
               data={data}
+              updateLoadComplete={(value) => setLoadComplete(value)}
             />
           }
         />
-        <Route excat path="/load" element={<Load />} />
+        <Route
+          excat
+          path="/load"
+          element={<Load loadComplete={loadComplete} />}
+        />
       </Routes>
     </BrowserRouter>
   );
