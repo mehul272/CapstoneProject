@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import FilesViewSet, upload_files_data,upload_files_data1,filter_files_data,start_transformation
+from .views import FilesViewSet, upload_files_data,upload_files_data1,filter_files_data,start_transformation,start_loading
 from . import views
 
 router = DefaultRouter()
@@ -13,4 +13,5 @@ urlpatterns = [
     path('api/upload-files-data/<int:title>/', upload_files_data, name='show-single-file'),
     path('api/filter-files-data/<int:title>/', filter_files_data, name='filter-files-data'),
     path('api/start-transformation/<int:title>/', start_transformation, name='start-transformation'),
+    path('api/start-loading',start_loading,name='start-loading')
 ]

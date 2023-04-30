@@ -34,9 +34,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'etlDB',
+        'HOST': '127.0.0.1',
         'USER': 'root',
         'PASSWORD': 'Password@123',
-        'HOST': 'localhost',
         'PORT': '3306',
     }
 }

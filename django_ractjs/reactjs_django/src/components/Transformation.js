@@ -1,11 +1,18 @@
 import { ViewData } from "./viewData";
 import axios from "axios";
 import { useState } from "react";
-import { Button, Form, Modal, Row, Col, InputGroup } from "react-bootstrap";
-import { stringToOptions } from "./Extraction";
-import Select from "react-select";
+import { Button, Modal } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
-const TRANSFORMATION_OPTIONS = ["Multiply this row by 10"].map(stringToOptions);
+const TRANSFORMATION_OPTION = [
+  "1. Remove duplicate rows",
+  "2. Replace missing values with the mean of each column",
+  "3. Convert string columns to uppercase",
+  "4. Remove columns with all missing values",
+  "5. Convert a categorical column to numeric",
+  "6. Replace null values with N/A",
+  "7. Convert string columns to lowercase",
+];
 
 export function Transformation({
   columnNames,
@@ -18,6 +25,8 @@ export function Transformation({
 
   console.log(numRows);
 
+  let navigate = useNavigate();
+
   const [transformation, setTransformation] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -25,6 +34,8 @@ export function Transformation({
   const [column, setColumn] = useState([]);
 
   const [transformedData, setTransformedData] = useState([]);
+
+  const [transformationOptions, setTransformationOptions] = useState([]);
 
   const handleClose = () => {
     setShowModal(false);
@@ -37,6 +48,7 @@ export function Transformation({
           stringArray: JSON.stringify(column),
           numRows: numRows,
           transformation: transformation,
+          transformationOptions: JSON.stringify(transformationOptions),
         },
       })
       .then((res) => {
@@ -54,6 +66,36 @@ export function Transformation({
       columnNames.splice(columnNames.indexOf(option), 1);
     }
     setColumn(columnNames);
+  };
+
+  const handleFilteredTransformationOptions = (event, option) => {
+    const isChecked = event.target.checked;
+    const isIncluded = transformationOptions.includes(option);
+
+    if (isChecked && !isIncluded) {
+      transformationOptions.push(option);
+    } else if (!isChecked) {
+      transformationOptions.splice(transformationOptions.indexOf(option), 1);
+    }
+    setTransformationOptions(transformationOptions);
+  };
+
+  const handleDoLoading = async () => {
+    if (!window.confirm(`Are you sure you want to start the Loading?`)) {
+      return;
+    }
+
+    await axios
+      .get(api + `/start-loading`, {
+        params: {
+          stringArray: JSON.stringify(transformedData),
+        },
+      })
+      .then((res) => {
+        navigate("/load");
+      });
+
+    setShowModal(false);
   };
 
   return (
@@ -84,12 +126,16 @@ export function Transformation({
               {option}
             </div>
           ))}
-          <Select
-            name="invoicePerPage"
-            onChange={(e) => setTransformation(e.value)}
-            options={TRANSFORMATION_OPTIONS}
-            className="lg-my-0 w-1 h-25"
-          />
+          <h2>Transformation Options</h2>
+          {TRANSFORMATION_OPTION.map((option, index) => (
+            <div key={index}>
+              <input
+                type="checkbox"
+                onChange={(e) => handleFilteredTransformationOptions(e, option)}
+              />
+              {option}
+            </div>
+          ))}
           <Button
             variant="primary"
             onClick={handleTranformation}
@@ -107,6 +153,13 @@ export function Transformation({
         <Modal.Footer>
           <Button variant="bordered" onClick={handleClose} disabled={isSaving}>
             Cancel
+          </Button>
+          <Button
+            variant="bordered"
+            onClick={handleDoLoading}
+            disabled={isSaving}
+          >
+            Start the Loading
           </Button>
         </Modal.Footer>
       </Modal>

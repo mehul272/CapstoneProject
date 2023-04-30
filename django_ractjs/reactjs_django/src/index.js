@@ -10,6 +10,7 @@ import { Transformation } from "./components/Transformation";
 import HomePage from "./components/HomePage";
 import Login from "./components/Login";
 import Documentation from "./components/DocPDF";
+import Load from "./components/Load";
 
 function Router() {
   const [columnNames, setColumnNames] = useState([]);
@@ -21,27 +22,9 @@ function Router() {
   return (
     <BrowserRouter>
       <Routes>
-      <Route
-          exact
-          path="/"
-          element={
-            <HomePage/>
-          }
-        />
-      <Route
-          exact
-          path="/Login"
-          element={
-            <Login/>
-          }
-        />
-        <Route
-          exact
-          path="/docs"
-          element={
-            <Documentation/>
-          }
-        />
+        <Route exact path="/" element={<HomePage />} />
+        <Route exact path="/Login" element={<Login />} />
+        <Route exact path="/docs" element={<Documentation />} />
         <Route
           exact
           path="/extract"
@@ -69,6 +52,7 @@ function Router() {
             />
           }
         />
+        <Route excat path="/load" element={<Load />} />
       </Routes>
     </BrowserRouter>
   );

@@ -43,7 +43,7 @@ function HomePage() {
                 <div>
                     <ImageCarousel images={images} interval={5000} />
                 </div>
-                <div style={{ textAlign: 'center', marginTop: '50rem' }}>
+                <div style={{ textAlign: 'center', marginTop: '47rem' }}>
                      <button  style={buttonStyle} disabled={!loggedIn} onClick={handleLogin}>
                         {loggedIn ? 'Lets See the ETL In Action' : 'Login to See the pipiline in Action'}
                     </button>

@@ -16,39 +16,44 @@ from sklearn.preprocessing import LabelEncoder
 import numpy as np
 
 
-def transform_dataframe(df):
-    # Remove duplicate rows
-    df = df.drop_duplicates()
+def transform_dataframe(df, transformationOptions):
 
-    # Replace missing values with the mean of each column
-    numeric_cols = df.select_dtypes(include=np.number).columns.tolist()
-    df[numeric_cols] = df[numeric_cols].fillna(df[numeric_cols].mean())
+    for options in transformationOptions:
+        num = options[0]
 
-    # Rename columns to lower case
-    df = df.rename(columns=lambda x: x.lower())
-
-    # Convert string columns to uppercase
-    str_cols = df.select_dtypes(include='object').columns
-    df[str_cols] = df[str_cols].apply(lambda x: x.str.upper())
-
-    # Remove columns with all missing values
-    df = df.dropna(how='all', axis=1)
-
-    # Convert a categorical column to numeric
-    cat_col = 'category_col'
-    if cat_col in df.columns:
-        df[cat_col] = pd.Categorical(df[cat_col])
-        df[cat_col] = df[cat_col].cat.codes
-
-    # Normalize numeric columns
-    num_cols = df.select_dtypes(include=[np.number]).columns
-        
-    df[num_cols] = (df[num_cols] - df[num_cols].mean()) / df[num_cols].std()
-
-    # replace null values with 'N/A'
-    df.replace(['', ' ', None, np.nan], 'N/A', inplace=True, regex=True)
+        if num == "1":
+            # Remove duplicate rows
+            df = df.drop_duplicates()
+        elif num == "2":
+            # Replace missing values with the mean of each column
+            numeric_cols = df.select_dtypes(include=np.number).columns.tolist()
+            df[numeric_cols] = df[numeric_cols].fillna(df[numeric_cols].mean())
+        elif num == "3":
+            # Convert string columns to uppercase
+            str_cols = df.select_dtypes(include='object').columns
+            df[str_cols] = df[str_cols].apply(lambda x: x.str.upper())
+        elif num == "4":
+            # Remove columns with all missing values
+            df = df.dropna(how='all', axis=1)
+        elif num == "5":
+            # Convert a categorical column to numeric
+            cat_col = 'category_col'
+            if cat_col in df.columns:
+                df[cat_col] = pd.Categorical(df[cat_col])
+                df[cat_col] = df[cat_col].cat.codes
+        elif num == "6":
+            # replace null values with 'N/A'
+            df.replace(['', ' ', None, np.nan], 'N/A',
+                       inplace=True, regex=True)
+        elif num == "7":
+            # Convert string columns to lowercase
+            str_cols = df.select_dtypes(include='object').columns
+            df[str_cols] = df[str_cols].apply(lambda x: x.str.lower())
+        else:
+            print("No Option Available")
 
     return df
+
 
 class FilesViewSet(viewsets.ModelViewSet):
     queryset = Files.objects.all()
@@ -64,6 +69,8 @@ def get_file_data(request, title, no_of_rows):
     string_array_str = request.GET.get('stringArray')
 
     string_array = json.loads(string_array_str)
+
+    print(string_array)
 
     data = []
 
@@ -115,7 +122,8 @@ def filter_files_data(request, title):
 
     filtered_df = get_file_data(request, title, no_of_rows)
 
-    filtered_data = filtered_df.to_dict('records')
+    filtered_data = filtered_df.to_dict(orient='records')
+    print(filtered_data)
 
     return JsonResponse({'result': filtered_data})
 
@@ -123,10 +131,8 @@ def filter_files_data(request, title):
 @api_view(['GET'])
 def start_transformation(request, title):
 
-    transformationType = request.GET.get('transformation')
-    columns_str = request.GET.get('stringArray')
-
-    columns = json.loads(columns_str)
+    transformationOptions = request.GET.get('transformationOptions')
+    print(transformationOptions)
 
     no_of_rows = request.GET.get('numRows')
 
@@ -134,9 +140,23 @@ def start_transformation(request, title):
 
     # Tranformation Steps:
 
-    filtered_df = transform_dataframe(filtered_df)
+    filtered_df = transform_dataframe(
+        filtered_df, json.loads(transformationOptions))
+
     filtered_df = filtered_df.reset_index(drop=True)
 
     filtered_data = filtered_df.to_dict('records')
 
     return JsonResponse({'result': filtered_data})
+
+@api_view(['GET'])
+def start_loading(request):
+    string_array_str = request.GET.get('stringArray')
+
+    string_array = json.loads(string_array_str)
+    
+    df = pd.DataFrame(string_array)
+    
+    print(df)
+
+    return JsonResponse({'result': "Done"})
