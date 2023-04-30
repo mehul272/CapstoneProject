@@ -1,30 +1,24 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { Extraction } from "./Extraction";
-import AppNavbar from './Navbar';
+import AppNavbar from "./Navbar";
 import { Tranformation } from "./Transformation";
-import '../resources/css/UploadFile.css';
+import "../resources/css/UploadFile.css";
 import HeaderPart from "./Header";
-
-
-//UploadFile ---> Parent Component(Transformation(props Bool,Data))
-
-//Extraction --> Child (props --> Bool, Data)
-//Transformation --> Child
-
-//create a state
 
 function UploadFile({
   updateColumnNames,
   updateNumRows,
   updateTitle,
   updateFileName,
-  updateData
+  updateData,
 }) {
   const [filename, setFilename] = useState("");
   const [files, setFiles] = useState([{}]);
   const [status, setstatus] = useState("");
   const [fileData, setFileData] = useState({ title: 0, url: "" });
+
+  const [fileStatus,setFileStatus] = useState(true)
 
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [columnNames, setColumnNames] = useState([]);
@@ -107,66 +101,72 @@ function UploadFile({
 
   const handleMouseEnter = () => {
     setDisabled(true);
-  }
+  };
 
   const handleMouseLeave = () => {
     setDisabled(false);
-  }
+  };
 
   return (
     <div>
-    <HeaderPart/>
-    
-    <div className="container-fluid">
-       
-    
-      <div className="row">
-        <div className="col-md-4">
-          <h3 className="alert">File Upload Section</h3>
+      <HeaderPart />
 
-          <form>
-            <div className="form-group">
-              <label htmlFor="exampleFormControlFile1" className="float-left">
-              Browse a File To Upload
-              </label>
-              <input
-                type="file"
-                onChange={(e) => setFilename(e.target.files[0])}
-                className="form-control"
-              />
-            </div>
+      <div className="container-fluid">
+        <div className="row">
+          <div className="col-md-4">
+            <h3 className="alert">File Upload Section</h3>
 
-            <button
-              type="button"
-              onClick={saveFile}
-              className="btn btn-primary float-left mt-2 submitBtn"
-            >
-              Submit
-            </button>
+            <form>
+              <div className="form-group">
+                <label htmlFor="exampleFormControlFile1" className="float-left">
+                  Browse a File To Upload
+                </label>
+                <input
+                  type="file"
+                  // accept=".csv"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file && file.type === "text/csv") {
+                      setFilename(file);
+                      setFileStatus(true);
+
+                    } else {
+                      setFileStatus(false);
+                      alert("Please upload a CSV file");
+                    }
+                  }}
+                  className="form-control"
+                />
+              </div>
+
+              <button
+                type="button"
+                disabled={!fileStatus}
+                onClick={saveFile}
+                className="btn btn-primary float-left mt-2 submitBtn"
+              >
+                Submit
+              </button>
+              <br />
+              <br />
+              <br />
+
+              {status ? <h2>{status}</h2> : null}
+            </form>
+            <h1> OR </h1>
             <br />
             <br />
-            <br />
-
-            {status ? <h2>{status}</h2> : null}
-          </form>
-          <h1>  OR  </h1>
-          <br />
-          <br />
-          
 
             <h3>This part of the app is coming soon!</h3>
             <br />
 
-            <div className="form-group" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-            
-              <label className="float-left">
-              Provide the Web Link
-              </label>
-              <input
-                type="text"
-                disabled={disabled}
-                className="form-control"
-              />
+            <div
+              className="form-group"
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+            >
+              <label className="float-left">Provide the Web Link</label>
+              <input type="text" disabled={disabled} className="form-control" />
             </div>
 
             <button
@@ -176,61 +176,61 @@ function UploadFile({
             >
               Submit
             </button>
-        </div>
+          </div>
 
-        <div className="col-md-7">
-          {/* <h2 className="alert">List of Uploaded Files & Download </h2> */}
+          <div className="col-md-7">
+            {/* <h2 className="alert">List of Uploaded Files & Download </h2> */}
 
-          <table className="table table-bordered mt-4">
-            <thead>
-              <tr>
-                <th scope="col">File Title</th>
-                <th scope="col">Download</th>
-                <th scope="col">Do Extraction</th>
-              </tr>
-            </thead>
-            <tbody>
-              {files.map((file) => {
-                return (
-                  <tr>
-                    <td>{file.pdf}</td>
-                    <td>
-                      <a href="" target="_blank"></a>
+            <table className="table table-bordered mt-4">
+              <thead>
+                <tr>
+                  <th scope="col">File Title</th>
+                  <th scope="col">Download</th>
+                  <th scope="col">Do Extraction</th>
+                </tr>
+              </thead>
+              <tbody>
+                {files.map((file) => {
+                  return (
+                    <tr>
+                      <td>{file.pdf}</td>
+                      <td>
+                        <a href="" target="_blank"></a>
 
-                      <button
-                        onClick={() => downloadWithAxios(file.pdf, file.id)}
-                        className="btn btn-success"
-                      >
-                        DownLoad
-                      </button>
-                    </td>
-                    <td>
-                      <button
-                        onClick={() => extractionStart(file.pdf, file.id)}
-                        className="btn btn-danger"
-                      >
-                        Do Extraction
-                      </button>
-                      <Extraction
-                        showModal={showUpdateModal}
-                        updateModal={(value) => handleUpdateModal(value)}
-                        columnNames={columnNames}
-                        title={fileData.title}
-                        url={fileData.url}
-                        updateColumnNames={updateColumnNames}
-                        updateFileName={updateFileName}
-                        updateNumRows={updateNumRows}
-                        updateData={updateData}
-                      />
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                        <button
+                          onClick={() => downloadWithAxios(file.pdf, file.id)}
+                          className="btn btn-success"
+                        >
+                          DownLoad
+                        </button>
+                      </td>
+                      <td>
+                        <button
+                          onClick={() => extractionStart(file.pdf, file.id)}
+                          className="btn btn-danger"
+                        >
+                          Do Extraction
+                        </button>
+                        <Extraction
+                          showModal={showUpdateModal}
+                          updateModal={(value) => handleUpdateModal(value)}
+                          columnNames={columnNames}
+                          title={fileData.title}
+                          url={fileData.url}
+                          updateColumnNames={updateColumnNames}
+                          updateFileName={updateFileName}
+                          updateNumRows={updateNumRows}
+                          updateData={updateData}
+                        />
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
-    </div>
     </div>
   );
 }
