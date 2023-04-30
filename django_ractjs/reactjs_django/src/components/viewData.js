@@ -7,6 +7,9 @@ const xlsx = require("xlsx");
 const headersToKeyValue = (item) => ({ label: item, key: item });
 
 export function ViewData({ data, numRows, columnNamesArray, fileName }) {
+
+  console.log("Data is: ", data)
+
   const [isSaving, setIsSaving] = useState(false);
   const columnNames = new Set(data.flatMap((obj) => Object.keys(obj)));
 

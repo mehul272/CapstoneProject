@@ -16,7 +16,19 @@ from sklearn.preprocessing import LabelEncoder
 import numpy as np
 
 
-def transform_dataframe(df, transformationOptions):
+def sort_dataframe(df, sortColumn):
+    if sortColumn == "All":
+        sorted_df = df.apply(lambda col: pd.to_numeric(col, errors="coerce")).fillna(df)
+        sorted_df = sorted_df.sort_values(by=sorted_df.columns.tolist())
+    else:
+        sorted_df = df.sort_values(by=sortColumn)
+    
+    return sorted_df
+
+
+def transform_dataframe(df, transformationOptions, sortColumn):
+
+    df = df.apply(pd.to_numeric, errors='ignore')
 
     for options in transformationOptions:
         num = options[0]
@@ -26,8 +38,11 @@ def transform_dataframe(df, transformationOptions):
             df = df.drop_duplicates()
         elif num == "2":
             # Replace missing values with the mean of each column
-            numeric_cols = df.select_dtypes(include=np.number).columns.tolist()
-            df[numeric_cols] = df[numeric_cols].fillna(df[numeric_cols].mean())
+            for col in df.columns:
+                if df[col].dtype == 'int64' or df[col].dtype == 'float64':
+                    col_mean = df[col].mean()
+                    df[col].fillna(col_mean, inplace=True)
+            print(df)
         elif num == "3":
             # Convert string columns to uppercase
             str_cols = df.select_dtypes(include='object').columns
@@ -49,6 +64,10 @@ def transform_dataframe(df, transformationOptions):
             # Convert string columns to lowercase
             str_cols = df.select_dtypes(include='object').columns
             df[str_cols] = df[str_cols].apply(lambda x: x.str.lower())
+        elif num == "8":
+            # Sort Dataframe
+            df = sort_dataframe(df, sortColumn)
+            print(df)
         else:
             print("No Option Available")
 
@@ -132,6 +151,7 @@ def filter_files_data(request, title):
 def start_transformation(request, title):
 
     transformationOptions = request.GET.get('transformationOptions')
+    sortColumn = request.GET.get('sortColumn')
     print(transformationOptions)
 
     no_of_rows = request.GET.get('numRows')
@@ -141,7 +161,7 @@ def start_transformation(request, title):
     # Tranformation Steps:
 
     filtered_df = transform_dataframe(
-        filtered_df, json.loads(transformationOptions))
+        filtered_df, json.loads(transformationOptions), sortColumn)
 
     filtered_df = filtered_df.reset_index(drop=True)
 
@@ -149,14 +169,15 @@ def start_transformation(request, title):
 
     return JsonResponse({'result': filtered_data})
 
+
 @api_view(['GET'])
 def start_loading(request):
     string_array_str = request.GET.get('stringArray')
 
     string_array = json.loads(string_array_str)
-    
+
     df = pd.DataFrame(string_array)
-    
+
     print(df)
 
     return JsonResponse({'result': "Done"})

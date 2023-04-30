@@ -3,6 +3,8 @@ import axios from "axios";
 import { useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { stringToOptions } from "./Extraction";
+import Select from "react-select";
 
 const TRANSFORMATION_OPTION = [
   "1. Remove duplicate rows",
@@ -12,6 +14,7 @@ const TRANSFORMATION_OPTION = [
   "5. Convert a categorical column to numeric",
   "6. Replace null values with N/A",
   "7. Convert string columns to lowercase",
+  "8. Sort Dataframe",
 ];
 
 export function Transformation({
@@ -20,11 +23,13 @@ export function Transformation({
   fileName,
   title,
   data,
-  updateLoadComplete
+  updateLoadComplete,
 }) {
   let api = "http://127.0.0.1:8000/api";
 
   console.log(numRows);
+
+  const COLUMN_NAMES = [...columnNames, "All"].map(stringToOptions);
 
   let navigate = useNavigate();
 
@@ -38,6 +43,10 @@ export function Transformation({
 
   const [transformationOptions, setTransformationOptions] = useState([]);
 
+  const [sort, setSort] = useState(false);
+
+  const [sortColumn, setSortColumn] = useState("");
+
   const handleClose = () => {
     setShowModal(false);
   };
@@ -50,6 +59,7 @@ export function Transformation({
           numRows: numRows,
           transformation: transformation,
           transformationOptions: JSON.stringify(transformationOptions),
+          sortColumn: sortColumn,
         },
       })
       .then((res) => {
@@ -74,8 +84,14 @@ export function Transformation({
     const isIncluded = transformationOptions.includes(option);
 
     if (isChecked && !isIncluded) {
+      if (option[0] === "8") {
+        setSort(true);
+      }
       transformationOptions.push(option);
     } else if (!isChecked) {
+      if (option[0] === "8") {
+        setSort(false);
+      }
       transformationOptions.splice(transformationOptions.indexOf(option), 1);
     }
     setTransformationOptions(transformationOptions);
@@ -94,7 +110,7 @@ export function Transformation({
         },
       })
       .then((res) => {
-        updateLoadComplete(false)
+        updateLoadComplete(false);
       });
 
     setShowModal(false);
@@ -138,6 +154,17 @@ export function Transformation({
               {option}
             </div>
           ))}
+          {sort ? (
+            <div>
+              <h3>Choose ColumnName</h3>
+              <Select
+                name="invoicePerPage"
+                onChange={(e) => setSortColumn(e.value)}
+                options={COLUMN_NAMES}
+                className="lg-my-0 w-1 h-25"
+              />
+            </div>
+          ) : null}
           <Button
             variant="primary"
             onClick={handleTranformation}
