@@ -206,7 +206,6 @@ def transform_dataframe(df, transformationOptions, sortColumn):
                 if df[col].dtype == 'int64' or df[col].dtype == 'float64':
                     col_mean = df[col].mean()
                     df[col].fillna(col_mean, inplace=True)
-            print(df)
         elif num == "3":
             # Convert string columns to uppercase
             str_cols = df.select_dtypes(include='object').columns
@@ -231,7 +230,6 @@ def transform_dataframe(df, transformationOptions, sortColumn):
         elif num == "8":
             # Sort Dataframe
             df = sort_dataframe(df, sortColumn)
-            print(df)
         else:
             print("No Option Available")
 
@@ -253,7 +251,6 @@ def get_file_data(request, title, no_of_rows):
 
     string_array = json.loads(string_array_str)
 
-    print(string_array)
 
     data = []
 
@@ -293,7 +290,6 @@ def upload_files_data(request, title):
 @api_view(['GET'])
 def upload_files_data1(request):
 
-    print(request)
 
     return JsonResponse({"success": False})
 
@@ -306,7 +302,6 @@ def filter_files_data(request, title):
     filtered_df = get_file_data(request, title, no_of_rows)
 
     filtered_data = filtered_df.to_dict(orient='records')
-    print(filtered_data)
 
     return JsonResponse({'result': filtered_data})
 
@@ -336,7 +331,6 @@ def start_transformation(request, title):
             if isinstance(value, float) and math.isnan(value):
                 d[key] = None
                 
-    print(filtered_data)
 
     return JsonResponse({'result': filtered_data})
 
@@ -353,7 +347,6 @@ def start_loading(request):
 
     df = pd.DataFrame(string_array)
 
-    print(df)
 
     df = df.convert_dtypes()
     
