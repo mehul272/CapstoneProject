@@ -52,7 +52,7 @@ export function Transformation({
   };
 
   const handleTranformation = async () => {
-    await axios
+    const result = await axios
       .get(api + `/start-transformation/${title}`, {
         params: {
           stringArray: JSON.stringify(column),
@@ -62,9 +62,19 @@ export function Transformation({
           sortColumn: sortColumn,
         },
       })
-      .then((res) => {
-        setTransformedData(res.data.result);
+      .catch((err) => {
+        console.log(err);
       });
+
+    console.log("Result: ", result);
+
+    if (result) {
+      try {
+        setTransformedData(result.data.result);
+      } catch (err) {
+        console.log(err);
+      }
+    }
   };
 
   const handleFilterColumnNames = (event, option) => {
@@ -73,10 +83,13 @@ export function Transformation({
 
     if (isChecked && !isIncluded) {
       columnNames.push(option);
+      console.log("Col: ", columnNames);
     } else if (!isChecked) {
       columnNames.splice(columnNames.indexOf(option), 1);
     }
     setColumn(columnNames);
+
+    console.log("Hi: ", column);
   };
 
   const handleFilteredTransformationOptions = (event, option) => {
@@ -98,22 +111,29 @@ export function Transformation({
   };
 
   const handleDoLoading = async () => {
-    if (!window.confirm(`Are you sure you want to start the Loading?`)) {
-      return;
+    let input = window.prompt("Enter the name of the table:");
+
+    console.log("Hi: ", input);
+    if (input !== null && input !== "") {
+      if (window.confirm(`Are you sure you want to start the Loading?`)) {
+        navigate("/load");
+
+        await axios
+          .get(api + `/start-loading`, {
+            params: {
+              stringArray: JSON.stringify(transformedData),
+              tableName: input,
+            },
+          })
+          .then((res) => {
+            updateLoadComplete(res.data.status);
+          });
+
+        setShowModal(false);
+      } else {
+        return;
+      }
     }
-    navigate("/load");
-
-    await axios
-      .get(api + `/start-loading`, {
-        params: {
-          stringArray: JSON.stringify(transformedData),
-        },
-      })
-      .then((res) => {
-        updateLoadComplete(false);
-      });
-
-    setShowModal(false);
   };
 
   return (
