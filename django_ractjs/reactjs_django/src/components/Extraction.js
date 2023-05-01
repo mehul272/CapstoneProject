@@ -58,18 +58,16 @@ export function Extraction({
 
   const handleFilterColumnNames = (event, option) => {
     const isChecked = event.target.checked;
-    const updatedFilters = [...columnNamesArray];
-    if (isChecked) {
-      updatedFilters.push(option);
-    } else {
-      const index = updatedFilters.indexOf(option);
-      if (index !== -1) {
-        updatedFilters.splice(index, 1);
-      }
-    }
-    setColumnNamesArray(updatedFilters);
+    const isIncluded = columnNamesArray.includes(option);
 
-    updateColumnNames(updatedFilters);
+    if (isChecked && !isIncluded) {
+      columnNamesArray.push(option);
+    } else if (!isChecked) {
+      columnNamesArray.splice(columnNamesArray.indexOf(option), 1);
+    }
+
+    setColumnNamesArray(columnNamesArray);
+    updateColumnNames(columnNamesArray);
   };
 
   const handleExtraction = async () => {
@@ -88,20 +86,6 @@ export function Extraction({
         setData(res.data.result);
         updateData(res.data.result);
       });
-  };
-
-  const handleSelectAll = (e) => {
-    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-    checkboxes.forEach((checkbox) => {
-      checkbox.checked = e.target.checked;
-    });
-    if (e.target.checked) {
-      setColumnNamesArray(columnNames);
-      updateColumnNames(columnNames);
-    } else {
-      setColumnNamesArray([]);
-      updateColumnNames([]);
-    }
   };
 
   const handleRowSelect = async (event) => {
@@ -130,8 +114,6 @@ export function Extraction({
         <Modal.Header>EXtraction</Modal.Header>
         <Modal.Body>
           <>
-            <input type="checkbox" onChange={handleSelectAll} />
-            <label>Select All</label>
             {columnNames.map((option, index) => (
               <div key={index}>
                 <input

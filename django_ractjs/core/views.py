@@ -169,6 +169,9 @@ def start_transformation(request, title):
     filtered_df = filtered_df.reset_index(drop=True)
 
     filtered_data = filtered_df.to_dict('records')
+    
+    print(filtered_data)
+    print(filtered_df)
 
     return JsonResponse({'result': filtered_data})
 
