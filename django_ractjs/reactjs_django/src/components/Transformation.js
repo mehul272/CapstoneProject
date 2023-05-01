@@ -1,11 +1,21 @@
 import { ViewData } from "./viewData";
 import axios from "axios";
 import { useState } from "react";
-import { Button, Form, Modal, Row, Col, InputGroup } from "react-bootstrap";
+import { Button, Modal } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import { stringToOptions } from "./Extraction";
 import Select from "react-select";
 
-const TRANSFORMATION_OPTIONS = ["Multiply this row by 10"].map(stringToOptions);
+const TRANSFORMATION_OPTION = [
+  "1. Remove duplicate rows",
+  "2. Replace missing values with the mean of each column",
+  "3. Convert string columns to uppercase",
+  "4. Remove columns with all missing values",
+  "5. Convert a categorical column to numeric",
+  "6. Replace null values with N/A",
+  "7. Convert string columns to lowercase",
+  "8. Sort Dataframe",
+];
 
 export function Transformation({
   columnNames,
@@ -13,10 +23,15 @@ export function Transformation({
   fileName,
   title,
   data,
+  updateLoadComplete,
 }) {
   let api = "http://127.0.0.1:8000/api";
 
   console.log(numRows);
+
+  const COLUMN_NAMES = [...columnNames, "All"].map(stringToOptions);
+
+  let navigate = useNavigate();
 
   const [transformation, setTransformation] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -26,22 +41,40 @@ export function Transformation({
 
   const [transformedData, setTransformedData] = useState([]);
 
+  const [transformationOptions, setTransformationOptions] = useState([]);
+
+  const [sort, setSort] = useState(false);
+
+  const [sortColumn, setSortColumn] = useState("");
+
   const handleClose = () => {
     setShowModal(false);
   };
 
   const handleTranformation = async () => {
-    await axios
+    const result = await axios
       .get(api + `/start-transformation/${title}`, {
         params: {
           stringArray: JSON.stringify(column),
           numRows: numRows,
           transformation: transformation,
+          transformationOptions: JSON.stringify(transformationOptions),
+          sortColumn: sortColumn,
         },
       })
-      .then((res) => {
-        setTransformedData(res.data.result);
+      .catch((err) => {
+        console.log(err);
       });
+
+    console.log("Result: ", result);
+
+    if (result) {
+      try {
+        setTransformedData(result.data.result);
+      } catch (err) {
+        console.log(err);
+      }
+    }
   };
 
   const handleFilterColumnNames = (event, option) => {
@@ -50,10 +83,57 @@ export function Transformation({
 
     if (isChecked && !isIncluded) {
       columnNames.push(option);
+      console.log("Col: ", columnNames);
     } else if (!isChecked) {
       columnNames.splice(columnNames.indexOf(option), 1);
     }
     setColumn(columnNames);
+
+    console.log("Hi: ", column);
+  };
+
+  const handleFilteredTransformationOptions = (event, option) => {
+    const isChecked = event.target.checked;
+    const isIncluded = transformationOptions.includes(option);
+
+    if (isChecked && !isIncluded) {
+      if (option[0] === "8") {
+        setSort(true);
+      }
+      transformationOptions.push(option);
+    } else if (!isChecked) {
+      if (option[0] === "8") {
+        setSort(false);
+      }
+      transformationOptions.splice(transformationOptions.indexOf(option), 1);
+    }
+    setTransformationOptions(transformationOptions);
+  };
+
+  const handleDoLoading = async () => {
+    let input = window.prompt("Enter the name of the table:");
+
+    console.log("Hi: ", input);
+    if (input !== null && input !== "") {
+      if (window.confirm(`Are you sure you want to start the Loading?`)) {
+        navigate("/load");
+
+        await axios
+          .get(api + `/start-loading`, {
+            params: {
+              stringArray: JSON.stringify(transformedData),
+              tableName: input,
+            },
+          })
+          .then((res) => {
+            updateLoadComplete(res.data.status);
+          });
+
+        setShowModal(false);
+      } else {
+        return;
+      }
+    }
   };
 
   return (
@@ -84,12 +164,27 @@ export function Transformation({
               {option}
             </div>
           ))}
-          <Select
-            name="invoicePerPage"
-            onChange={(e) => setTransformation(e.value)}
-            options={TRANSFORMATION_OPTIONS}
-            className="lg-my-0 w-1 h-25"
-          />
+          <h2>Transformation Options</h2>
+          {TRANSFORMATION_OPTION.map((option, index) => (
+            <div key={index}>
+              <input
+                type="checkbox"
+                onChange={(e) => handleFilteredTransformationOptions(e, option)}
+              />
+              {option}
+            </div>
+          ))}
+          {sort ? (
+            <div>
+              <h3>Choose ColumnName</h3>
+              <Select
+                name="invoicePerPage"
+                onChange={(e) => setSortColumn(e.value)}
+                options={COLUMN_NAMES}
+                className="lg-my-0 w-1 h-25"
+              />
+            </div>
+          ) : null}
           <Button
             variant="primary"
             onClick={handleTranformation}
@@ -107,6 +202,13 @@ export function Transformation({
         <Modal.Footer>
           <Button variant="bordered" onClick={handleClose} disabled={isSaving}>
             Cancel
+          </Button>
+          <Button
+            variant="bordered"
+            onClick={handleDoLoading}
+            disabled={isSaving}
+          >
+            Start the Loading
           </Button>
         </Modal.Footer>
       </Modal>
