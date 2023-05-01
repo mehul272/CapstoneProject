@@ -159,9 +159,12 @@ def start_transformation(request, title):
     filtered_df = get_file_data(request, title, no_of_rows)
 
     # Tranformation Steps:
-
-    filtered_df = transform_dataframe(
-        filtered_df, json.loads(transformationOptions), sortColumn)
+    
+    if len(transformationOptions) == 0 :
+        pass
+    else:
+        filtered_df = transform_dataframe(
+            filtered_df, json.loads(transformationOptions), sortColumn)
 
     filtered_df = filtered_df.reset_index(drop=True)
 

@@ -18,14 +18,16 @@ function UploadFile({
   const [status, setstatus] = useState("");
   const [fileData, setFileData] = useState({ title: 0, url: "" });
 
-  const [fileStatus,setFileStatus] = useState(true)
+  const [fileStatus, setFileStatus] = useState(true);
 
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [columnNames, setColumnNames] = useState([]);
 
   let api = "http://127.0.0.1:8000/api";
 
-  const saveFile = async () => {
+  const saveFile = async (event) => {
+    event.preventDefault();
+
     let formData = new FormData();
     formData.append("pdf", filename);
 
@@ -39,7 +41,9 @@ function UploadFile({
       method: "post",
       url: "http://127.0.0.1:8000/api/files/",
       data: formData,
-    }).then((response) => {});
+    }).then((response) => {
+      window.location.reload();
+    });
   };
 
   const getFiles = () => {
@@ -129,7 +133,6 @@ function UploadFile({
                     if (file && file.type === "text/csv") {
                       setFilename(file);
                       setFileStatus(true);
-
                     } else {
                       setFileStatus(false);
                       alert("Please upload a CSV file");
