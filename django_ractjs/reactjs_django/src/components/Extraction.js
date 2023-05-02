@@ -36,9 +36,13 @@ export function Extraction({
 
   const [fileName, setFileName] = useState("ExtractedFile");
 
+  const [startTransform, setStartTransform] = useState(false);
+
   const handleClose = () => {
     updateModal(false);
     setData([]);
+    setStartTransform(false)
+    setColumnNamesArray([])
   };
 
   const handleDoTransformation = () => {
@@ -67,9 +71,8 @@ export function Extraction({
         updatedFilters.splice(index, 1);
       }
     }
-    
-    setColumnNamesArray(updatedFilters);
 
+    setColumnNamesArray(updatedFilters);
     updateColumnNames(updatedFilters);
   };
 
@@ -88,6 +91,7 @@ export function Extraction({
       .then((res) => {
         setData(res.data.result);
         updateData(res.data.result);
+        setStartTransform(true);
       });
   };
 
@@ -106,7 +110,6 @@ export function Extraction({
   };
 
   const handleRowSelect = async (event) => {
-    console.log("Hello World: ", event.value);
     await updateNumRows(event.value);
 
     setNumRows(event.value);
@@ -131,7 +134,12 @@ export function Extraction({
         <Modal.Header>EXtraction</Modal.Header>
         <Modal.Body>
           <>
-            <input type="checkbox" onChange={handleSelectAll} />
+            <input
+              type="checkbox"
+              onChange={handleSelectAll}
+              class="select-all"
+              id="myCheckbox"
+            />
             <label>Select All</label>
             {columnNames.map((option, index) => (
               <div key={index}>
@@ -169,26 +177,28 @@ export function Extraction({
               <Button
                 variant="primary"
                 onClick={handleExtraction}
-                disabled={isSaving}
+                disabled={columnNamesArray.length === 0}
               >
                 Extract Data from Files
               </Button>
             </div>
 
-            <div>
-              {numRows === "All" ? (
-                <h1>First 40 Data to Display</h1>
-              ) : (
-                <h1>Display {numRows} rows of the File</h1>
-              )}
+            {startTransform && (
+              <div>
+                {numRows === "All" ? (
+                  <h1>First 40 Data to Display</h1>
+                ) : (
+                  <h1>Display {numRows} rows of the File</h1>
+                )}
 
-              <ViewData
-                data={data}
-                numRows={numRows}
-                columnNamesArray={columnNamesArray}
-                fileName={fileName}
-              />
-            </div>
+                <ViewData
+                  data={data}
+                  numRows={numRows}
+                  columnNamesArray={columnNamesArray}
+                  fileName={fileName}
+                />
+              </div>
+            )}
           </>
         </Modal.Body>
         <Modal.Footer>
@@ -199,7 +209,7 @@ export function Extraction({
           <Button
             variant="bordered"
             onClick={handleDoTransformation}
-            disabled={isSaving}
+            disabled={!startTransform}
           >
             Start the Transformation
           </Button>

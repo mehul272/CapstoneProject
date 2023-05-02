@@ -82,7 +82,6 @@ def get_all_tables():
         tableName.append(temp)
     cursor.commit()
 
-    print("Got All Tables")
     cursor.close()
     return tableName
 
@@ -148,10 +147,7 @@ def getTableData(request, tableName):
     jsonDataArray = []
     columns = []
     returnObj = {}
-    print("Table Name is: " + tableName)
     sql_get_all_data = select_table_query(tableName)
-
-    print(sql_get_all_data)
 
     cursor = conn.cursor()
     cursor.execute(sql_get_all_data)
@@ -341,8 +337,6 @@ def start_loading(request):
     string_array_str = request.GET.get('stringArray')
     tableName = request.GET.get('tableName')
     
-    print("TableName: ",tableName)
-
     string_array = json.loads(string_array_str)
 
     df = pd.DataFrame(string_array)
@@ -364,7 +358,6 @@ def start_loading(request):
     tables = get_all_tables()
 
     if tableName in tables:
-        print("Yes it exists")
         result = "Table already Exists"
         returnObj["status"] = False
         returnObj["data"] = result
@@ -389,7 +382,6 @@ def start_loading(request):
 
         ## * Inserting the Data *
         sql_insert = insert_sql_query(tableName, tableCols)
-        print(sql_insert)
         try:
             for singleRecord in records:
                 if pd.isna(singleRecord).sum() > 0:

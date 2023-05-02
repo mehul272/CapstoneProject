@@ -27,8 +27,6 @@ export function Transformation({
 }) {
   let api = "http://127.0.0.1:8000/api";
 
-  console.log(numRows);
-
   const COLUMN_NAMES = [...columnNames, "All"].map(stringToOptions);
 
   let navigate = useNavigate();
@@ -46,9 +44,11 @@ export function Transformation({
   const [sort, setSort] = useState(false);
 
   const [sortColumn, setSortColumn] = useState("");
+  const [startLoading, setStartLoading] = useState(false);
 
   const handleClose = () => {
     setShowModal(false);
+    startLoading(false);
   };
 
   const handleTranformation = async () => {
@@ -66,11 +66,10 @@ export function Transformation({
         console.log(err);
       });
 
-    console.log("Result: ", result);
-
     if (result) {
       try {
         setTransformedData(result.data.result);
+        setStartLoading(true);
       } catch (err) {
         console.log(err);
       }
@@ -89,8 +88,6 @@ export function Transformation({
       }
     }
     setColumn(updatedFilters);
-
-    console.log("Hi: ", column);
   };
 
   const handleSelectAll = (e) => {
@@ -128,7 +125,6 @@ export function Transformation({
   const handleDoLoading = async () => {
     let input = window.prompt("Enter the name of the table:");
 
-    console.log("Hi: ", input);
     if (input !== null && input !== "") {
       if (window.confirm(`Are you sure you want to start the Loading?`)) {
         navigate("/load");
@@ -141,7 +137,6 @@ export function Transformation({
             },
           })
           .then((res) => {
-            console.log("Res: ", res);
             updateLoadComplete(res.data.status);
           });
 
@@ -207,16 +202,18 @@ export function Transformation({
           <Button
             variant="primary"
             onClick={handleTranformation}
-            disabled={isSaving}
+            disabled={column.length === 0}
           >
             Transformation
           </Button>
-          <ViewData
-            data={transformedData}
-            numRows={numRows}
-            columnNamesArray={columnNames}
-            fileName={fileName}
-          />
+          {startLoading && (
+            <ViewData
+              data={transformedData}
+              numRows={numRows}
+              columnNamesArray={columnNames}
+              fileName={fileName}
+            />
+          )}
         </Modal.Body>
         <Modal.Footer>
           <Button variant="bordered" onClick={handleClose} disabled={isSaving}>
@@ -225,7 +222,7 @@ export function Transformation({
           <Button
             variant="bordered"
             onClick={handleDoLoading}
-            disabled={isSaving}
+            disabled={!startLoading}
           >
             Start the Loading
           </Button>
