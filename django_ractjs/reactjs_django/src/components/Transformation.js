@@ -79,15 +79,15 @@ export function Transformation({
 
   const handleFilterColumnNames = (event, option) => {
     const isChecked = event.target.checked;
-    const isIncluded = columnNames.includes(option);
+    const isIncluded = column.includes(option);
 
     if (isChecked && !isIncluded) {
-      columnNames.push(option);
-      console.log("Col: ", columnNames);
+      column.push(option);
+      console.log("Col: ", column);
     } else if (!isChecked) {
-      columnNames.splice(columnNames.indexOf(option), 1);
+      column.splice(column.indexOf(option), 1);
     }
-    setColumn(columnNames);
+    setColumn(column);
 
     console.log("Hi: ", column);
   };
