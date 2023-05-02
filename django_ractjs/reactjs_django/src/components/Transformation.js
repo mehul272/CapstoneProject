@@ -137,6 +137,7 @@ export function Transformation({
             },
           })
           .then((res) => {
+            console.log("Load: ", res)
             updateLoadComplete(res.data.status);
           });
 

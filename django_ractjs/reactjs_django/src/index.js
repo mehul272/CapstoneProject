@@ -11,6 +11,7 @@ import HomePage from "./components/HomePage";
 import Login from "./components/Login";
 import Documentation from "./components/DocPDF";
 import Load from "./components/Load";
+import Visualize from "./components/Visualize";
 
 function Router() {
   const [columnNames, setColumnNames] = useState([]);
@@ -19,6 +20,7 @@ function Router() {
   const [fileName, setFileName] = useState("Extracted");
   const [data, setData] = useState([]);
   const [loadComplete, setLoadComplete] = useState(true);
+  const [tableData, setTableData] = useState([]);
 
   return (
     <BrowserRouter>
@@ -57,7 +59,17 @@ function Router() {
         <Route
           excat
           path="/load"
-          element={<Load loadComplete={loadComplete} />}
+          element={
+            <Load
+              loadComplete={loadComplete}
+              updateTableData={(value) => setTableData(value)}
+            />
+          }
+        />
+        <Route
+          excat
+          path="/visualize"
+          element={<Visualize tableData={tableData} />}
         />
       </Routes>
     </BrowserRouter>

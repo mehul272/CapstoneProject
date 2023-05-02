@@ -143,8 +143,9 @@ def getTables(request):
 
     return HttpResponse(json.dumps(returnObj), content_type="application/json")
 
-
+@api_view(['GET'])
 def getTableData(request, tableName):
+        
     jsonDataArray = []
     columns = []
     returnObj = {}
@@ -216,7 +217,6 @@ def transform_dataframe(df, transformationOptions, sortColumn):
             for col in cat_cols:
                 le = LabelEncoder()
                 df[col] = le.fit_transform(df[col])
-            print(df)
         elif num == "6":
             # replace null values with 'N/A'
             df.replace(['', ' ', None, np.nan], 'N/A',
@@ -248,7 +248,6 @@ def get_file_data(request, title, no_of_rows):
     string_array_str = request.GET.get('stringArray')
 
     string_array = json.loads(string_array_str)
-
 
     data = []
 
@@ -288,7 +287,6 @@ def upload_files_data(request, title):
 @api_view(['GET'])
 def upload_files_data1(request):
 
-
     return JsonResponse({"success": False})
 
 
@@ -313,39 +311,34 @@ def start_transformation(request, title):
     no_of_rows = request.GET.get('numRows')
 
     filtered_df = get_file_data(request, title, no_of_rows)
-        
-    
+
     # Tranformation Steps:
 
     if not len(transformationOptions) == 0:
         filtered_df = transform_dataframe(
             filtered_df, json.loads(transformationOptions), sortColumn)
 
-
     filtered_data = filtered_df.to_dict('records')
-    
+
     for d in filtered_data:
         for key, value in d.items():
             if isinstance(value, float) and math.isnan(value):
                 d[key] = None
-                
 
     return JsonResponse({'result': filtered_data})
-
 
 
 @api_view(['GET'])
 def start_loading(request):
     string_array_str = request.GET.get('stringArray')
     tableName = request.GET.get('tableName')
-    
+
     string_array = json.loads(string_array_str)
 
     df = pd.DataFrame(string_array)
 
-
     df = df.convert_dtypes()
-    
+
     tableName = re.sub("[^0-9a-zA-Z]+", "_", tableName)
 
     columns, dataTypes, tableCols = get_column_name(df)
@@ -355,7 +348,7 @@ def start_loading(request):
 
     result = ""
     returnObj = {}
-    ## * Cheching if table already exists *
+    # * Cheching if table already exists *
 
     tables = get_all_tables()
 
@@ -365,7 +358,7 @@ def start_loading(request):
         returnObj["data"] = result
 
     else:
-        ## * Creting the Table *
+        # * Creting the Table *
         sql_createTable = create_table_query(tableName, dataTypes)
 
         print(sql_createTable)
@@ -382,7 +375,7 @@ def start_loading(request):
         finally:
             print("Table is Created")
 
-        ## * Inserting the Data *
+        # * Inserting the Data *
         sql_insert = insert_sql_query(tableName, tableCols)
         try:
             for singleRecord in records:
