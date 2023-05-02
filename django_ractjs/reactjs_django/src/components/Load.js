@@ -5,6 +5,8 @@ import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const useStyles = makeStyles((theme) => ({
   backdrop: {
@@ -27,9 +29,15 @@ const Load = ({ loadComplete, updateTableData }) => {
   console.log("hi", loadComplete);
 
   const handleLoadTables = async () => {
-    await axios.get(api + `/tables`).then((res) => {
-      setTables(res.data.data);
-    });
+    await axios
+      .get(api + `/tables`)
+      .then((res) => {
+        toast.success("The tables are Displayed Successfully");
+        setTables(res.data.data);
+      })
+      .catch((err) => {
+        toast.error(err);
+      });
   };
 
   const handleTableChange = (event) => {
@@ -41,6 +49,9 @@ const Load = ({ loadComplete, updateTableData }) => {
       .get(api + `/visualize-tables/${selectedTable}/`)
       .catch((err) => {
         console.log(err);
+      })
+      .catch((err) => {
+        toast.error(err);
       })
       .then((res) => {
         updateTableData(res.data.data);
@@ -78,6 +89,7 @@ const Load = ({ loadComplete, updateTableData }) => {
           <CircularProgress color="inherit" />
         </Backdrop>
       )}
+      <ToastContainer />
     </>
   );
 };
