@@ -27,8 +27,6 @@ export function Transformation({
 }) {
   let api = "http://127.0.0.1:8000/api";
 
-  console.log(numRows);
-
   const COLUMN_NAMES = [...columnNames, "All"].map(stringToOptions);
 
   let navigate = useNavigate();
@@ -46,9 +44,11 @@ export function Transformation({
   const [sort, setSort] = useState(false);
 
   const [sortColumn, setSortColumn] = useState("");
+  const [startLoading, setStartLoading] = useState(false);
 
   const handleClose = () => {
     setShowModal(false);
+    startLoading(false);
   };
 
   const handleTranformation = async () => {
@@ -66,11 +66,10 @@ export function Transformation({
         console.log(err);
       });
 
-    console.log("Result: ", result);
-
     if (result) {
       try {
         setTransformedData(result.data.result);
+        setStartLoading(true);
       } catch (err) {
         console.log(err);
       }
@@ -79,17 +78,30 @@ export function Transformation({
 
   const handleFilterColumnNames = (event, option) => {
     const isChecked = event.target.checked;
-    const isIncluded = columnNames.includes(option);
-
-    if (isChecked && !isIncluded) {
-      columnNames.push(option);
-      console.log("Col: ", columnNames);
-    } else if (!isChecked) {
-      columnNames.splice(columnNames.indexOf(option), 1);
+    const updatedFilters = [...column];
+    if (isChecked) {
+      updatedFilters.push(option);
+    } else {
+      const index = updatedFilters.indexOf(option);
+      if (index !== -1) {
+        updatedFilters.splice(index, 1);
+      }
     }
-    setColumn(columnNames);
+    setColumn(updatedFilters);
+  };
 
-    console.log("Hi: ", column);
+  const handleSelectAll = (e) => {
+    const checkboxes = document.querySelectorAll(
+      'input[type="checkbox"].type2'
+    );
+    checkboxes.forEach((checkbox) => {
+      checkbox.checked = e.target.checked;
+    });
+    if (e.target.checked) {
+      setColumn(columnNames);
+    } else {
+      setColumn([]);
+    }
   };
 
   const handleFilteredTransformationOptions = (event, option) => {
@@ -113,7 +125,6 @@ export function Transformation({
   const handleDoLoading = async () => {
     let input = window.prompt("Enter the name of the table:");
 
-    console.log("Hi: ", input);
     if (input !== null && input !== "") {
       if (window.confirm(`Are you sure you want to start the Loading?`)) {
         navigate("/load");
@@ -126,6 +137,7 @@ export function Transformation({
             },
           })
           .then((res) => {
+            console.log("Load: ", res)
             updateLoadComplete(res.data.status);
           });
 
@@ -155,10 +167,13 @@ export function Transformation({
       >
         <Modal.Header>Transformation</Modal.Header>
         <Modal.Body>
+          <input type="checkbox" onChange={handleSelectAll} />
+          <label>Select All</label>
           {columnNames.map((option, index) => (
             <div key={index}>
               <input
                 type="checkbox"
+                class="type2"
                 onChange={(e) => handleFilterColumnNames(e, option)}
               />
               {option}
@@ -188,16 +203,18 @@ export function Transformation({
           <Button
             variant="primary"
             onClick={handleTranformation}
-            disabled={isSaving}
+            disabled={column.length === 0}
           >
             Transformation
           </Button>
-          <ViewData
-            data={transformedData}
-            numRows={numRows}
-            columnNamesArray={columnNames}
-            fileName={fileName}
-          />
+          {startLoading && (
+            <ViewData
+              data={transformedData}
+              numRows={numRows}
+              columnNamesArray={columnNames}
+              fileName={fileName}
+            />
+          )}
         </Modal.Body>
         <Modal.Footer>
           <Button variant="bordered" onClick={handleClose} disabled={isSaving}>
@@ -206,7 +223,7 @@ export function Transformation({
           <Button
             variant="bordered"
             onClick={handleDoLoading}
-            disabled={isSaving}
+            disabled={!startLoading}
           >
             Start the Loading
           </Button>

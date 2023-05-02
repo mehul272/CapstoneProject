@@ -36,9 +36,13 @@ export function Extraction({
 
   const [fileName, setFileName] = useState("ExtractedFile");
 
+  const [startTransform, setStartTransform] = useState(false);
+
   const handleClose = () => {
     updateModal(false);
     setData([]);
+    setStartTransform(false)
+    setColumnNamesArray([])
   };
 
   const handleDoTransformation = () => {
@@ -58,16 +62,18 @@ export function Extraction({
 
   const handleFilterColumnNames = (event, option) => {
     const isChecked = event.target.checked;
-    const isIncluded = columnNamesArray.includes(option);
-
-    if (isChecked && !isIncluded) {
-      columnNamesArray.push(option);
-    } else if (!isChecked) {
-      columnNamesArray.splice(columnNamesArray.indexOf(option), 1);
+    const updatedFilters = [...columnNamesArray];
+    if (isChecked) {
+      updatedFilters.push(option);
+    } else {
+      const index = updatedFilters.indexOf(option);
+      if (index !== -1) {
+        updatedFilters.splice(index, 1);
+      }
     }
 
-    setColumnNamesArray(columnNamesArray);
-    updateColumnNames(columnNamesArray);
+    setColumnNamesArray(updatedFilters);
+    updateColumnNames(updatedFilters);
   };
 
   const handleExtraction = async () => {
@@ -85,11 +91,25 @@ export function Extraction({
       .then((res) => {
         setData(res.data.result);
         updateData(res.data.result);
+        setStartTransform(true);
       });
   };
 
+  const handleSelectAll = (e) => {
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach((checkbox) => {
+      checkbox.checked = e.target.checked;
+    });
+    if (e.target.checked) {
+      setColumnNamesArray(columnNames);
+      updateColumnNames(columnNames);
+    } else {
+      setColumnNamesArray([]);
+      updateColumnNames([]);
+    }
+  };
+
   const handleRowSelect = async (event) => {
-    console.log("Hello World: ", event.value);
     await updateNumRows(event.value);
 
     setNumRows(event.value);
@@ -114,6 +134,13 @@ export function Extraction({
         <Modal.Header>EXtraction</Modal.Header>
         <Modal.Body>
           <>
+            <input
+              type="checkbox"
+              onChange={handleSelectAll}
+              class="select-all"
+              id="myCheckbox"
+            />
+            <label>Select All</label>
             {columnNames.map((option, index) => (
               <div key={index}>
                 <input
@@ -150,26 +177,28 @@ export function Extraction({
               <Button
                 variant="primary"
                 onClick={handleExtraction}
-                disabled={isSaving}
+                disabled={columnNamesArray.length === 0}
               >
                 Extract Data from Files
               </Button>
             </div>
 
-            <div>
-              {numRows === "All" ? (
-                <h1>First 40 Data to Display</h1>
-              ) : (
-                <h1>Display {numRows} rows of the File</h1>
-              )}
+            {startTransform && (
+              <div>
+                {numRows === "All" ? (
+                  <h1>First 40 Data to Display</h1>
+                ) : (
+                  <h1>Display {numRows} rows of the File</h1>
+                )}
 
-              <ViewData
-                data={data}
-                numRows={numRows}
-                columnNamesArray={columnNamesArray}
-                fileName={fileName}
-              />
-            </div>
+                <ViewData
+                  data={data}
+                  numRows={numRows}
+                  columnNamesArray={columnNamesArray}
+                  fileName={fileName}
+                />
+              </div>
+            )}
           </>
         </Modal.Body>
         <Modal.Footer>
@@ -180,7 +209,7 @@ export function Extraction({
           <Button
             variant="bordered"
             onClick={handleDoTransformation}
-            disabled={isSaving}
+            disabled={!startTransform}
           >
             Start the Transformation
           </Button>

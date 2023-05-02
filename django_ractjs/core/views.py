@@ -15,6 +15,7 @@ import pypyodbc as odbc
 from django.shortcuts import render, HttpResponse
 import re
 import math
+from sklearn.preprocessing import LabelEncoder
 
 DRIVER = "SQL Server"
 SERVER_NAME = "LAPTOP-H3TEL2C9\SQLEXPRESS"
@@ -82,7 +83,6 @@ def get_all_tables():
         tableName.append(temp)
     cursor.commit()
 
-    print("Got All Tables")
     cursor.close()
     return tableName
 
@@ -143,15 +143,13 @@ def getTables(request):
 
     return HttpResponse(json.dumps(returnObj), content_type="application/json")
 
-
+@api_view(['GET'])
 def getTableData(request, tableName):
+        
     jsonDataArray = []
     columns = []
     returnObj = {}
-    print("Table Name is: " + tableName)
     sql_get_all_data = select_table_query(tableName)
-
-    print(sql_get_all_data)
 
     cursor = conn.cursor()
     cursor.execute(sql_get_all_data)
@@ -206,7 +204,6 @@ def transform_dataframe(df, transformationOptions, sortColumn):
                 if df[col].dtype == 'int64' or df[col].dtype == 'float64':
                     col_mean = df[col].mean()
                     df[col].fillna(col_mean, inplace=True)
-            print(df)
         elif num == "3":
             # Convert string columns to uppercase
             str_cols = df.select_dtypes(include='object').columns
@@ -216,10 +213,10 @@ def transform_dataframe(df, transformationOptions, sortColumn):
             df = df.dropna(how='all', axis=1)
         elif num == "5":
             # Convert a categorical column to numeric
-            cat_col = 'category_col'
-            if cat_col in df.columns:
-                df[cat_col] = pd.Categorical(df[cat_col])
-                df[cat_col] = df[cat_col].cat.codes
+            cat_cols = df.select_dtypes(include=['object']).columns
+            for col in cat_cols:
+                le = LabelEncoder()
+                df[col] = le.fit_transform(df[col])
         elif num == "6":
             # replace null values with 'N/A'
             df.replace(['', ' ', None, np.nan], 'N/A',
@@ -231,7 +228,6 @@ def transform_dataframe(df, transformationOptions, sortColumn):
         elif num == "8":
             # Sort Dataframe
             df = sort_dataframe(df, sortColumn)
-            print(df)
         else:
             print("No Option Available")
 
@@ -252,8 +248,6 @@ def get_file_data(request, title, no_of_rows):
     string_array_str = request.GET.get('stringArray')
 
     string_array = json.loads(string_array_str)
-
-    print(string_array)
 
     data = []
 
@@ -293,8 +287,6 @@ def upload_files_data(request, title):
 @api_view(['GET'])
 def upload_files_data1(request):
 
-    print(request)
-
     return JsonResponse({"success": False})
 
 
@@ -306,7 +298,6 @@ def filter_files_data(request, title):
     filtered_df = get_file_data(request, title, no_of_rows)
 
     filtered_data = filtered_df.to_dict(orient='records')
-    print(filtered_data)
 
     return JsonResponse({'result': filtered_data})
 
@@ -320,43 +311,34 @@ def start_transformation(request, title):
     no_of_rows = request.GET.get('numRows')
 
     filtered_df = get_file_data(request, title, no_of_rows)
-        
-    
+
     # Tranformation Steps:
 
     if not len(transformationOptions) == 0:
         filtered_df = transform_dataframe(
             filtered_df, json.loads(transformationOptions), sortColumn)
 
-
     filtered_data = filtered_df.to_dict('records')
-    
+
     for d in filtered_data:
         for key, value in d.items():
             if isinstance(value, float) and math.isnan(value):
                 d[key] = None
-                
-    print(filtered_data)
 
     return JsonResponse({'result': filtered_data})
-
 
 
 @api_view(['GET'])
 def start_loading(request):
     string_array_str = request.GET.get('stringArray')
     tableName = request.GET.get('tableName')
-    
-    print("TableName: ",tableName)
 
     string_array = json.loads(string_array_str)
 
     df = pd.DataFrame(string_array)
 
-    print(df)
-
     df = df.convert_dtypes()
-    
+
     tableName = re.sub("[^0-9a-zA-Z]+", "_", tableName)
 
     columns, dataTypes, tableCols = get_column_name(df)
@@ -366,18 +348,17 @@ def start_loading(request):
 
     result = ""
     returnObj = {}
-    ## * Cheching if table already exists *
+    # * Cheching if table already exists *
 
     tables = get_all_tables()
 
     if tableName in tables:
-        print("Yes it exists")
         result = "Table already Exists"
         returnObj["status"] = False
         returnObj["data"] = result
 
     else:
-        ## * Creting the Table *
+        # * Creting the Table *
         sql_createTable = create_table_query(tableName, dataTypes)
 
         print(sql_createTable)
@@ -394,9 +375,8 @@ def start_loading(request):
         finally:
             print("Table is Created")
 
-        ## * Inserting the Data *
+        # * Inserting the Data *
         sql_insert = insert_sql_query(tableName, tableCols)
-        print(sql_insert)
         try:
             for singleRecord in records:
                 if pd.isna(singleRecord).sum() > 0:
