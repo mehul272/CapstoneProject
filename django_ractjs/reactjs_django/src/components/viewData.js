@@ -1,6 +1,8 @@
 import { Button, Form, Modal, Row, Col, InputGroup } from "react-bootstrap";
 import { CSVLink } from "react-csv";
 import { useState, useEffect } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const xlsx = require("xlsx");
 
@@ -19,6 +21,8 @@ export function ViewData({ data, numRows, columnNamesArray, fileName }) {
 
     xlsx.utils.book_append_sheet(workBook, workSheet);
     xlsx.writeFile(workBook, `${fileName}.xlsx`);
+
+    toast.success("Successfully Downloaded")
   };
 
   const handleExportToJSON = async () => {
@@ -36,6 +40,9 @@ export function ViewData({ data, numRows, columnNamesArray, fileName }) {
     // cleaning the document and url after download
     document.body.removeChild(link);
     URL.revokeObjectURL(downloadLink);
+
+    toast.success("Successfully Downloaded")
+
   };
 
   const headers = columnNamesArray.map(headersToKeyValue);
@@ -84,6 +91,7 @@ export function ViewData({ data, numRows, columnNamesArray, fileName }) {
           Export to JSON
         </Button>
       </div>
+      <ToastContainer />
     </div>
   );
 }

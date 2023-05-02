@@ -5,6 +5,9 @@ import AppNavbar from "./Navbar";
 import { Tranformation } from "./Transformation";
 import "../resources/css/UploadFile.css";
 import HeaderPart from "./Header";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 function UploadFile({
   updateColumnNames,
@@ -41,9 +44,16 @@ function UploadFile({
       method: "post",
       url: "http://127.0.0.1:8000/api/files/",
       data: formData,
-    }).then((response) => {
-      window.location.reload();
-    });
+    })
+      .catch((err) => {
+        toast.error(err);
+      })
+      .then((response) => {
+        toast.success("File Uploaded Successfully");
+      })
+      .then((res)=>{
+        window.location.reload();
+      })
   };
 
   const getFiles = () => {
@@ -74,8 +84,12 @@ function UploadFile({
     })
       .then((response) => {
         forceDownload(response, title);
+        toast.success("Successfully Downloaded")
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        toast.error(error)
+
+      });
   };
 
   const handleUpdateModal = (value) => {
@@ -92,7 +106,7 @@ function UploadFile({
         setFileData({ title: title, url: url });
       })
       .catch((error) => {
-        console.log(error);
+        toast.error(error)
       });
     await updateTitle(title);
   };
@@ -234,6 +248,7 @@ function UploadFile({
           </div>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 }

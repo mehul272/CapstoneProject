@@ -5,6 +5,8 @@ import { Button, Modal } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { stringToOptions } from "./Extraction";
 import Select from "react-select";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const TRANSFORMATION_OPTION = [
   "1. Remove duplicate rows",
@@ -17,6 +19,10 @@ const TRANSFORMATION_OPTION = [
   "8. Sort Dataframe",
 ];
 
+function removeDuplicates(arr) {
+  return arr.filter((value, index) => arr.indexOf(value) === index);
+}
+
 export function Transformation({
   columnNames,
   numRows,
@@ -27,13 +33,14 @@ export function Transformation({
 }) {
   let api = "http://127.0.0.1:8000/api";
 
-  const COLUMN_NAMES = [...columnNames, "All"].map(stringToOptions);
+  const COLUMN_NAMES = [...removeDuplicates(columnNames), "All"].map(
+    stringToOptions
+  );
 
   let navigate = useNavigate();
 
   const [transformation, setTransformation] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
 
   const [column, setColumn] = useState([]);
 
@@ -63,15 +70,16 @@ export function Transformation({
         },
       })
       .catch((err) => {
-        console.log(err);
-      });
+        toast.error(err);
+      })
 
     if (result) {
       try {
         setTransformedData(result.data.result);
         setStartLoading(true);
+        toast.success("Successfully Transformed");
       } catch (err) {
-        console.log(err);
+        toast.error(err);
       }
     }
   };
@@ -127,8 +135,6 @@ export function Transformation({
 
     if (input !== null && input !== "") {
       if (window.confirm(`Are you sure you want to start the Loading?`)) {
-        navigate("/load");
-
         await axios
           .get(api + `/start-loading`, {
             params: {
@@ -137,11 +143,17 @@ export function Transformation({
             },
           })
           .then((res) => {
-            console.log("Load: ", res)
-            updateLoadComplete(res.data.status);
-          });
+            console.log("Load: ", res.data.status);
 
-        setShowModal(false);
+            if (res.data.status === false) {
+              toast.error(res.data.data);
+            } else {
+              toast.success(res.data.data);
+              updateLoadComplete(res.data.status);
+              setShowModal(false);
+              navigate("/load");
+            }
+          });
       } else {
         return;
       }
@@ -217,7 +229,7 @@ export function Transformation({
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="bordered" onClick={handleClose} disabled={isSaving}>
+          <Button variant="bordered" onClick={handleClose}>
             Cancel
           </Button>
           <Button
@@ -229,6 +241,7 @@ export function Transformation({
           </Button>
         </Modal.Footer>
       </Modal>
+      <ToastContainer />
     </>
   );
 }

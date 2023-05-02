@@ -4,6 +4,8 @@ import axios from "axios";
 import { ViewData } from "./viewData";
 import Select from "react-select";
 import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export const stringToOptions = (item) => ({ value: item, label: item });
 
@@ -92,6 +94,8 @@ export function Extraction({
         setData(res.data.result);
         updateData(res.data.result);
         setStartTransform(true);
+        toast.success("Successfully Extracted")
+
       });
   };
 
@@ -215,6 +219,7 @@ export function Extraction({
           </Button>
         </Modal.Footer>
       </Modal>
+      <ToastContainer />
     </>
   );
 }
