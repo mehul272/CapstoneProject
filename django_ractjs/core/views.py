@@ -16,11 +16,30 @@ from django.shortcuts import render, HttpResponse
 import re
 import math
 from sklearn.preprocessing import LabelEncoder
+import openpyxl 
 
 DRIVER = "SQL Server"
 SERVER_NAME = "LAPTOP-H3TEL2C9\SQLEXPRESS"
 DATABASE_NAME = "database1"
 
+def read_file(file_path):
+    # get the file extension
+    file_ext = file_path.split('.')[-1]
+
+    if file_ext == 'csv':
+        # read the CSV file into a pandas DataFrame
+        df = pd.read_csv(file_path)
+    elif file_ext == 'xlsx':
+        # read the Excel file into a pandas DataFrame
+        workbook = openpyxl.load_workbook(file_path)
+        sheet = workbook.active
+        data = sheet.values
+        headers = next(data)
+        df = pd.DataFrame(data, columns=headers)
+    else:
+        raise ValueError('Unsupported file format')
+
+    return df
 
 def connection_string(driver, server_name, db_name):
     conn_string = f"""
@@ -244,44 +263,54 @@ def get_file_data(request, title, no_of_rows):
     files = Files.objects.get(id=title)
 
     file_path = files.pdf.path
-
+    
+    df = read_file(file_path)
+    
+    print("Hello")
+    
     string_array_str = request.GET.get('stringArray')
 
     string_array = json.loads(string_array_str)
 
     data = []
 
-    with open(file_path, newline='') as csvfile:
-
-        reader = csv.DictReader(csvfile)
-        for row in reader:
-            data.append(row)
-
-        df = pd.DataFrame(data)
-
-        if no_of_rows != "All":
-            filtered_df = df[string_array].head(int(no_of_rows))
-        else:
-            filtered_df = df[string_array]
-
+    if no_of_rows != "All":
+        filtered_df = df[string_array].head(int(no_of_rows))
+    else:
+        filtered_df = df[string_array]
+        
     return filtered_df
 
 
 @api_view(['GET'])
 def upload_files_data(request, title):
 
+    print("Hello")
     files = Files.objects.get(id=title)
 
     file_path = files.pdf.path
+    
+    final = read_file(file_path)
 
-    with default_storage.open(file_path, 'r') as f:
-        contents = f.read()
+    print("Hi: ",final)
+    
+    if not file_path.split('.')[-1] == 'xlsx':
 
-        lines = contents.split('\n')
-        header_row = lines[0]
-        column_names = header_row.split(',')
+        with default_storage.open(file_path, 'r') as f:
+            contents = f.read()
 
-        return JsonResponse({"success": column_names})
+            lines = contents.split('\n')
+            header_row = lines[0]
+            column_names = header_row.split(',')
+
+            return JsonResponse({"success": column_names})
+    else:
+        with default_storage.open(file_path, 'rb') as f:
+            workbook = openpyxl.load_workbook(f)
+            
+            worksheet = workbook.active
+            header_row = [cell.value for cell in worksheet[1]]
+            return JsonResponse({"success": header_row})
 
 
 @api_view(['GET'])
@@ -292,12 +321,19 @@ def upload_files_data1(request):
 
 @api_view(['GET'])
 def filter_files_data(request, title):
-
+    
     no_of_rows = request.GET.get('numRows')
 
     filtered_df = get_file_data(request, title, no_of_rows)
+    
+    print("File Data", filtered_df)
 
     filtered_data = filtered_df.to_dict(orient='records')
+    
+    for d in filtered_data:
+        for key, value in d.items():
+            if isinstance(value, float) and math.isnan(value):
+                d[key] = None
 
     return JsonResponse({'result': filtered_data})
 
