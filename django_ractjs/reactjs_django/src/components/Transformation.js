@@ -39,7 +39,6 @@ export function Transformation({
 
   let navigate = useNavigate();
 
-  const [transformation, setTransformation] = useState([]);
   const [showModal, setShowModal] = useState(false);
 
   const [column, setColumn] = useState([]);
@@ -64,7 +63,6 @@ export function Transformation({
         params: {
           stringArray: JSON.stringify(column),
           numRows: numRows,
-          transformation: transformation,
           transformationOptions: JSON.stringify(transformationOptions),
           sortColumn: sortColumn,
         },

@@ -1,8 +1,6 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Extraction } from "./Extraction";
-import AppNavbar from "./Navbar";
-import { Tranformation } from "./Transformation";
 import "../resources/css/UploadFile.css";
 import HeaderPart from "./Header";
 import { toast, ToastContainer } from 'react-toastify';
@@ -33,12 +31,6 @@ function UploadFile({
 
     let formData = new FormData();
     formData.append("pdf", filename);
-
-    let axiosConfig = {
-      headers: {
-        "Content-Type": "multpart/form-data",
-      },
-    };
 
     await axios({
       method: "post",
@@ -149,7 +141,7 @@ function UploadFile({
                       setFileStatus(true);
                     } else {
                       setFileStatus(false);
-                      alert("Please upload a CSV file");
+                      toast.error("Please upload a CSV file");
                     }
                   }}
                   className="form-control"
@@ -212,7 +204,6 @@ function UploadFile({
                     <tr>
                       <td>{file.pdf}</td>
                       <td>
-                        <a href="" target="_blank"></a>
 
                         <button
                           onClick={() => downloadWithAxios(file.pdf, file.id)}

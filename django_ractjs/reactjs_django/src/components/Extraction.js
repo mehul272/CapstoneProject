@@ -1,5 +1,5 @@
-import { Button, Form, Modal, Row, Col, InputGroup } from "react-bootstrap";
-import { useState, useEffect } from "react";
+import { Button, Modal } from "react-bootstrap";
+import { useState } from "react";
 import axios from "axios";
 import { ViewData } from "./viewData";
 import Select from "react-select";
@@ -26,9 +26,6 @@ export function Extraction({
 }) {
   let navigate = useNavigate();
 
-  const [isSaving, setIsSaving] = useState(false);
-
-  const [fileDownloading, setFileDownloading] = useState(false);
 
   const [columnNamesArray, setColumnNamesArray] = useState([]);
 
@@ -206,7 +203,7 @@ export function Extraction({
           </>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="bordered" onClick={handleClose} disabled={isSaving}>
+          <Button variant="bordered" onClick={handleClose}>
             Cancel
           </Button>
 
