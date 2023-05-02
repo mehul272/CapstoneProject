@@ -1,6 +1,7 @@
-import { Button, Form, Modal, Row, Col, InputGroup } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import { CSVLink } from "react-csv";
-import { useState, useEffect } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const xlsx = require("xlsx");
 
@@ -8,7 +9,6 @@ const headersToKeyValue = (item) => ({ label: item, key: item });
 
 export function ViewData({ data, numRows, columnNamesArray, fileName }) {
 
-  const [isSaving, setIsSaving] = useState(false);
   const columnNames = new Set(data.flatMap((obj) => Object.keys(obj)));
 
   const tableData = numRows === "All" ? data.slice(0, 41) : data;
@@ -19,6 +19,8 @@ export function ViewData({ data, numRows, columnNamesArray, fileName }) {
 
     xlsx.utils.book_append_sheet(workBook, workSheet);
     xlsx.writeFile(workBook, `${fileName}.xlsx`);
+
+    toast.success("Successfully Downloaded")
   };
 
   const handleExportToJSON = async () => {
@@ -36,6 +38,9 @@ export function ViewData({ data, numRows, columnNamesArray, fileName }) {
     // cleaning the document and url after download
     document.body.removeChild(link);
     URL.revokeObjectURL(downloadLink);
+
+    toast.success("Successfully Downloaded")
+
   };
 
   const headers = columnNamesArray.map(headersToKeyValue);
@@ -72,18 +77,17 @@ export function ViewData({ data, numRows, columnNamesArray, fileName }) {
         <Button
           variant="primary"
           onClick={handleExportToExcel}
-          disabled={isSaving}
         >
           Export to Excel
         </Button>
         <Button
           variant="primary"
           onClick={handleExportToJSON}
-          disabled={isSaving}
         >
           Export to JSON
         </Button>
       </div>
+      <ToastContainer />
     </div>
   );
 }
