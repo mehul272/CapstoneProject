@@ -79,17 +79,32 @@ export function Transformation({
 
   const handleFilterColumnNames = (event, option) => {
     const isChecked = event.target.checked;
-    const isIncluded = column.includes(option);
-
-    if (isChecked && !isIncluded) {
-      column.push(option);
-      console.log("Col: ", column);
-    } else if (!isChecked) {
-      column.splice(column.indexOf(option), 1);
+    const updatedFilters = [...column];
+    if (isChecked) {
+      updatedFilters.push(option);
+    } else {
+      const index = updatedFilters.indexOf(option);
+      if (index !== -1) {
+        updatedFilters.splice(index, 1);
+      }
     }
-    setColumn(column);
+    setColumn(updatedFilters);
 
     console.log("Hi: ", column);
+  };
+
+  const handleSelectAll = (e) => {
+    const checkboxes = document.querySelectorAll(
+      'input[type="checkbox"].type2'
+    );
+    checkboxes.forEach((checkbox) => {
+      checkbox.checked = e.target.checked;
+    });
+    if (e.target.checked) {
+      setColumn(columnNames);
+    } else {
+      setColumn([]);
+    }
   };
 
   const handleFilteredTransformationOptions = (event, option) => {
@@ -126,6 +141,7 @@ export function Transformation({
             },
           })
           .then((res) => {
+            console.log("Res: ", res);
             updateLoadComplete(res.data.status);
           });
 
@@ -155,10 +171,13 @@ export function Transformation({
       >
         <Modal.Header>Transformation</Modal.Header>
         <Modal.Body>
+          <input type="checkbox" onChange={handleSelectAll} />
+          <label>Select All</label>
           {columnNames.map((option, index) => (
             <div key={index}>
               <input
                 type="checkbox"
+                class="type2"
                 onChange={(e) => handleFilterColumnNames(e, option)}
               />
               {option}
