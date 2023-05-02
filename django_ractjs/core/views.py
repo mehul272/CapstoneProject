@@ -15,6 +15,7 @@ import pypyodbc as odbc
 from django.shortcuts import render, HttpResponse
 import re
 import math
+from sklearn.preprocessing import LabelEncoder
 
 DRIVER = "SQL Server"
 SERVER_NAME = "LAPTOP-H3TEL2C9\SQLEXPRESS"
@@ -211,10 +212,11 @@ def transform_dataframe(df, transformationOptions, sortColumn):
             df = df.dropna(how='all', axis=1)
         elif num == "5":
             # Convert a categorical column to numeric
-            cat_col = 'category_col'
-            if cat_col in df.columns:
-                df[cat_col] = pd.Categorical(df[cat_col])
-                df[cat_col] = df[cat_col].cat.codes
+            cat_cols = df.select_dtypes(include=['object']).columns
+            for col in cat_cols:
+                le = LabelEncoder()
+                df[col] = le.fit_transform(df[col])
+            print(df)
         elif num == "6":
             # replace null values with 'N/A'
             df.replace(['', ' ', None, np.nan], 'N/A',
