@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import AppNavbar from './Navbar';
+import axios from "axios";
 import {
   MDBContainer,
   MDBTabs,
@@ -16,6 +17,8 @@ from 'mdb-react-ui-kit';
 
 function Login() {
 
+  let api = "http://127.0.0.1:8000/api";
+
   const [justifyActive, setJustifyActive] = useState('tab1');;
 
   const handleJustifyClick = (value) => {
@@ -25,6 +28,28 @@ function Login() {
 
     setJustifyActive(value);
   };
+
+  const handleRegisterUser = async ()=>{
+    await axios
+      .get(api + `/register-user`)
+      .then((res)=>{
+        console.log(res)
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+  }
+
+  const handleLoginUser = async ()=>{
+    await axios
+      .get(api + `/login-user`)
+      .then((res)=>{
+        console.log(res)
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+  }
 
   return (
     <div>
@@ -81,7 +106,7 @@ function Login() {
             <a href="!#">Forgot password?</a>
           </div>
 
-          <MDBBtn className="mb-4 w-100">Sign in</MDBBtn>
+          <MDBBtn className="mb-4 w-100" onClick={handleLoginUser}>Sign in</MDBBtn>
           <p className="text-center">Not a member? <a href="#!">Register</a></p>
 
         </MDBTabsPane>
@@ -121,7 +146,7 @@ function Login() {
             <MDBCheckbox name='flexCheck' id='flexCheckDefault' label='I have read and agree to the terms' />
           </div>
 
-          <MDBBtn className="mb-4 w-100">Sign up</MDBBtn>
+          <MDBBtn onClick={handleRegisterUser} className="mb-4 w-100">Sign up</MDBBtn>
 
         </MDBTabsPane>
 

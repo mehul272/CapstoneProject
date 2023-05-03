@@ -8,7 +8,7 @@ from django.core.files.storage import default_storage
 import json
 import csv
 import pandas as pd
-
+from django.db import models
 import numpy as np
 from django.views.decorators.csrf import csrf_exempt
 import pypyodbc as odbc
@@ -16,11 +16,16 @@ from django.shortcuts import render, HttpResponse
 import re
 import math
 from sklearn.preprocessing import LabelEncoder
-import openpyxl 
+import openpyxl
+from django.contrib.auth import authenticate, login
+from django.shortcuts import render, redirect
+from django.contrib.auth import get_user_model
+from django.contrib.auth import logout  
 
 DRIVER = "SQL Server"
 SERVER_NAME = "LAPTOP-H3TEL2C9\SQLEXPRESS"
 DATABASE_NAME = "database1"
+
 
 def read_file(file_path):
     # get the file extension
@@ -40,6 +45,7 @@ def read_file(file_path):
         raise ValueError('Unsupported file format')
 
     return df
+
 
 def connection_string(driver, server_name, db_name):
     conn_string = f"""
@@ -162,9 +168,10 @@ def getTables(request):
 
     return HttpResponse(json.dumps(returnObj), content_type="application/json")
 
+
 @api_view(['GET'])
 def getTableData(request, tableName):
-        
+
     jsonDataArray = []
     columns = []
     returnObj = {}
@@ -263,11 +270,11 @@ def get_file_data(request, title, no_of_rows):
     files = Files.objects.get(id=title)
 
     file_path = files.pdf.path
-    
+
     df = read_file(file_path)
-    
+
     print("Hello")
-    
+
     string_array_str = request.GET.get('stringArray')
 
     string_array = json.loads(string_array_str)
@@ -278,7 +285,7 @@ def get_file_data(request, title, no_of_rows):
         filtered_df = df[string_array].head(int(no_of_rows))
     else:
         filtered_df = df[string_array]
-        
+
     return filtered_df
 
 
@@ -289,11 +296,11 @@ def upload_files_data(request, title):
     files = Files.objects.get(id=title)
 
     file_path = files.pdf.path
-    
+
     final = read_file(file_path)
 
-    print("Hi: ",final)
-    
+    print("Hi: ", final)
+
     if not file_path.split('.')[-1] == 'xlsx':
 
         with default_storage.open(file_path, 'r') as f:
@@ -307,7 +314,7 @@ def upload_files_data(request, title):
     else:
         with default_storage.open(file_path, 'rb') as f:
             workbook = openpyxl.load_workbook(f)
-            
+
             worksheet = workbook.active
             header_row = [cell.value for cell in worksheet[1]]
             return JsonResponse({"success": header_row})
@@ -321,15 +328,15 @@ def upload_files_data1(request):
 
 @api_view(['GET'])
 def filter_files_data(request, title):
-    
+
     no_of_rows = request.GET.get('numRows')
 
     filtered_df = get_file_data(request, title, no_of_rows)
-    
+
     print("File Data", filtered_df)
 
     filtered_data = filtered_df.to_dict(orient='records')
-    
+
     for d in filtered_data:
         for key, value in d.items():
             if isinstance(value, float) and math.isnan(value):
@@ -378,6 +385,10 @@ def start_loading(request):
     tableName = re.sub("[^0-9a-zA-Z]+", "_", tableName)
 
     columns, dataTypes, tableCols = get_column_name(df)
+
+    print("dataTypes", dataTypes)
+    print("tableCols", tableCols)
+    print("columns", columns)
 
     df_data = df[columns]
     records = df_data.values.tolist()
@@ -442,3 +453,79 @@ def start_loading(request):
             cursor.close()
 
     return HttpResponse(json.dumps(returnObj), content_type="application/json")
+
+
+def register_user(request):
+
+    username = "Utkrist"
+    email = "utkrist@gmail.com"
+    password = "1234"
+    cpassword = "1234"
+
+    result = ""
+    returnObj = {}
+
+    cursor = conn.cursor()
+
+    sql_data = f'''SELECT username,email FROM RegisterTable'''
+    cursor.execute(sql_data)
+
+    data = cursor.fetchall()
+
+    print(data)
+
+    usernames = []
+    emails = []
+    for d in data:
+        i = 0
+        for item in d:
+            if i == 0:
+                usernames.append(item)
+            else:
+                emails.append(item)
+            i += 1
+
+    if username in usernames:
+        returnObj['data'] = "Username Already Exists"
+        returnObj['status'] = False
+    elif email in emails:
+        returnObj['data'] = "Email Already Exists"
+        returnObj['status'] = False
+    elif password != cpassword:
+        returnObj['data'] = "Password not matched"
+        returnObj['status'] = False
+    else:
+        sql_insert = f'''INSERT INTO RegisterTable VALUES('{username}','{email}','{password}','{cpassword}');'''
+        cursor.execute(sql_insert)
+        cursor.commit()
+        
+        User = get_user_model()
+        User.objects.create(username = username, email = email, password = password)
+        
+        returnObj['data'] = "Registered"
+        returnObj['status'] = True
+
+    return HttpResponse(json.dumps(returnObj), content_type="application/json")
+
+
+def login_user(request):
+
+    username = "Utkrist"
+    password = "12345" 
+
+    returnObj = {'status': False, 'data': "Not matched"}
+        
+    user = authenticate(request = request, username = username, password = password)
+    print(user)
+    if user is not None:
+        login(request, user)
+        returnObj["data"] = "Login Success"
+        returnObj["status"] = True
+        
+    print(returnObj)
+    return HttpResponse(json.dumps(returnObj), content_type="application/json")
+
+
+def logout_user(request):
+    logout(request)
+    return HttpResponse({"data": "Logged Out"}, content_type="application/json")

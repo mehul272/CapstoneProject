@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import FilesViewSet, upload_files_data, upload_files_data1, filter_files_data, start_transformation, start_loading, getTables, getTableData
+from .views import FilesViewSet, upload_files_data, upload_files_data1, filter_files_data, start_transformation, start_loading, getTables, getTableData, register_user, login_user, logout_user
 from . import views
 
 router = DefaultRouter()
@@ -18,6 +18,10 @@ urlpatterns = [
          start_transformation, name='start-transformation'),
     path('api/start-loading', start_loading, name='start-loading'),
     path("api/tables", getTables, name="Load-Tables"),
-    path("api/visualize-tables/<str:tableName>/", getTableData, name="Table-Data"),
+    path("api/visualize-tables/<str:tableName>/",
+         getTableData, name="Table-Data"),
+    path("api/register-user", register_user, name="register-user"),
+    path("api/login-user", login_user, name="login-user"),
+    path("api/logout-user", logout_user, name="logout-user"),
 
 ]
