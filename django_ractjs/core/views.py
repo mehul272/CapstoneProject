@@ -18,7 +18,7 @@ import math
 from sklearn.preprocessing import LabelEncoder
 
 DRIVER = "SQL Server"
-SERVER_NAME = "LAPTOP-H3TEL2C9\SQLEXPRESS"
+SERVER_NAME = "UTKRIST-AG\SQLEXPRESS"
 DATABASE_NAME = "database1"
 
 
