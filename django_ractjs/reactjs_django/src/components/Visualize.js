@@ -1,6 +1,7 @@
 import React from "react";
 import BarChart from "./Barchat";
 import { Line } from "react-chartjs-2";
+import ChartSelection from "./chartSelection"
 
 export const transformData = (inputData) => {
   const labels = [];
@@ -41,20 +42,9 @@ const Visualize = (tableData) => {
   return (
     <div>
       <h1>Hello</h1>
-      <BarChart heading={"My Chart"} details={tableData.tableData} />
-      {/* <div>
-        <Line
-          data={{
-            labels: transformedData.labels,
-            datasets: [
-              {
-                label: "Data",
-                data: transformedData.data,
-              },
-            ],
-          }}
-        />
-      </div> */}
+
+      <ChartSelection heading={"My Chart"} details={tableData.tableData}/>
+
     </div>
   );
 };

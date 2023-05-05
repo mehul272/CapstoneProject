@@ -52,18 +52,15 @@ ChartJS.register(
 //   );
 // }
 
-export default function BarChart({ heading, details }) {
-  const columns = Object.keys(details[0]);
+export default function BarChart({ heading, yaxis, xaxis, data }) {
 
-
-  const filteredColumns = columns.filter((column) => column !== "id");
-  details.map((item) => console.log(item));
+  const filteredColumns = yaxis.concat(xaxis)
 
   const chartData = {
-    labels: details.map((item) => item[filteredColumns[0]]),
+    labels: data.map((item) => item[yaxis[0]]),
     datasets: filteredColumns.map((column) => ({
       label: column,
-      data: details.map((item) => item[column]),
+      data: data.map((item) => item[column]),
       backgroundColor: "rgba(255, 99, 132, 0.6)",
     })),
   };
