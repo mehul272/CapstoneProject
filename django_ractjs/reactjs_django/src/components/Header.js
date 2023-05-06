@@ -7,7 +7,7 @@ const Header = () => {
       <div className="header-logo">
         <img src="https://static.thenounproject.com/png/3147308-200.png" alt="Logo" height="65" />
       </div>
-      <div className="header-heading">
+      <div className="header-heading tracking-in-expand">
         <h3>Pipeline Phase 1: Extract</h3>
       </div>
     </div>

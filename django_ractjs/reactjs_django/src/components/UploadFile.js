@@ -121,8 +121,8 @@ function UploadFile({
     <div>
       <HeaderPart />
 
-      <div className="container-fluid">
-        <div className="row">
+      <div className="container-fluid ">
+        <div className="row bg-pan-right">
           <div className="col-md-4">
             <h3 className="alert">File Upload Section</h3>
 
@@ -152,7 +152,7 @@ function UploadFile({
                 type="button"
                 disabled={!fileStatus}
                 onClick={saveFile}
-                className="btn btn-primary float-left mt-2 submitBtn"
+                className="btn btn-primary float-left mt-2 submitBtn shake-top"
               >
                 Submit
               </button>
@@ -187,7 +187,7 @@ function UploadFile({
             </button>
           </div>
 
-          <div className="col-md-7">
+          <div className="col-md-7 buttons-animations">
             {/* <h2 className="alert">List of Uploaded Files & Download </h2> */}
 
             <table className="table table-bordered mt-4">
@@ -207,15 +207,15 @@ function UploadFile({
 
                         <button
                           onClick={() => downloadWithAxios(file.pdf, file.id)}
-                          className="btn btn-success"
+                          className="btn btn-success btn2"
                         >
-                          DownLoad
+                          <p data-text="start!" data-title="Download"></p>
                         </button>
                       </td>
                       <td>
                         <button
                           onClick={() => extractionStart(file.pdf, file.id)}
-                          className="btn btn-danger"
+                          className="btn btn-danger btn2"
                         >
                           Do Extraction
                         </button>

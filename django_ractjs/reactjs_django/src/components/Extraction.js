@@ -132,7 +132,7 @@ export function Extraction({
         data-backdrop="static"
         onHide={handleClose}
       >
-        <Modal.Header>EXtraction</Modal.Header>
+        <Modal.Header>EXTRACTION</Modal.Header>
         <Modal.Body>
           <>
             <input
