@@ -94,6 +94,7 @@ function UploadFile({
       .then((response) => {
         setColumnNames(response.data.success);
         setFileData({ title: title, url: url });
+        // setShowUpdateModal(false)
       })
       .catch((error) => {
         toast.error(error);

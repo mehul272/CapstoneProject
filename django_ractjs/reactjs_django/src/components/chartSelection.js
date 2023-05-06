@@ -3,6 +3,7 @@ import { Bar } from "react-chartjs-2";
 import BarChart from "./Barchat";
 import PieChart from "./pieChart";
 import { Button } from "react-bootstrap";
+import LineChart from "./LineChart";
 
 function isStringValue(arr, key) {
   for (const obj of arr) {
@@ -22,7 +23,7 @@ function conversion(labels, values) {
   return data;
 }
 
-const VISUALIZATION_TYPES = ["BarChart", "PieChart"];
+const VISUALIZATION_TYPES = ["BarChart", "PieChart","LineChart"];
 
 export default function ChartSelection({ heading, details }) {
   const columns = Object.keys(details[0]);
@@ -88,6 +89,15 @@ export default function ChartSelection({ heading, details }) {
       case "PieChart":
         return (
           <PieChart heading={"Hi"} yaxis={yaxis} xaxis={xaxis} data={details} />
+        );
+      case "LineChart":
+        return (
+          <LineChart
+            heading={"Hi"}
+            yaxis={yaxis}
+            xaxis={xaxis}
+            data={details}
+          />
         );
       default:
         return null;

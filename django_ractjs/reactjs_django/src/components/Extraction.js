@@ -92,7 +92,6 @@ export function Extraction({
         updateData(res.data.result);
         setStartTransform(true);
         toast.success("Successfully Extracted")
-
       });
   };
 
