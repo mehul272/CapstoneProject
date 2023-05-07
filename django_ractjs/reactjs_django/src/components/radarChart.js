@@ -1,31 +1,33 @@
 import React from "react";
-import { Pie } from "react-chartjs-2";
+import { Line } from "react-chartjs-2";
 import { useEffect } from "react";
 import { Chart } from "chart.js";
 import randomcolor from "randomcolor";
 
-function PieChart({ heading, yaxis, xaxis, data }) {
-
-  console.log(xaxis)
-
-  const filteredColumns = yaxis.concat(xaxis[0]);
+function RadarChart({ heading, yaxis, xaxis, data }) {
+  const filteredColumns = yaxis.concat(xaxis);
 
   const colors = randomcolor({ count: data.length });
 
   useEffect(() => {
-    const pieChartCanvas = document
-      .getElementById("pie-chart")
+    const radarChartCanvas = document
+      .getElementById("radar-chart")
       .getContext("2d");
 
-
-    new Chart(pieChartCanvas, {
-      type: "pie",
+    new Chart(radarChartCanvas, {
+      type: "radar",
       data: {
         labels: data.map((item) => item[yaxis[0]]),
         datasets: filteredColumns.map((column) => ({
           label: column,
           data: data.map((item) => item[column]),
+          fill: true,
           backgroundColor: colors,
+          borderColor: colors,
+          pointBackgroundColor: colors,
+          pointBorderColor: colors,
+          pointHoverBackgroundColor: colors,
+          pointHoverBorderColor: colors,
         })),
       },
       options: {
@@ -44,13 +46,13 @@ function PieChart({ heading, yaxis, xaxis, data }) {
         },
       },
     });
-  }, [yaxis,xaxis]);
+  }, [yaxis, xaxis]);
 
   return (
     <div>
-      <canvas id="pie-chart"></canvas>
+      <canvas id="radar-chart"></canvas>
     </div>
   );
 }
 
-export default PieChart;
+export default RadarChart;

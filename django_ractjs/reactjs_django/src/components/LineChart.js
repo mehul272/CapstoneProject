@@ -38,8 +38,8 @@ function LineChart({ heading, yaxis, xaxis, data }) {
           ],
         },
         canvas: {
-          height: 400,
-          width: 400,
+          height: 800,
+          width: 800,
         },
       },
     });

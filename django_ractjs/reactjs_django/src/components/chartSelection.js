@@ -4,6 +4,8 @@ import BarChart from "./Barchat";
 import PieChart from "./pieChart";
 import { Button } from "react-bootstrap";
 import LineChart from "./LineChart";
+import RadarChart from "./radarChart";
+import PolarAreaChart from "./polarAreaChart";
 
 function isStringValue(arr, key) {
   for (const obj of arr) {
@@ -23,7 +25,12 @@ function conversion(labels, values) {
   return data;
 }
 
-const VISUALIZATION_TYPES = ["BarChart", "PieChart", "LineChart"];
+const VISUALIZATION_TYPES = [
+  "BarChart",
+  "PieChart",
+  "LineChart",
+  "RadarChart",
+];
 
 export default function ChartSelection({ heading, details }) {
   const columns = Object.keys(details[0]);
@@ -84,16 +91,35 @@ export default function ChartSelection({ heading, details }) {
     switch (chartType) {
       case "BarChart":
         return (
-          <BarChart heading={"My Bar Chart"} yaxis={yaxis} xaxis={xaxis} data={details} />
+          <BarChart
+            heading={"My Bar Chart"}
+            yaxis={yaxis}
+            xaxis={xaxis}
+            data={details}
+          />
         );
       case "PieChart":
         return (
-          <PieChart heading={"My Pie Chart"} yaxis={yaxis} xaxis={xaxis} data={details} />
+          <PieChart
+            heading={"My Pie Chart"}
+            yaxis={yaxis}
+            xaxis={xaxis}
+            data={details}
+          />
         );
       case "LineChart":
         return (
           <LineChart
             heading={"My Line Chart"}
+            yaxis={yaxis}
+            xaxis={xaxis}
+            data={details}
+          />
+        );
+      case "RadarChart":
+        return (
+          <RadarChart
+            heading={"My Radar Chart"}
             yaxis={yaxis}
             xaxis={xaxis}
             data={details}
