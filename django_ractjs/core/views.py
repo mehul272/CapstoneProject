@@ -457,10 +457,11 @@ def start_loading(request):
 
 def register_user(request):
 
-    username = "Utkrist"
-    email = "utkrist@gmail.com"
-    password = "1234"
-    cpassword = "1234"
+    
+    username = request.GET.get('username')
+    email = request.GET.get('email')
+    password = request.GET.get('password')
+    cpassword = request.GET.get('cpassword')
 
     result = ""
     returnObj = {}
@@ -502,7 +503,7 @@ def register_user(request):
         User = get_user_model()
         User.objects.create(username = username, email = email, password = password)
         
-        returnObj['data'] = "Registered"
+        returnObj['data'] = "Registered successfully"
         returnObj['status'] = True
 
     return HttpResponse(json.dumps(returnObj), content_type="application/json")
@@ -510,8 +511,10 @@ def register_user(request):
 
 def login_user(request):
 
-    username = "Utkrist"
-    password = "12345" 
+
+    username = request.GET.get('email')
+    password = request.GET.get('password')
+    
 
     returnObj = {'status': False, 'data': "Not matched"}
         
@@ -519,7 +522,7 @@ def login_user(request):
     print(user)
     if user is not None:
         login(request, user)
-        returnObj["data"] = "Login Success"
+        returnObj["data"] = "Login Successfull"
         returnObj["status"] = True
         
     print(returnObj)
