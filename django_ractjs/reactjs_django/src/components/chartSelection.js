@@ -23,7 +23,7 @@ function conversion(labels, values) {
   return data;
 }
 
-const VISUALIZATION_TYPES = ["BarChart", "PieChart","LineChart"];
+const VISUALIZATION_TYPES = ["BarChart", "PieChart", "LineChart"];
 
 export default function ChartSelection({ heading, details }) {
   const columns = Object.keys(details[0]);
@@ -108,6 +108,18 @@ export default function ChartSelection({ heading, details }) {
     <>
       <div className="w-50">
         <>
+          <h1>Chart Selection</h1>
+          {VISUALIZATION_TYPES.map((option, index) => (
+            <div key={index}>
+              <input
+                type="radio"
+                name="table1"
+                onChange={(e) => handleCheckForTypes(e, option)}
+              />
+              {option}
+            </div>
+          ))}
+
           <h1>Y-Axes Selection</h1>
           {stringValueCols.map((option, index) => (
             <div key={index}>
@@ -123,21 +135,19 @@ export default function ChartSelection({ heading, details }) {
           <h1>X-Axes Selection</h1>
           {numericValueCols.map((option, index) => (
             <div key={index}>
-              <input
-                type="checkbox"
-                onChange={(e) => handleCheckForXaxis(e, option)}
-              />
-              {option}
-            </div>
-          ))}
-          <h1>Chart Selection</h1>
-          {VISUALIZATION_TYPES.map((option, index) => (
-            <div key={index}>
-              <input
-                type="radio"
-                name="table1"
-                onChange={(e) => handleCheckForTypes(e, option)}
-              />
+              {chartType === "PieChart" ? (
+                <input
+                  type="radio"
+                  name="table1"
+                  onChange={(e) => handleCheckForXaxis(e, option)}
+                />
+              ) : (
+                <input
+                  type="checkbox"
+                  onChange={(e) => handleCheckForXaxis(e, option)}
+                />
+              )}
+
               {option}
             </div>
           ))}

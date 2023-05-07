@@ -1,27 +1,51 @@
 import React from "react";
-import { Pie } from 'react-chartjs-2';
+import { Pie } from "react-chartjs-2";
+import { useEffect } from "react";
+import { Chart } from "chart.js";
+import randomcolor from "randomcolor";
 
 function PieChart({ heading, yaxis, xaxis, data }) {
   const filteredColumns = yaxis.concat(xaxis);
 
-  const chartData = {
-    labels: ['Mehul','Meh','Ul','Hi'],
-    datasets: filteredColumns.map((column) => ({
-      data: [400, 300, 300, 200],
-      backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0"],
-      hoverBackgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0"],
-    })),
-  };
+  const colors = randomcolor({ count: data.length });
 
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false
-  };
+  useEffect(() => {
+    const pieChartCanvas = document
+      .getElementById("pie-chart")
+      .getContext("2d");
+
+
+    new Chart(pieChartCanvas, {
+      type: "pie",
+      data: {
+        labels: data.map((item) => item[yaxis[0]]),
+        datasets: filteredColumns.map((column) => ({
+          label: column,
+          data: data.map((item) => item[column]),
+          backgroundColor: colors,
+        })),
+      },
+      options: {
+        scales: {
+          yAxes: [
+            {
+              ticks: {
+                beginAtZero: true,
+              },
+            },
+          ],
+        },
+        canvas: {
+          height: 400,
+          width: 400,
+        },
+      },
+    });
+  }, []);
 
   return (
     <div>
-      <h2>Pie Chart</h2>
-      <Pie data={chartData} options={chartOptions}  />
+      <canvas id="pie-chart"></canvas>
     </div>
   );
 }

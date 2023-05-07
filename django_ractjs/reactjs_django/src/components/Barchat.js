@@ -21,36 +21,6 @@ ChartJS.register(
   Legend
 );
 
-// export default function BarChart({ heading, details }) {
-//   console.log("Before: ", details);
-//   const transformedData = transformData(details);
-
-//   console.log("finalD: ", transformedData);
-
-//   const chartData = {
-//     labels: details.map((item) => item.col11),
-//     datasets: [
-//       {
-//         label: "Values",
-//         data: details.map((item) => item.col22),
-//         backgroundColor: "rgba(255, 99, 132, 0.6)",
-//       },
-//     ],
-//   };
-
-//   return (
-//     <div className="w-50">
-//       <Bar
-//         data={chartData}
-//         options={{
-//           scales: {
-//             yAxes: [{ ticks: { beginAtZero: true } }],
-//           },
-//         }}
-//       />
-//     </div>
-//   );
-// }
 
 export default function BarChart({ heading, yaxis, xaxis, data }) {
 

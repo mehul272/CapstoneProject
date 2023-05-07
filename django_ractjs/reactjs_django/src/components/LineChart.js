@@ -1,68 +1,57 @@
 import React from "react";
 import { Line } from "react-chartjs-2";
-import ChartDataLabels from "chartjs-plugin-datalabels";
-import { useEffect,useState } from "react";
-import { useRef } from 'react';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
-import { Chart } from 'chart.js';
+import { useEffect } from "react";
+import { Chart } from "chart.js";
+import randomcolor from "randomcolor";
 
-const createChart = (canvas, data, options) => {
-    return new Chart(canvas, {
-      type: 'line',
-      data: data,
-      options: options,
-    });
-  };
+function LineChart({ heading, yaxis, xaxis, data }) {
+  const filteredColumns = yaxis.concat(xaxis);
 
-export default function LineChart({ heading, yaxis, xaxis, data }) {
-  const canvasRef = useRef(null);
-  const [chartInstance, setChartInstance] = useState(null);
+  const colors = randomcolor({ count: data.length });
 
-  const chartOptions = {
-    scales: {
-      y: {
-        beginAtZero: true,
-      },
-    },
-  };
 
   useEffect(() => {
-    if (canvasRef.current && chartInstance) {
-      chartInstance.destroy();
-    }
-    if (canvasRef.current) {
-      const newChartInstance = createChart(canvasRef.current, data, chartOptions);
-      setChartInstance(newChartInstance);
-    }
-  }, [data, chartOptions]);
+    const lineChartCanvas = document
+      .getElementById("line-chart")
+      .getContext("2d");
 
-  const chartdata = {
-    labels: ["January", "February", "March", "April", "May", "June", "July"],
-    datasets: [
-      {
-        label: "My First Dataset",
-        data: [65, 59, 80, 81, 56, 55, 40],
-        fill: false,
-        borderColor: "rgb(75, 192, 192)",
-        tension: 0.1,
+
+
+    new Chart(lineChartCanvas, {
+      type: "line",
+      data: {
+        labels: data.map((item) => item[yaxis[0]]),
+        datasets: filteredColumns.map((column) => ({
+          label: column,
+          data: data.map((item) => item[column]),
+          fill: false,
+          borderColor: colors,
+          tension: 0.1,
+        })),
       },
-    ],
-  };
-
-
+      options: {
+        scales: {
+          yAxes: [
+            {
+              ticks: {
+                beginAtZero: true,
+              },
+            },
+          ],
+        },
+        canvas: {
+          height: 400,
+          width: 400,
+        },
+      },
+    });
+  }, []);
 
   return (
     <div>
-      <h2>Line Chart</h2>
-      <Line data={chartdata} options={chartOptions} ref={canvasRef} />
+      <canvas id="line-chart"></canvas>
     </div>
   );
 }
+
+export default LineChart;
