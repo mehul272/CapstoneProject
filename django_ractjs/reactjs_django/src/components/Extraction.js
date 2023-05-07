@@ -6,6 +6,7 @@ import Select from "react-select";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import "../resources/css/Extraction.css";
 
 export const stringToOptions = (item) => ({ value: item, label: item });
 
@@ -131,33 +132,50 @@ export function Extraction({
         data-keyboard="false"
         data-backdrop="static"
         onHide={handleClose}
+        
       >
         <Modal.Header>EXTRACTION</Modal.Header>
         <Modal.Body>
           <>
+          <div className="select-all-checkbox">
             <input
               type="checkbox"
               onChange={handleSelectAll}
-              class="select-all"
+              class="select-all "
               id="myCheckbox"
             />
             <label>Select All</label>
+            </div>
+            
+            <div className="checkbox-wrapper">
             {columnNames.map((option, index) => (
-              <div key={index}>
+           
+              <div key={index} className="all-columns-checkbox checkbox-wrapper-47">
                 <input
                   type="checkbox"
                   onChange={(e) => handleFilterColumnNames(e, option)}
-                />
-                {option}
+                  className="plus-minus"
+                  name="cb" 
+                  id="cb-47"
+                /><label for="cb-47" className="col-name">{option}</label>
               </div>
+              
             ))}
-            <div>
+            </div>
+            <div className="custom-filed">
+            <label
+                    htmlFor="exampleFormControlFile1"
+                    className="float-left"
+                    style={{ marginRight: '1rem' }}
+                  >
+                    Rows Count
+                  </label>
               <Select
                 name="invoicePerPage"
                 defaultValue={PER_PAGE_PAGINATION_OPTIONS[1]}
                 onChange={(e) => handleRowSelect(e)}
                 options={PER_PAGE_PAGINATION_OPTIONS}
-                className="lg-my-0 w-1 h-25"
+                className="lg-my-0 w-1 h-25 rows-count"
               />
               <form>
                 <div className="form-group">
@@ -171,10 +189,12 @@ export function Extraction({
                     type="text"
                     value={fileName}
                     onChange={(e) => handleFileNameChange(e)}
-                    className="form-control"
+                    className="form-control file-name"
                   />
                 </div>
               </form>
+              </div>
+            <div style={{ textAlign: 'center', marginTop: '20px' }}>
               <Button
                 variant="primary"
                 onClick={handleExtraction}
@@ -187,9 +207,9 @@ export function Extraction({
             {startTransform && (
               <div>
                 {numRows === "All" ? (
-                  <h1>First 40 Data to Display</h1>
+                  <h3>First 40 Data to Display</h3>
                 ) : (
-                  <h1>Display {numRows} rows of the File</h1>
+                  <h3>Display {numRows} rows of the File</h3>
                 )}
 
                 <ViewData
@@ -197,6 +217,7 @@ export function Extraction({
                   numRows={numRows}
                   columnNamesArray={columnNamesArray}
                   fileName={fileName}
+                
                 />
               </div>
             )}
@@ -211,6 +232,7 @@ export function Extraction({
             variant="bordered"
             onClick={handleDoTransformation}
             disabled={!startTransform}
+            className="css-button-arrow--black"
           >
             Start the Transformation
           </Button>

@@ -2,6 +2,7 @@ import { Button } from "react-bootstrap";
 import { CSVLink } from "react-csv";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import "../resources/css/viewData.css";
 
 const xlsx = require("xlsx");
 
@@ -52,8 +53,8 @@ export function ViewData({ data, numRows, columnNamesArray, fileName }) {
   };
 
   return (
-    <div>
-      <table className="table table-bordered mt-4">
+    <div className="parent-container">
+      <table className="table table-bordered mt-4" >
         <thead>
           <tr>
             {Array.from(columnNames).map((column) => (
