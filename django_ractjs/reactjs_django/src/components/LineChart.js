@@ -15,8 +15,6 @@ function LineChart({ heading, yaxis, xaxis, data }) {
       .getElementById("line-chart")
       .getContext("2d");
 
-
-
     new Chart(lineChartCanvas, {
       type: "line",
       data: {
@@ -45,7 +43,7 @@ function LineChart({ heading, yaxis, xaxis, data }) {
         },
       },
     });
-  }, []);
+  }, [yaxis,xaxis]);
 
   return (
     <div>

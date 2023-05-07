@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import BarChart from "./Barchat";
 import PieChart from "./pieChart";
@@ -84,16 +84,16 @@ export default function ChartSelection({ heading, details }) {
     switch (chartType) {
       case "BarChart":
         return (
-          <BarChart heading={"Hi"} yaxis={yaxis} xaxis={xaxis} data={details} />
+          <BarChart heading={"My Bar Chart"} yaxis={yaxis} xaxis={xaxis} data={details} />
         );
       case "PieChart":
         return (
-          <PieChart heading={"Hi"} yaxis={yaxis} xaxis={xaxis} data={details} />
+          <PieChart heading={"My Pie Chart"} yaxis={yaxis} xaxis={xaxis} data={details} />
         );
       case "LineChart":
         return (
           <LineChart
-            heading={"Hi"}
+            heading={"My Line Chart"}
             yaxis={yaxis}
             xaxis={xaxis}
             data={details}

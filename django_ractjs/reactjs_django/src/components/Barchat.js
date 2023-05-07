@@ -7,9 +7,10 @@ import {
   Tooltip,
   Legend,
 } from "chart.js/auto";
-import { Bar } from "react-chartjs-2";
 import ChartDataLabels from "chartjs-plugin-datalabels";
-import { transformData } from "./Visualize";
+import { useEffect } from "react";
+import { Chart } from "chart.js";
+import randomcolor from "randomcolor";
 
 ChartJS.register(
   ChartDataLabels,
@@ -21,32 +22,49 @@ ChartJS.register(
   Legend
 );
 
-
 export default function BarChart({ heading, yaxis, xaxis, data }) {
 
-  const filteredColumns = yaxis.concat(xaxis)
+  const filteredColumns = yaxis.concat(xaxis);
 
-  const chartData = {
-    labels: data.map((item) => item[yaxis[0]]),
-    datasets: filteredColumns.map((column) => ({
-      label: column,
-      data: data.map((item) => item[column]),
-      backgroundColor: "rgba(255, 99, 132, 0.6)",
-    })),
-  };
+  const colors = randomcolor({ count: data.length });
 
-  const chartOptions = {
-    responsive: true,
-    scales: {
-      xAxes: [{ stacked: true }],
-      yAxes: [{ stacked: true }],
-    },
-  };
+  useEffect(() => {
+    const barChartCanvas = document
+      .getElementById("bar-chart")
+      .getContext("2d");
+
+    new Chart(barChartCanvas, {
+      type: "bar",
+      data: {
+        labels: data.map((item) => item[yaxis[0]]),
+        datasets: filteredColumns.map((column) => ({
+          label: column,
+          data: data.map((item) => item[column]),
+          backgroundColor: colors,
+        })),
+      },
+      options: {
+        scales: {
+          yAxes: [
+            {
+              ticks: {
+                beginAtZero: true,
+              },
+            },
+          ],
+        },
+        canvas: {
+          height: 400,
+          width: 400,
+        },
+      },
+    });
+  }, [yaxis,xaxis]);
 
   return (
     <div className="w-50">
       <div>
-        <Bar data={chartData} options={chartOptions} />
+        <canvas id="bar-chart"></canvas>
       </div>
     </div>
   );
