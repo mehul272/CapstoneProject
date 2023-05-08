@@ -141,7 +141,6 @@ export function Transformation({
             },
           })
           .then((res) => {
-            console.log("Load: ", res.data.status);
 
             if (res.data.status === false) {
               toast.error(res.data.data);

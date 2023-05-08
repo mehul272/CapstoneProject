@@ -273,8 +273,6 @@ def get_file_data(request, title, no_of_rows):
 
     df = read_file(file_path)
 
-    print("Hello")
-
     string_array_str = request.GET.get('stringArray')
 
     string_array = json.loads(string_array_str)
@@ -292,14 +290,11 @@ def get_file_data(request, title, no_of_rows):
 @api_view(['GET'])
 def upload_files_data(request, title):
 
-    print("Hello")
     files = Files.objects.get(id=title)
 
     file_path = files.pdf.path
 
     final = read_file(file_path)
-
-    print("Hi: ", final)
 
     if not file_path.split('.')[-1] == 'xlsx':
 
@@ -332,8 +327,6 @@ def filter_files_data(request, title):
     no_of_rows = request.GET.get('numRows')
 
     filtered_df = get_file_data(request, title, no_of_rows)
-
-    print("File Data", filtered_df)
 
     filtered_data = filtered_df.to_dict(orient='records')
 
@@ -385,10 +378,6 @@ def start_loading(request):
     tableName = re.sub("[^0-9a-zA-Z]+", "_", tableName)
 
     columns, dataTypes, tableCols = get_column_name(df)
-
-    print("dataTypes", dataTypes)
-    print("tableCols", tableCols)
-    print("columns", columns)
 
     df_data = df[columns]
     records = df_data.values.tolist()
@@ -473,8 +462,6 @@ def register_user(request):
 
     data = cursor.fetchall()
 
-    print(data)
-
     usernames = []
     emails = []
     for d in data:
@@ -519,13 +506,11 @@ def login_user(request):
     returnObj = {'status': False, 'data': "Not matched"}
         
     user = authenticate(request = request, username = username, password = password)
-    print(user)
     if user is not None:
         login(request, user)
         returnObj["data"] = "Login Successfull"
         returnObj["status"] = True
         
-    print(returnObj)
     return HttpResponse(json.dumps(returnObj), content_type="application/json")
 
 

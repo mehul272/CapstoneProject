@@ -6,8 +6,6 @@ import randomcolor from "randomcolor";
 
 function PieChart({ heading, yaxis, xaxis, data }) {
 
-  console.log(xaxis)
-
   const filteredColumns = yaxis.concat(xaxis[0]);
 
   const colors = randomcolor({ count: data.length });

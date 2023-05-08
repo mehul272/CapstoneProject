@@ -58,8 +58,6 @@ export default function ChartSelection({ heading, details }) {
     return filteredValues.map((item) => item[label]);
   });
 
-  console.log("Data: ", data);
-
   const handleCheckForXaxis = (event, option) => {
     const isChecked = event.target.checked;
     const updatedFilters = [...xaxis];

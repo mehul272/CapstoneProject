@@ -44,7 +44,6 @@ function Login() {
   const [loginData, setLoginData] = useState(EmptyLoginData());
   const [registerData, setRegisterData] = useState(EmptyRegisterData());
 
-  console.log("LoginData: ", loginData);
 
   const handleJustifyClick = (value) => {
     if (value === justifyActive) {
@@ -83,7 +82,6 @@ function Login() {
         } else {
           toast.error(res.data.data);
         }
-        console.log(res);
       })
       .catch((err) => {
         console.log(err);
