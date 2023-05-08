@@ -152,7 +152,7 @@ export function Extraction({
             ))}
             <div>
               <Select
-                name="invoicePerPage"
+                name="optionperpage"
                 defaultValue={PER_PAGE_PAGINATION_OPTIONS[1]}
                 onChange={(e) => handleRowSelect(e)}
                 options={PER_PAGE_PAGINATION_OPTIONS}
