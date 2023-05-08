@@ -8,7 +8,7 @@ from django.core.files.storage import default_storage
 import json
 import csv
 import pandas as pd
-
+from django.db import models
 import numpy as np
 from django.views.decorators.csrf import csrf_exempt
 import pypyodbc as odbc
@@ -16,10 +16,35 @@ from django.shortcuts import render, HttpResponse
 import re
 import math
 from sklearn.preprocessing import LabelEncoder
+import openpyxl
+from django.contrib.auth import authenticate, login
+from django.shortcuts import render, redirect
+from django.contrib.auth import get_user_model
+from django.contrib.auth import logout  
 
 DRIVER = "SQL Server"
 SERVER_NAME = "UTKRIST-AG\SQLEXPRESS"
 DATABASE_NAME = "database1"
+
+
+def read_file(file_path):
+    # get the file extension
+    file_ext = file_path.split('.')[-1]
+
+    if file_ext == 'csv':
+        # read the CSV file into a pandas DataFrame
+        df = pd.read_csv(file_path)
+    elif file_ext == 'xlsx':
+        # read the Excel file into a pandas DataFrame
+        workbook = openpyxl.load_workbook(file_path)
+        sheet = workbook.active
+        data = sheet.values
+        headers = next(data)
+        df = pd.DataFrame(data, columns=headers)
+    else:
+        raise ValueError('Unsupported file format')
+
+    return df
 
 
 def connection_string(driver, server_name, db_name):
@@ -143,9 +168,10 @@ def getTables(request):
 
     return HttpResponse(json.dumps(returnObj), content_type="application/json")
 
+
 @api_view(['GET'])
 def getTableData(request, tableName):
-        
+
     jsonDataArray = []
     columns = []
     returnObj = {}
@@ -245,24 +271,18 @@ def get_file_data(request, title, no_of_rows):
 
     file_path = files.pdf.path
 
+    df = read_file(file_path)
+
     string_array_str = request.GET.get('stringArray')
 
     string_array = json.loads(string_array_str)
 
     data = []
 
-    with open(file_path, newline='') as csvfile:
-
-        reader = csv.DictReader(csvfile)
-        for row in reader:
-            data.append(row)
-
-        df = pd.DataFrame(data)
-
-        if no_of_rows != "All":
-            filtered_df = df[string_array].head(int(no_of_rows))
-        else:
-            filtered_df = df[string_array]
+    if no_of_rows != "All":
+        filtered_df = df[string_array].head(int(no_of_rows))
+    else:
+        filtered_df = df[string_array]
 
     return filtered_df
 
@@ -274,14 +294,25 @@ def upload_files_data(request, title):
 
     file_path = files.pdf.path
 
-    with default_storage.open(file_path, 'r') as f:
-        contents = f.read()
+    final = read_file(file_path)
 
-        lines = contents.split('\n')
-        header_row = lines[0]
-        column_names = header_row.split(',')
+    if not file_path.split('.')[-1] == 'xlsx':
 
-        return JsonResponse({"success": column_names})
+        with default_storage.open(file_path, 'r') as f:
+            contents = f.read()
+
+            lines = contents.split('\n')
+            header_row = lines[0]
+            column_names = header_row.split(',')
+
+            return JsonResponse({"success": column_names})
+    else:
+        with default_storage.open(file_path, 'rb') as f:
+            workbook = openpyxl.load_workbook(f)
+
+            worksheet = workbook.active
+            header_row = [cell.value for cell in worksheet[1]]
+            return JsonResponse({"success": header_row})
 
 
 @api_view(['GET'])
@@ -299,6 +330,11 @@ def filter_files_data(request, title):
 
     filtered_data = filtered_df.to_dict(orient='records')
 
+    for d in filtered_data:
+        for key, value in d.items():
+            if isinstance(value, float) and math.isnan(value):
+                d[key] = None
+
     return JsonResponse({'result': filtered_data})
 
 
@@ -311,7 +347,7 @@ def start_transformation(request, title):
     no_of_rows = request.GET.get('numRows')
 
     filtered_df = get_file_data(request, title, no_of_rows)
-
+    
     # Tranformation Steps:
 
     if not len(transformationOptions) == 0:
@@ -406,3 +442,78 @@ def start_loading(request):
             cursor.close()
 
     return HttpResponse(json.dumps(returnObj), content_type="application/json")
+
+
+def register_user(request):
+
+    
+    username = request.GET.get('username')
+    email = request.GET.get('email')
+    password = request.GET.get('password')
+    cpassword = request.GET.get('cpassword')
+
+    result = ""
+    returnObj = {}
+
+    cursor = conn.cursor()
+
+    sql_data = f'''SELECT username,email FROM RegisterTable'''
+    cursor.execute(sql_data)
+
+    data = cursor.fetchall()
+
+    usernames = []
+    emails = []
+    for d in data:
+        i = 0
+        for item in d:
+            if i == 0:
+                usernames.append(item)
+            else:
+                emails.append(item)
+            i += 1
+
+    if username in usernames:
+        returnObj['data'] = "Username Already Exists"
+        returnObj['status'] = False
+    elif email in emails:
+        returnObj['data'] = "Email Already Exists"
+        returnObj['status'] = False
+    elif password != cpassword:
+        returnObj['data'] = "Password not matched"
+        returnObj['status'] = False
+    else:
+        sql_insert = f'''INSERT INTO RegisterTable VALUES('{username}','{email}','{password}','{cpassword}');'''
+        cursor.execute(sql_insert)
+        cursor.commit()
+        
+        User = get_user_model()
+        User.objects.create(username = username, email = email, password = password)
+        
+        returnObj['data'] = "Registered successfully"
+        returnObj['status'] = True
+
+    return HttpResponse(json.dumps(returnObj), content_type="application/json")
+
+
+def login_user(request):
+
+
+    username = request.GET.get('email')
+    password = request.GET.get('password')
+    
+
+    returnObj = {'status': False, 'data': "Not matched"}
+        
+    user = authenticate(request = request, username = username, password = password)
+    if user is not None:
+        login(request, user)
+        returnObj["data"] = "Login Successfull"
+        returnObj["status"] = True
+        
+    return HttpResponse(json.dumps(returnObj), content_type="application/json")
+
+
+def logout_user(request):
+    logout(request)
+    return HttpResponse({"data": "Logged Out"}, content_type="application/json")

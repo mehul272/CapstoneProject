@@ -93,7 +93,6 @@ export function Extraction({
         updateData(res.data.result);
         setStartTransform(true);
         toast.success("Successfully Extracted")
-
       });
   };
 
@@ -174,7 +173,7 @@ export function Extraction({
                     Rows Count
                   </label>
               <Select
-                name="invoicePerPage"
+                name="optionperpage"
                 defaultValue={PER_PAGE_PAGINATION_OPTIONS[1]}
                 onChange={(e) => handleRowSelect(e)}
                 options={PER_PAGE_PAGINATION_OPTIONS}

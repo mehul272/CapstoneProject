@@ -12,6 +12,7 @@ import Login from "./components/Login";
 import Documentation from "./components/DocPDF";
 import Load from "./components/Load";
 import Visualize from "./components/Visualize";
+import EndComponent from "./components/end";
 
 function Router() {
   const [columnNames, setColumnNames] = useState([]);
@@ -71,6 +72,7 @@ function Router() {
           path="/visualize"
           element={<Visualize tableData={tableData} />}
         />
+        <Route excat path="/end" element={<EndComponent />} />
       </Routes>
     </BrowserRouter>
   );

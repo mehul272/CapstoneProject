@@ -6,10 +6,11 @@ import {
   Title,
   Tooltip,
   Legend,
-} from "chart.js";
-import { Bar } from "react-chartjs-2";
+} from "chart.js/auto";
 import ChartDataLabels from "chartjs-plugin-datalabels";
-import { transformData } from "./Visualize";
+import { useEffect } from "react";
+import { Chart } from "chart.js";
+import randomcolor from "randomcolor";
 
 ChartJS.register(
   ChartDataLabels,
@@ -21,65 +22,49 @@ ChartJS.register(
   Legend
 );
 
-// export default function BarChart({ heading, details }) {
-//   console.log("Before: ", details);
-//   const transformedData = transformData(details);
+export default function BarChart({ heading, yaxis, xaxis, data }) {
 
-//   console.log("finalD: ", transformedData);
+  const filteredColumns = yaxis.concat(xaxis);
 
-//   const chartData = {
-//     labels: details.map((item) => item.col11),
-//     datasets: [
-//       {
-//         label: "Values",
-//         data: details.map((item) => item.col22),
-//         backgroundColor: "rgba(255, 99, 132, 0.6)",
-//       },
-//     ],
-//   };
+  const colors = randomcolor({ count: data.length });
 
-//   return (
-//     <div className="w-50">
-//       <Bar
-//         data={chartData}
-//         options={{
-//           scales: {
-//             yAxes: [{ ticks: { beginAtZero: true } }],
-//           },
-//         }}
-//       />
-//     </div>
-//   );
-// }
+  useEffect(() => {
+    const barChartCanvas = document
+      .getElementById("bar-chart")
+      .getContext("2d");
 
-export default function BarChart({ heading, details }) {
-  const columns = Object.keys(details[0]);
-
-
-  const filteredColumns = columns.filter((column) => column !== "id");
-  details.map((item) => console.log(item));
-
-  const chartData = {
-    labels: details.map((item) => item[filteredColumns[0]]),
-    datasets: filteredColumns.map((column) => ({
-      label: column,
-      data: details.map((item) => item[column]),
-      backgroundColor: "rgba(255, 99, 132, 0.6)",
-    })),
-  };
-
-  const chartOptions = {
-    responsive: true,
-    scales: {
-      xAxes: [{ stacked: true }],
-      yAxes: [{ stacked: true }],
-    },
-  };
+    new Chart(barChartCanvas, {
+      type: "bar",
+      data: {
+        labels: data.map((item) => item[yaxis[0]]),
+        datasets: filteredColumns.map((column) => ({
+          label: column,
+          data: data.map((item) => item[column]),
+          backgroundColor: colors,
+        })),
+      },
+      options: {
+        scales: {
+          yAxes: [
+            {
+              ticks: {
+                beginAtZero: true,
+              },
+            },
+          ],
+        },
+        canvas: {
+          height: 800,
+          width: 800,
+        },
+      },
+    });
+  }, [yaxis,xaxis]);
 
   return (
     <div className="w-50">
       <div>
-        <Bar data={chartData} options={chartOptions} />
+        <canvas id="bar-chart"></canvas>
       </div>
     </div>
   );
