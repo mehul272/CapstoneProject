@@ -103,8 +103,19 @@
     }
   }
 
+  input[type="checkbox"]:checked + label {
+    color: #000; /* change the text color */
+    font-weight: bold; /* make the text bold */
+    background-color: #ddd; /* change the background color */
+    border-radius: 3px; /* add rounded corners */
+    padding: 3px 8px; /* add some padding */
+  }
   
-
+  .custom-font .col-name {
+    font-family: Tahoma;
+    font-weight: bold;
+    font-size: 14px;
+  }
   
 
   

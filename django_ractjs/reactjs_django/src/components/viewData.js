@@ -3,13 +3,19 @@ import { CSVLink } from "react-csv";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "../resources/css/viewData.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faFileCsv,
+  faFileExcel,
+  faFileCode,
+} from "@fortawesome/free-solid-svg-icons";
+
 
 const xlsx = require("xlsx");
 
 const headersToKeyValue = (item) => ({ label: item, key: item });
 
 export function ViewData({ data, numRows, columnNamesArray, fileName }) {
-
   const columnNames = new Set(data.flatMap((obj) => Object.keys(obj)));
 
   const tableData = numRows === "All" ? data.slice(0, 41) : data;
@@ -21,7 +27,7 @@ export function ViewData({ data, numRows, columnNamesArray, fileName }) {
     xlsx.utils.book_append_sheet(workBook, workSheet);
     xlsx.writeFile(workBook, `${fileName}.xlsx`);
 
-    toast.success("Successfully Downloaded")
+    toast.success("Successfully Downloaded");
   };
 
   const handleExportToJSON = async () => {
@@ -40,8 +46,7 @@ export function ViewData({ data, numRows, columnNamesArray, fileName }) {
     document.body.removeChild(link);
     URL.revokeObjectURL(downloadLink);
 
-    toast.success("Successfully Downloaded")
-
+    toast.success("Successfully Downloaded");
   };
 
   const headers = columnNamesArray.map(headersToKeyValue);
@@ -54,7 +59,7 @@ export function ViewData({ data, numRows, columnNamesArray, fileName }) {
 
   return (
     <div className="parent-container">
-      <table className="table table-bordered mt-4" >
+      <table className="table table-bordered mt-4 roundedCorners">
         <thead>
           <tr>
             {Array.from(columnNames).map((column) => (
@@ -72,22 +77,24 @@ export function ViewData({ data, numRows, columnNamesArray, fileName }) {
           ))}
         </tbody>
       </table>
-      <div>
-        <CSVLink {...csvLink}>Export to CSV</CSVLink>
 
-        <Button
-          variant="primary"
-          onClick={handleExportToExcel}
-        >
-          Export to Excel
-        </Button>
-        <Button
-          variant="primary"
-          onClick={handleExportToJSON}
-        >
-          Export to JSON
-        </Button>
+      <div className="download-options">
+     
+        <div className="icon-wrapper">
+          <CSVLink className="csv-extract" {...csvLink}>
+            <FontAwesomeIcon icon={faFileCsv} size="1x" />
+          </CSVLink>
+        </div>
+
+        <div onClick={handleExportToExcel} className="icon-wrapper">
+          <FontAwesomeIcon icon={faFileExcel} size="1x" />
+        </div>
+
+        <div onClick={handleExportToJSON} className="icon-wrapper">
+          <FontAwesomeIcon icon={faFileCode} size="1x" />
+        </div>
       </div>
+
       <ToastContainer />
     </div>
   );

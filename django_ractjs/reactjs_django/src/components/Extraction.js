@@ -141,13 +141,13 @@ export function Extraction({
             <input
               type="checkbox"
               onChange={handleSelectAll}
-              class="select-all "
-              id="myCheckbox"
+              className="select-all checkbox-pull"
+              id="check3"
             />
-            <label>Select All</label>
+            <label for="check3"><span></span>Select All</label>
             </div>
-            
-            <div className="checkbox-wrapper">
+
+            <div className="checkbox-wrapper custom-font">
             {columnNames.map((option, index) => (
            
               <div key={index} className="all-columns-checkbox checkbox-wrapper-47">
@@ -162,6 +162,9 @@ export function Extraction({
               
             ))}
             </div>
+
+           
+
             <div className="custom-filed">
             <label
                     htmlFor="exampleFormControlFile1"
@@ -206,11 +209,11 @@ export function Extraction({
 
             {startTransform && (
               <div>
-                {numRows === "All" ? (
-                  <h3>First 40 Data to Display</h3>
+                {/* {numRows === "All" ? (
+                  <h4>First 40 Data to Display</h4>
                 ) : (
-                  <h3>Display {numRows} rows of the File</h3>
-                )}
+                  <h4>Display {numRows} rows of the File</h4>
+                )} */}
 
                 <ViewData
                   data={data}
