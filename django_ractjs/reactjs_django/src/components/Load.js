@@ -7,6 +7,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { isStringValue } from "./chartSelection";
+import ErrorModal from "./ErrorModal";
 
 const useStyles = makeStyles((theme) => ({
   backdrop: {
@@ -24,9 +26,11 @@ const Load = ({ loadComplete, updateTableData }) => {
 
   const [tables, setTables] = useState([]);
 
+  const [tableData, setTableData] = useState([]);
+
   const [selectedTable, setSelectedTable] = useState("");
 
-  console.log("hi", loadComplete);
+  const [showModal, setShowModal] = useState(false);
 
   const handleLoadTables = async () => {
     await axios
@@ -45,18 +49,39 @@ const Load = ({ loadComplete, updateTableData }) => {
   };
 
   const handleVisualizeTables = async () => {
-    await axios
-      .get(api + `/visualize-tables/${selectedTable}/`)
-      .catch((err) => {
-        console.log(err);
-      })
-      .catch((err) => {
-        toast.error(err);
-      })
-      .then((res) => {
-        updateTableData(res.data.data);
-        navigate("/visualize");
-      });
+    try {
+      const res = await axios.get(api + `/visualize-tables/${selectedTable}/`);
+      updateTableData(res.data.data);
+      setTableData(res.data.data);
+
+      const columns = Object.keys(res.data.data[0]);
+      const filteredColumns = columns.filter((column) => column !== "id");
+
+      const stringValueCols = filteredColumns.filter((col) =>
+        isStringValue(res.data.data, col)
+      );
+      const numericValueCols = filteredColumns.filter(
+        (col) => !isStringValue(res.data.data, col)
+      );
+
+      if (stringValueCols.length === 0 || numericValueCols.length === 0) {
+        setShowModal(true);
+      } else {
+        await navigate("/visualize");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message);
+    }
+  };
+
+    const handleCloseModal = (confirmed) => {
+    setShowModal(false);
+    if (confirmed) {
+      navigate('/load')
+    } else {
+      navigate('/end');
+    }
   };
 
   return (
@@ -83,6 +108,12 @@ const Load = ({ loadComplete, updateTableData }) => {
           </div>
 
           <Button onClick={handleVisualizeTables}>Visualize Tables</Button>
+
+          <ErrorModal
+            open={showModal}
+            errorMessage="Please select at least one column for string values and one column for numeric values."
+            onClose={handleCloseModal}
+          />
         </>
       ) : (
         <Backdrop className={classes.backdrop} open>

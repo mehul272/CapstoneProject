@@ -1,5 +1,9 @@
 {
   "devDependencies": {
     "react-router-dom": "^6.10.0"
+  },
+  "dependencies": {
+    "chart.js": "^4.3.0",
+    "chartjs-plugin-datalabels": "^2.2.0"
   }
 }

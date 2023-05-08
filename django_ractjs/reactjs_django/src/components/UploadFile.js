@@ -3,9 +3,8 @@ import axios from "axios";
 import { Extraction } from "./Extraction";
 import "../resources/css/UploadFile.css";
 import HeaderPart from "./Header";
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function UploadFile({
   updateColumnNames,
@@ -43,9 +42,9 @@ function UploadFile({
       .then((response) => {
         toast.success("File Uploaded Successfully");
       })
-      .then((res)=>{
+      .then((res) => {
         window.location.reload();
-      })
+      });
   };
 
   const getFiles = () => {
@@ -76,11 +75,10 @@ function UploadFile({
     })
       .then((response) => {
         forceDownload(response, title);
-        toast.success("Successfully Downloaded")
+        toast.success("Successfully Downloaded");
       })
       .catch((error) => {
-        toast.error(error)
-
+        toast.error(error);
       });
   };
 
@@ -98,7 +96,7 @@ function UploadFile({
         setFileData({ title: title, url: url });
       })
       .catch((error) => {
-        toast.error(error)
+        toast.error(error);
       });
     await updateTitle(title);
   };
@@ -136,12 +134,17 @@ function UploadFile({
                   // accept=".csv"
                   onChange={(e) => {
                     const file = e.target.files[0];
-                    if (file && file.type === "text/csv") {
+                    if (
+                      file &&
+                      (file.type === "text/csv" ||
+                        file.type ===
+                          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                    ) {
                       setFilename(file);
                       setFileStatus(true);
                     } else {
                       setFileStatus(false);
-                      toast.error("Please upload a CSV file");
+                      toast.error("Please upload a CSV or Excel file");
                     }
                   }}
                   className="form-control"
@@ -204,7 +207,6 @@ function UploadFile({
                     <tr>
                       <td>{file.pdf}</td>
                       <td>
-
                         <button
                           onClick={() => downloadWithAxios(file.pdf, file.id)}
                           className="btn btn-success"

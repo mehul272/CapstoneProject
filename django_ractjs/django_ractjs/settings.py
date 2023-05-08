@@ -129,3 +129,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 CORS_ORIGIN_ALLOW_ALL = True
+
+AUTHENTICATION_BACKENDS = [
+    'core.custom_auth.MSSQLAuthBackend',
+    'django.contrib.auth.backends.ModelBackend'
+]
