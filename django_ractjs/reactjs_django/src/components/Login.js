@@ -18,7 +18,6 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 
-
 const EmptyLoginData = () => {
   cloneDeep({
     email: "",
@@ -80,6 +79,7 @@ function Login() {
       .then((res) => {
         if (res.data.status) {
           toast.success(res.data.data);
+          navigate("/extract");
         } else {
           toast.error(res.data.data);
         }
@@ -101,7 +101,7 @@ function Login() {
       .then((res) => {
         if (res.data.status) {
           toast.success(res.data.data);
-          navigate('/extract')
+          navigate("/extract");
         } else {
           toast.error(res.data.data);
         }

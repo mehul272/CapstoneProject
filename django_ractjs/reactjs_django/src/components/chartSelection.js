@@ -5,9 +5,8 @@ import PieChart from "./pieChart";
 import { Button } from "react-bootstrap";
 import LineChart from "./LineChart";
 import RadarChart from "./radarChart";
-import PolarAreaChart from "./polarAreaChart";
 
-function isStringValue(arr, key) {
+export function isStringValue(arr, key) {
   for (const obj of arr) {
     const value = obj[key];
     if (typeof value !== "string") {
@@ -17,13 +16,6 @@ function isStringValue(arr, key) {
   return true;
 }
 
-function conversion(labels, values) {
-  const data = labels.map((label) => {
-    return values.map((item) => item[label]);
-  });
-
-  return data;
-}
 
 const VISUALIZATION_TYPES = [
   "BarChart",
