@@ -354,7 +354,7 @@ def start_transformation(request, title):
     no_of_rows = request.GET.get('numRows')
 
     filtered_df = get_file_data(request, title, no_of_rows)
-
+    
     # Tranformation Steps:
 
     if not len(transformationOptions) == 0:
