@@ -101,7 +101,7 @@ def get_all_tables():
     tableName = []
     cursor = conn.cursor()
 
-    cursor.execute("SELECT table_name FROM information_schema.tables")
+    cursor.execute("SELECT table_name FROM information_schema.tables WHERE table_name != 'RegisterTable'")
     for table_name in cursor:
         temp = str(table_name)
         temp = temp[2: len(temp) - 3]
@@ -387,6 +387,7 @@ def start_loading(request):
     # * Cheching if table already exists *
 
     tables = get_all_tables()
+    tables.insert("RegisterTable")
 
     if tableName in tables:
         result = "Table already Exists"
