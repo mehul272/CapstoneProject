@@ -20,7 +20,7 @@ import openpyxl
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model
-from django.contrib.auth import logout  
+from django.contrib.auth import logout
 
 DRIVER = "SQL Server"
 SERVER_NAME = "LAPTOP-H3TEL2C9\SQLEXPRESS"
@@ -225,6 +225,7 @@ def transform_dataframe(df, transformationOptions, sortColumn):
             # Remove duplicate rows
             df = df.drop_duplicates()
         elif num == "2":
+
             # Replace missing values with the mean of each column
             for col in df.columns:
                 if df[col].dtype == 'int64' or df[col].dtype == 'float64':
@@ -276,13 +277,20 @@ def get_file_data(request, title, no_of_rows):
     string_array_str = request.GET.get('stringArray')
 
     string_array = json.loads(string_array_str)
+    
+    new_list = []
+
+    for item in string_array:
+        if item not in new_list:
+            new_list.append(item)
 
     data = []
 
     if no_of_rows != "All":
-        filtered_df = df[string_array].head(int(no_of_rows))
+        filtered_df = df[new_list].head(int(no_of_rows))
     else:
-        filtered_df = df[string_array]
+        filtered_df = df[new_list]
+        
 
     return filtered_df
 
@@ -348,6 +356,9 @@ def start_transformation(request, title):
 
     filtered_df = get_file_data(request, title, no_of_rows)
     
+    filtered_df = filtered_df.drop_duplicates()
+
+
     # Tranformation Steps:
 
     if not len(transformationOptions) == 0:
@@ -446,7 +457,6 @@ def start_loading(request):
 
 def register_user(request):
 
-    
     username = request.GET.get('username')
     email = request.GET.get('email')
     password = request.GET.get('password')
@@ -486,10 +496,10 @@ def register_user(request):
         sql_insert = f'''INSERT INTO RegisterTable VALUES('{username}','{email}','{password}','{cpassword}');'''
         cursor.execute(sql_insert)
         cursor.commit()
-        
+
         User = get_user_model()
-        User.objects.create(username = username, email = email, password = password)
-        
+        User.objects.create(username=username, email=email, password=password)
+
         returnObj['data'] = "Registered successfully"
         returnObj['status'] = True
 
@@ -498,19 +508,17 @@ def register_user(request):
 
 def login_user(request):
 
-
     username = request.GET.get('email')
     password = request.GET.get('password')
-    
 
     returnObj = {'status': False, 'data': "Not matched"}
-        
-    user = authenticate(request = request, username = username, password = password)
+
+    user = authenticate(request=request, username=username, password=password)
     if user is not None:
         login(request, user)
         returnObj["data"] = "Login Successfull"
         returnObj["status"] = True
-        
+
     return HttpResponse(json.dumps(returnObj), content_type="application/json")
 
 

@@ -178,7 +178,7 @@ export function Transformation({
         <Modal.Body>
           <input type="checkbox" onChange={handleSelectAll} />
           <label>Select All</label>
-          {columnNames.map((option, index) => (
+          {removeDuplicates(columnNames).map((option, index) => (
             <div key={index}>
               <input
                 type="checkbox"
