@@ -4,12 +4,39 @@ import { useState } from "react";
 import { Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { stringToOptions } from "./Extraction";
-import Select from "react-select";
+import ReactSelect from "react-select";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import HeaderPart from "./Header";
 import "../resources/css/Transformation.css";
 import * as React from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import {
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Checkbox,
+  ListItemText,
+} from "@material-ui/core";
+
+const useStyles = makeStyles((theme) => ({
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+    maxWidth: 300,
+  },
+  chips: {
+    display: "flex",
+    flexWrap: "wrap",
+  },
+  chip: {
+    margin: 2,
+  },
+  noLabel: {
+    marginTop: theme.spacing(3),
+  },
+}));
 
 const TRANSFORMATION_OPTION = [
   "1. Remove duplicate rows",
@@ -47,6 +74,8 @@ export function Transformation({
   const [transformedData, setTransformedData] = useState([]);
 
   const [transformationOptions, setTransformationOptions] = useState([]);
+
+  const classes = useStyles();
 
   const [sort, setSort] = useState(false);
 
@@ -107,6 +136,8 @@ export function Transformation({
   };
 
   const handleFilteredTransformationOptions = (event, option) => {
+    console.log("Hi", option);
+
     const isChecked = event.target.checked;
     const isIncluded = transformationOptions.includes(option);
 
@@ -151,6 +182,23 @@ export function Transformation({
     }
   };
 
+  const handleSelectChange = (event) => {
+    const { value } = event.target;
+
+    console.log("Hello M: ", value);
+
+    value.forEach((item) => {
+      if (item[0] === "8") {
+        setSort(true);
+      } else {
+        setSort(false);
+      }
+    });
+
+    setTransformationOptions(value);
+    console.log(transformationOptions);
+  };
+
   return (
     <>
       <HeaderPart
@@ -183,11 +231,33 @@ export function Transformation({
           </div>
         ))}
 
+        <div>
+          <FormControl className={classes.formControl}>
+            <Select
+              labelId="demo-multiple-checkbox-label"
+              id="demo-multiple-checkbox"
+              multiple
+              value={transformationOptions}
+              onChange={handleSelectChange}
+              renderValue={(selected) => selected.join(", ")}
+            >
+              {TRANSFORMATION_OPTION.map((option) => (
+                <MenuItem key={option} value={option}>
+                  <Checkbox
+                    checked={transformationOptions.indexOf(option) > -1}
+                  />
+                  <ListItemText primary={option} />
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </div>
+
         {sort ? (
           <div>
             <h3>Choose ColumnName</h3>
-            <Select
-              name="invoicePerPage"
+            <ReactSelect
+              name="optionPerPage"
               onChange={(e) => setSortColumn(e.value)}
               options={COLUMN_NAMES}
               className="lg-my-0 w-1 h-25"
