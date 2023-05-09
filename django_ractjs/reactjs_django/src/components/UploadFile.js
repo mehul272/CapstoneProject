@@ -117,7 +117,7 @@ function UploadFile({
 
   return (
     <div>
-      <HeaderPart />
+      <HeaderPart phaseNumber={1} phaseName={"Extract"} imgSource={"https://static.thenounproject.com/png/3147308-200.png"}/>
 
       <div className="container-fluid ">
         <div className="row bg-pan-right">

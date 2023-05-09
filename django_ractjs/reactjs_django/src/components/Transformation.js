@@ -1,12 +1,15 @@
 import { ViewData } from "./viewData";
 import axios from "axios";
 import { useState } from "react";
-import { Button, Modal } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { stringToOptions } from "./Extraction";
 import Select from "react-select";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import HeaderPart from "./Header";
+import "../resources/css/Transformation.css";
+import * as React from "react";
 
 const TRANSFORMATION_OPTION = [
   "1. Remove duplicate rows",
@@ -39,8 +42,6 @@ export function Transformation({
 
   let navigate = useNavigate();
 
-  const [showModal, setShowModal] = useState(false);
-
   const [column, setColumn] = useState([]);
 
   const [transformedData, setTransformedData] = useState([]);
@@ -51,11 +52,6 @@ export function Transformation({
 
   const [sortColumn, setSortColumn] = useState("");
   const [startLoading, setStartLoading] = useState(false);
-
-  const handleClose = () => {
-    setShowModal(false);
-    startLoading(false);
-  };
 
   const handleTranformation = async () => {
     const result = await axios
@@ -69,7 +65,7 @@ export function Transformation({
       })
       .catch((err) => {
         toast.error(err);
-      })
+      });
 
     if (result) {
       try {
@@ -141,13 +137,11 @@ export function Transformation({
             },
           })
           .then((res) => {
-
             if (res.data.status === false) {
               toast.error(res.data.data);
             } else {
               toast.success(res.data.data);
               updateLoadComplete(res.data.status);
-              setShowModal(false);
               navigate("/load");
             }
           });
@@ -159,86 +153,71 @@ export function Transformation({
 
   return (
     <>
-      <h1>Hi Do Transformation</h1>
+      <HeaderPart
+        phaseNumber={2}
+        phaseName={"Transform"}
+        imgSource="https://www.unite.ai/wp-content/uploads/2023/01/etl-1-990x600.png"
+      />
 
-      <h1>Till Now the Data is saved in the File {`${fileName}.csv`}</h1>
-
-      <Button onClick={() => setShowModal(true)}>Start Transformation</Button>
-
-      <Modal
-        show={showModal}
-        centered
-        size="xl"
-        data-toggle="modal"
-        data-keyboard="false"
-        data-backdrop="static"
-        onHide={handleClose}
-      >
-        <Modal.Header>Transformation</Modal.Header>
-        <Modal.Body>
-          <input type="checkbox" onChange={handleSelectAll} />
-          <label>Select All</label>
-          {columnNames.map((option, index) => (
-            <div key={index}>
-              <input
-                type="checkbox"
-                class="type2"
-                onChange={(e) => handleFilterColumnNames(e, option)}
-              />
-              {option}
-            </div>
-          ))}
-          <h2>Transformation Options</h2>
-          {TRANSFORMATION_OPTION.map((option, index) => (
-            <div key={index}>
-              <input
-                type="checkbox"
-                onChange={(e) => handleFilteredTransformationOptions(e, option)}
-              />
-              {option}
-            </div>
-          ))}
-          {sort ? (
-            <div>
-              <h3>Choose ColumnName</h3>
-              <Select
-                name="invoicePerPage"
-                onChange={(e) => setSortColumn(e.value)}
-                options={COLUMN_NAMES}
-                className="lg-my-0 w-1 h-25"
-              />
-            </div>
-          ) : null}
-          <Button
-            variant="primary"
-            onClick={handleTranformation}
-            disabled={column.length === 0}
-          >
-            Transformation
-          </Button>
-          {startLoading && (
-            <ViewData
-              data={transformedData}
-              numRows={numRows}
-              columnNamesArray={columnNames}
-              fileName={fileName}
+      <div class="transform-page">
+        <input type="checkbox" onChange={handleSelectAll} />
+        <label>Select All</label>
+        {columnNames.map((option, index) => (
+          <div key={index}>
+            <input
+              type="checkbox"
+              class="type2"
+              onChange={(e) => handleFilterColumnNames(e, option)}
             />
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="bordered" onClick={handleClose}>
-            Cancel
-          </Button>
-          <Button
-            variant="bordered"
-            onClick={handleDoLoading}
-            disabled={!startLoading}
-          >
-            Start the Loading
-          </Button>
-        </Modal.Footer>
-      </Modal>
-      <ToastContainer />
+            {option}
+          </div>
+        ))}
+        <h2>Transformation Options</h2>
+        {TRANSFORMATION_OPTION.map((option, index) => (
+          <div key={index}>
+            <input
+              type="checkbox"
+              onChange={(e) => handleFilteredTransformationOptions(e, option)}
+            />
+            {option}
+          </div>
+        ))}
+
+        {sort ? (
+          <div>
+            <h3>Choose ColumnName</h3>
+            <Select
+              name="invoicePerPage"
+              onChange={(e) => setSortColumn(e.value)}
+              options={COLUMN_NAMES}
+              className="lg-my-0 w-1 h-25"
+            />
+          </div>
+        ) : null}
+        <Button
+          variant="primary"
+          onClick={handleTranformation}
+          disabled={column.length === 0}
+        >
+          Transformation
+        </Button>
+        {startLoading && (
+          <ViewData
+            data={transformedData}
+            numRows={numRows}
+            columnNamesArray={columnNames}
+            fileName={fileName}
+          />
+        )}
+
+        <Button
+          variant="bordered"
+          onClick={handleDoLoading}
+          disabled={!startLoading}
+        >
+          Start the Loading
+        </Button>
+      </div>
     </>
   );
 }
