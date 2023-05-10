@@ -4,12 +4,39 @@ import { useState } from "react";
 import { Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { stringToOptions } from "./Extraction";
-import Select from "react-select";
+import ReactSelect from "react-select";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import HeaderPart from "./Header";
 import "../resources/css/Transformation.css";
 import * as React from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import {
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Checkbox,
+  ListItemText,
+} from "@material-ui/core";
+
+const useStyles = makeStyles((theme) => ({
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+    maxWidth: 300,
+  },
+  chips: {
+    display: "flex",
+    flexWrap: "wrap",
+  },
+  chip: {
+    margin: 2,
+  },
+  noLabel: {
+    marginTop: theme.spacing(3),
+  },
+}));
 
 const TRANSFORMATION_OPTION = [
   "1. Remove duplicate rows",
@@ -47,6 +74,8 @@ export function Transformation({
   const [transformedData, setTransformedData] = useState([]);
 
   const [transformationOptions, setTransformationOptions] = useState([]);
+
+  const classes = useStyles();
 
   const [sort, setSort] = useState(false);
 
@@ -151,6 +180,23 @@ export function Transformation({
     }
   };
 
+  const handleSelectChange = (event) => {
+    const { value } = event.target;
+
+    console.log("Hello M: ", value);
+
+    value.forEach((item) => {
+      if (item[0] === "8") {
+        setSort(true);
+      } else {
+        setSort(false);
+      }
+    });
+
+    setTransformationOptions(value);
+    console.log(transformationOptions);
+  };
+
   return (
     <>
       <HeaderPart
@@ -159,21 +205,30 @@ export function Transformation({
         imgSource="https://www.unite.ai/wp-content/uploads/2023/01/etl-1-990x600.png"
       />
 
-      <div class="transform-page">
-        <input type="checkbox" onChange={handleSelectAll} />
-        <label>Select All</label>
-        {columnNames.map((option, index) => (
-          <div key={index}>
-            <input
-              type="checkbox"
-              class="type2"
-              onChange={(e) => handleFilterColumnNames(e, option)}
-            />
-            {option}
-          </div>
-        ))}
-        <h2>Transformation Options</h2>
-        {TRANSFORMATION_OPTION.map((option, index) => (
+      <div className="transform-body">
+        <div className="transform-page select-all-checkbox">
+          <input type="checkbox" onChange={handleSelectAll} />
+          <label>Select All</label>
+        </div>
+
+        <div class="container">
+        <div className="options-checkbox">
+          {columnNames.map((option, index) => (
+            <div key={index}>
+              <input
+                type="checkbox"
+                className="type2 indi-checkbox"
+                onChange={(e) => handleFilterColumnNames(e, option)}
+              />
+              {option}
+            </div>
+          ))}
+        </div>
+        </div>
+
+        <div className="options-tranform-checkbox">
+          <h5>Transformation Options:  </h5>
+          {/* {TRANSFORMATION_OPTION.map((option, index) => (
           <div key={index}>
             <input
               type="checkbox"
@@ -181,42 +236,77 @@ export function Transformation({
             />
             {option}
           </div>
-        ))}
+        ))} */}
 
-        {sort ? (
           <div>
-            <h3>Choose ColumnName</h3>
-            <Select
-              name="invoicePerPage"
-              onChange={(e) => setSortColumn(e.value)}
-              options={COLUMN_NAMES}
-              className="lg-my-0 w-1 h-25"
-            />
+            <FormControl className={classes.formControl}>
+              <Select
+                labelId="demo-multiple-checkbox-label"
+                id="demo-multiple-checkbox"
+                multiple
+                value={transformationOptions}
+                onChange={handleSelectChange}
+                renderValue={(selected) => selected.join(", ")}
+              >
+                {TRANSFORMATION_OPTION.map((option) => (
+                  <MenuItem key={option} value={option}>
+                    <Checkbox
+                      checked={transformationOptions.indexOf(option) > -1}
+                    />
+                    <ListItemText primary={option} />
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </div>
-        ) : null}
-        <Button
-          variant="primary"
-          onClick={handleTranformation}
-          disabled={column.length === 0}
-        >
-          Transformation
-        </Button>
-        {startLoading && (
-          <ViewData
-            data={transformedData}
-            numRows={numRows}
-            columnNamesArray={columnNames}
-            fileName={fileName}
-          />
-        )}
+       
+        </div>
+        <div className="sort-dropdown">
+          {sort ? (
+            <div>
+              <h7>Choose ColumnName</h7>
+              <ReactSelect
+                name="optionPerPage"
+                onChange={(e) => setSortColumn(e.value)}
+                options={COLUMN_NAMES}
+                className="lg-my-0 w-1 h-25"
+              />
+            </div>
+          ) : null}
+          </div>
 
-        <Button
-          variant="bordered"
-          onClick={handleDoLoading}
-          disabled={!startLoading}
-        >
-          Start the Loading
-        </Button>
+        <div className="transform-button">
+          <Button
+            variant="primary"
+            onClick={handleTranformation}
+            disabled={column.length === 0}
+          >
+            Transformation
+          </Button>
+        </div>
+
+        <div className="view-tranform-data">
+          {startLoading && (
+            <ViewData
+              data={transformedData}
+              numRows={numRows}
+              columnNamesArray={columnNames}
+              fileName={fileName}
+            />
+          )}
+          </div>
+          
+        <div className="load-button">
+          <Button
+            variant="bordered"
+            onClick={handleDoLoading}
+            disabled={!startLoading}
+            className="button-86" 
+            role="button"
+          >
+            Start the Loading
+          </Button>
+        </div>
       </div>
     </>
   );
