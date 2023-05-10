@@ -136,6 +136,8 @@ export function Transformation({
   };
 
   const handleFilteredTransformationOptions = (event, option) => {
+    console.log("Hi", option);
+
     const isChecked = event.target.checked;
     const isIncluded = transformationOptions.includes(option);
 
@@ -308,6 +310,7 @@ export function Transformation({
           </Button>
         </div>
       </div>
+        
     </>
   );
 }
