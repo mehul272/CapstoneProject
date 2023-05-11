@@ -117,6 +117,7 @@ const Load = ({ loadComplete, updateTableData }) => {
             </Button>
           </div>
 
+        <div className="listing-table">
           {tables.length > 0 && (
             <div>
               <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
@@ -137,23 +138,9 @@ const Load = ({ loadComplete, updateTableData }) => {
               </FormControl>
             </div>
           )}
+          </div>
 
-          {/*           
-          <div>
-            {tables.map((table) => (
-              <div key={table}>
-                <input
-                  type="radio"
-                  name="table"
-                  value={table}
-                  checked={selectedTable === table}
-                  onChange={handleTableChange}
-                />
-                {table}
-              </div>
-            ))}
-          </div> */}
-
+          <div className="visualize-button">
           {selectedTable !== "" && (
             <div className="visualisation">
               <Button
@@ -165,6 +152,7 @@ const Load = ({ loadComplete, updateTableData }) => {
               </Button>
             </div>
           )}
+          </div>
 
           <ErrorModal
             open={showModal}
