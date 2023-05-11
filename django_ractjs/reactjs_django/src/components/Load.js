@@ -15,6 +15,7 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
+import { Checkbox, ListItemText } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   backdrop: {
@@ -116,25 +117,26 @@ const Load = ({ loadComplete, updateTableData }) => {
             </Button>
           </div>
 
-          <div>
-            <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-              <InputLabel id="demo-select-small-label">Table</InputLabel>
-              <Select
-                labelId="demo-select-small-label"
-                id="demo-select-small"
-                value={tableData}
-                label="tables"
-                onChange={handleTableChange}
-              >
-                {tables.map((table) => (
-                  <div key={table}>
-                    <MenuItem value=""></MenuItem>
-                    <MenuItem value={table}>{table}</MenuItem>
-                  </div>
-                ))}
-              </Select>
-            </FormControl>
-          </div>
+          {tables.length > 0 && (
+            <div>
+              <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+                <InputLabel id="demo-select-small-label">Table</InputLabel>
+                <Select
+                  labelId="demo-select-small-label"
+                  id="demo-select-small"
+                  value={selectedTable}
+                  label="tables"
+                  onChange={handleTableChange}
+                >
+                  {tables.map((option) => (
+                    <MenuItem key={option} value={option}>
+                      <ListItemText primary={option} />
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </div>
+          )}
 
           {/*           
           <div>
@@ -152,15 +154,17 @@ const Load = ({ loadComplete, updateTableData }) => {
             ))}
           </div> */}
 
-          <div className="visualisation">
-            <Button
-              onClick={handleVisualizeTables}
-              className="button-85 button-large"
-              role="button"
-            >
-              Visualize
-            </Button>
-          </div>
+          {selectedTable !== "" && (
+            <div className="visualisation">
+              <Button
+                onClick={handleVisualizeTables}
+                className="button-85 button-large"
+                role="button"
+              >
+                Visualize
+              </Button>
+            </div>
+          )}
 
           <ErrorModal
             open={showModal}
