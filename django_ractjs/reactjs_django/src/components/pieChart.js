@@ -3,6 +3,7 @@ import { Pie } from "react-chartjs-2";
 import { useEffect } from "react";
 import { Chart } from "chart.js";
 import randomcolor from "randomcolor";
+import "../resources/css/AllFourCharts.css";
 
 function PieChart({ heading, yaxis, xaxis, data }) {
 
@@ -45,7 +46,7 @@ function PieChart({ heading, yaxis, xaxis, data }) {
   }, [yaxis,xaxis]);
 
   return (
-    <div>
+    <div className="four-chart">
       <canvas id="pie-chart"></canvas>
     </div>
   );

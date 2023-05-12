@@ -8,8 +8,6 @@ const Visualize = (tableData) => {
 
   return (
     <div>
-      <h1>Hello</h1>
-
       <ChartSelection heading={"My Chart"} details={tableData.tableData} />
     </div>
   );
