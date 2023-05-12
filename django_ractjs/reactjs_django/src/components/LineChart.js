@@ -5,7 +5,7 @@ import { Chart } from "chart.js";
 import randomcolor from "randomcolor";
 import "../resources/css/AllFourCharts.css";
 
-function LineChart({ heading, yaxis, xaxis, data }) {
+function LineChart({ heading, yaxis, xaxis, data,updateCanvas }) {
   const filteredColumns = yaxis.concat(xaxis);
 
   const colors = randomcolor({ count: data.length });
@@ -16,7 +16,7 @@ function LineChart({ heading, yaxis, xaxis, data }) {
       .getElementById("line-chart")
       .getContext("2d");
 
-    new Chart(lineChartCanvas, {
+    const chart = new Chart(lineChartCanvas, {
       type: "line",
       data: {
         labels: data.map((item) => item[yaxis[0]]),
@@ -44,6 +44,7 @@ function LineChart({ heading, yaxis, xaxis, data }) {
         },
       },
     });
+    updateCanvas(chart.canvas)
   }, [yaxis,xaxis]);
 
   return (

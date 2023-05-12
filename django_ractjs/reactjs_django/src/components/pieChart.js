@@ -5,8 +5,7 @@ import { Chart } from "chart.js";
 import randomcolor from "randomcolor";
 import "../resources/css/AllFourCharts.css";
 
-function PieChart({ heading, yaxis, xaxis, data }) {
-
+function PieChart({ heading, yaxis, xaxis, data, updateCanvas }) {
   const filteredColumns = yaxis.concat(xaxis[0]);
 
   const colors = randomcolor({ count: data.length });
@@ -16,8 +15,7 @@ function PieChart({ heading, yaxis, xaxis, data }) {
       .getElementById("pie-chart")
       .getContext("2d");
 
-
-    new Chart(pieChartCanvas, {
+    const chart = new Chart(pieChartCanvas, {
       type: "pie",
       data: {
         labels: data.map((item) => item[yaxis[0]]),
@@ -43,7 +41,8 @@ function PieChart({ heading, yaxis, xaxis, data }) {
         },
       },
     });
-  }, [yaxis,xaxis]);
+    updateCanvas(chart.canvas);
+  }, [yaxis, xaxis]);
 
   return (
     <div className="four-chart">

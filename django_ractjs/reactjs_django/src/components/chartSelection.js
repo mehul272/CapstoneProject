@@ -7,6 +7,7 @@ import LineChart from "./LineChart";
 import RadarChart from "./radarChart";
 import "../resources/css/chartSelection.css";
 import HeaderPart from "./Header";
+import canvasToImage from "canvas-to-image";
 
 export function isStringValue(arr, key) {
   for (const obj of arr) {
@@ -27,6 +28,8 @@ export default function ChartSelection({ heading, details }) {
   const [yaxis, setYaxis] = useState([]);
   const [chartType, setChartType] = useState("");
   const [isButtonClicked, setIsButtonClicked] = useState(false);
+
+  const [canvasDownload, setCanvasDownload] = useState({});
 
   const filteredColumns = columns.filter((column) => column !== "id");
 
@@ -77,6 +80,16 @@ export default function ChartSelection({ heading, details }) {
     setIsButtonClicked(true);
   };
 
+  const handleDownload = () => {
+    canvasToImage(canvasDownload, {
+      name: "chart",
+      type: "jpg",
+      quality: 1,
+      backgroundColor: "#ffffff",
+      cssRules: "border: 1px solid black;",
+    });
+  };
+
   const renderComponent = () => {
     switch (chartType) {
       case "BarChart":
@@ -86,6 +99,7 @@ export default function ChartSelection({ heading, details }) {
             yaxis={yaxis}
             xaxis={xaxis}
             data={details}
+            updateCanvas={(value) => setCanvasDownload(value)}
           />
         );
       case "PieChart":
@@ -95,6 +109,7 @@ export default function ChartSelection({ heading, details }) {
             yaxis={yaxis}
             xaxis={xaxis}
             data={details}
+            updateCanvas={(value) => setCanvasDownload(value)}
           />
         );
       case "LineChart":
@@ -104,6 +119,7 @@ export default function ChartSelection({ heading, details }) {
             yaxis={yaxis}
             xaxis={xaxis}
             data={details}
+            updateCanvas={(value) => setCanvasDownload(value)}
           />
         );
       case "RadarChart":
@@ -113,6 +129,7 @@ export default function ChartSelection({ heading, details }) {
             yaxis={yaxis}
             xaxis={xaxis}
             data={details}
+            updateCanvas={(value) => setCanvasDownload(value)}
           />
         );
       default:
@@ -170,6 +187,10 @@ export default function ChartSelection({ heading, details }) {
         </>
         <button onClick={handleButtonClick}>Render Component</button>
         {isButtonClicked && renderComponent()}
+
+        {isButtonClicked ? (
+          <button onClick={handleDownload}>Download chart</button>
+        ) : null}
       </div>
     </>
   );
