@@ -28,6 +28,8 @@ export default function ChartSelection({ heading, details }) {
   const [chartType, setChartType] = useState("");
   const [isButtonClicked, setIsButtonClicked] = useState(false);
 
+  console.log(chartType)
+
   const filteredColumns = columns.filter((column) => column !== "id");
 
   const stringValueCols = filteredColumns.filter((col) =>
@@ -44,6 +46,7 @@ export default function ChartSelection({ heading, details }) {
   // const handleCheckForYaxis = (event, option) => {
   //   setYaxis([option]);
   // };
+
 
   const handleCheckForYaxis = (event, option) => {
     setYaxis([option]);
@@ -122,55 +125,93 @@ export default function ChartSelection({ heading, details }) {
 
   return (
     <>
-      <div className="w-50">
-        <>
-          <h1>Chart Selection</h1>
-          {VISUALIZATION_TYPES.map((option, index) => (
-            <div key={index}>
-              <input
-                type="radio"
-                name="table1"
-                onChange={(e) => handleCheckForTypes(e, option)}
-              />
-              {option}
-            </div>
-          ))}
+      <HeaderPart
+        phaseNumber={"4"}
+        phaseName={"Visualize"}
+        imgSource="https://cdn-icons-png.flaticon.com/512/1700/1700483.png"
+      />
 
-          <h1>Y-Axes Selection</h1>
-          {stringValueCols.map((option, index) => (
-            <div key={index}>
-              <input
-                type="radio"
-                name="table"
-                onChange={(e) => handleCheckForYaxis(e, option)}
-              />
-              {option}
-            </div>
-          ))}
-          <br></br>
-          <h1>X-Axes Selection</h1>
-          {numericValueCols.map((option, index) => (
-            <div key={index}>
-              {chartType === "PieChart" ? (
+<div className="container-body">
+      <>
+        <div class="my-div">
+          <div class="custom-options">
+
+            <div className="part1">
+            <h4 className="headings">Chart Selection</h4>
+            {VISUALIZATION_TYPES.map((option, index) => (
+              <div key={index} className="chart-custom-options">
                 <input
                   type="radio"
                   name="table1"
-                  onChange={(e) => handleCheckForXaxis(e, option)}
+                  onChange={(e) => handleCheckForTypes(e, option)}
+                  className="radio-button custom-radio"
                 />
-              ) : (
-                <input
-                  type="checkbox"
-                  onChange={(e) => handleCheckForXaxis(e, option)}
-                />
-              )}
-
-              {option}
+                 <label for="outline">{option}</label>
+              </div>
+            ))}
             </div>
-          ))}
-        </>
-        <button onClick={handleButtonClick}>Render Component</button>
-        {isButtonClicked && renderComponent()}
+
+            <div className="part2">
+            <h4 className="headings">X-Axis Selection</h4>
+            {stringValueCols.map((option, index) => (
+              <div key={index} className="x-custom-options">
+                <input
+                  type="radio"
+                  name="table"
+                  onChange={(e) => handleCheckForYaxis(e, option)}
+                  className="radio-button custom-radio"
+                />
+                 <label for="outline">{option}</label>
+              </div>
+            ))}
+            </div>
+
+            <div className="part3">
+            <h4 className="headings">Y-Axis Selection</h4>
+            {numericValueCols.map((option, index) => (
+              <div key={index} className="y-custom-options">
+                {chartType === "PieChart" ? (
+                  <input
+                    type="radio"
+                    name="table1"
+                    onChange={(e) => handleCheckForXaxis(e, option)}
+                    className="radio-button custom-radio"
+                  />
+                  // <input type="radio" name="styles" id="outline" class="custom-radio">
+                  // <label for="outline">outline</label>
+                ) : (
+                  <input
+                    type="checkbox"
+                    onChange={(e) => handleCheckForXaxis(e, option)}
+                    className="radio-button"
+                  />
+                )}
+
+            <label for="outline">{option}</label>
+              </div>
+            ))}
+             </div>
+
+            <div className="button-render">
+              <button
+                onClick={handleButtonClick}
+                className="button-33"
+                role="button"
+              >
+                Render Component
+              </button>
+            </div>
+            
+          </div>
+          <div class="visible-charts">
+            {isButtonClicked && renderComponent()}
+          </div>
+        </div>
+      </>
+      
       </div>
+
+      
     </>
   );
 }

@@ -115,7 +115,7 @@ width: 30%; /* Set the width to a third of the container width to fit three chec
 margin: 5px; /* Add some margin between the divs */
 }
 
-.container {
+.container-transform {
 
 margin-left: 15%;
 margin-bottom: 3%;
