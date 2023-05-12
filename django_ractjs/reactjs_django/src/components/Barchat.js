@@ -11,6 +11,7 @@ import ChartDataLabels from "chartjs-plugin-datalabels";
 import { useEffect } from "react";
 import { Chart } from "chart.js";
 import randomcolor from "randomcolor";
+import "../resources/css/AllFourCharts.css";
 
 ChartJS.register(
   ChartDataLabels,
@@ -62,7 +63,7 @@ export default function BarChart({ heading, yaxis, xaxis, data }) {
   }, [yaxis,xaxis]);
 
   return (
-    <div className="w-50">
+    <div className="four-chart">
       <div>
         <canvas id="bar-chart"></canvas>
       </div>

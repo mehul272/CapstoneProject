@@ -5,6 +5,8 @@ import PieChart from "./pieChart";
 import { Button } from "react-bootstrap";
 import LineChart from "./LineChart";
 import RadarChart from "./radarChart";
+import "../resources/css/chartSelection.css";
+import HeaderPart from "./Header";
 
 export function isStringValue(arr, key) {
   for (const obj of arr) {
@@ -16,13 +18,7 @@ export function isStringValue(arr, key) {
   return true;
 }
 
-
-const VISUALIZATION_TYPES = [
-  "BarChart",
-  "PieChart",
-  "LineChart",
-  "RadarChart",
-];
+const VISUALIZATION_TYPES = ["BarChart", "PieChart", "LineChart", "RadarChart"];
 
 export default function ChartSelection({ heading, details }) {
   const columns = Object.keys(details[0]);
@@ -122,54 +118,77 @@ export default function ChartSelection({ heading, details }) {
 
   return (
     <>
-      <div className="w-50">
+      <div className=" visualize-body">
+        <div className="upper-body">
         <>
-          <h1>Chart Selection</h1>
-          {VISUALIZATION_TYPES.map((option, index) => (
-            <div key={index}>
-              <input
-                type="radio"
-                name="table1"
-                onChange={(e) => handleCheckForTypes(e, option)}
-              />
-              {option}
-            </div>
-          ))}
+          {/* <div className="head-visualize">
+            <h3 class="animate-charcter"> Let's Visualize</h3>
+          </div> */}
+            <HeaderPart
+        phaseNumber={"4"}
+        phaseName={"Visualize"}
+        imgSource="https://cdn-icons-png.flaticon.com/512/1700/1700483.png"
+      />
 
-          <h1>Y-Axes Selection</h1>
-          {stringValueCols.map((option, index) => (
-            <div key={index}>
-              <input
-                type="radio"
-                name="table"
-                onChange={(e) => handleCheckForYaxis(e, option)}
-              />
-              {option}
+          <div className="chart-selection-container">
+            <div className="chart-selection">
+              <h5 className="headings">Chart Selection</h5>
+              <select onChange={(e) => handleCheckForTypes(e, e.target.value)}>
+                {VISUALIZATION_TYPES.map((option, index) => (
+                  <option key={index} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
             </div>
-          ))}
-          <br></br>
-          <h1>X-Axes Selection</h1>
-          {numericValueCols.map((option, index) => (
-            <div key={index}>
-              {chartType === "PieChart" ? (
-                <input
-                  type="radio"
-                  name="table1"
-                  onChange={(e) => handleCheckForXaxis(e, option)}
-                />
-              ) : (
-                <input
-                  type="checkbox"
-                  onChange={(e) => handleCheckForXaxis(e, option)}
-                />
-              )}
 
-              {option}
+            <div className="x-axis-selection">
+              <h5 className="headings">X-Axis Selection</h5>
+              <select onChange={(e) => handleCheckForYaxis(e, e.target.value)}>
+                {stringValueCols.map((option, index) => (
+                  <option key={index} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
             </div>
-          ))}
+
+            <div className="y-axis-selection">
+              <h5 className="headings">Y-Axis Selection</h5>
+              <select
+                multiple={chartType !== "PieChart"}
+                onChange={(e) =>
+                  handleCheckForXaxis(
+                    e,
+                    Array.from(e.target.selectedOptions).map(
+                      (option) => option.value
+                    )
+                  )
+                }
+              >
+                {numericValueCols.map((option, index) => (
+                  <option key={index} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
         </>
-        <button onClick={handleButtonClick}>Render Component</button>
-        {isButtonClicked && renderComponent()}
+
+        <div className="button-render">
+          <button
+            onClick={handleButtonClick}
+            className="button-33"
+            role="button"
+          >
+            Render Component
+          </button>
+        </div>
+        </div>
+        
+          {isButtonClicked && renderComponent()}
+        
       </div>
     </>
   );
