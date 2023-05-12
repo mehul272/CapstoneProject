@@ -41,6 +41,10 @@ export default function ChartSelection({ heading, details }) {
     setChartType(option);
   };
 
+  // const handleCheckForYaxis = (event, option) => {
+  //   setYaxis([option]);
+  // };
+
   const handleCheckForYaxis = (event, option) => {
     setYaxis([option]);
   };
@@ -118,77 +122,54 @@ export default function ChartSelection({ heading, details }) {
 
   return (
     <>
-      <div className=" visualize-body">
-        <div className="upper-body">
+      <div className="w-50">
         <>
-          {/* <div className="head-visualize">
-            <h3 class="animate-charcter"> Let's Visualize</h3>
-          </div> */}
-            <HeaderPart
-        phaseNumber={"4"}
-        phaseName={"Visualize"}
-        imgSource="https://cdn-icons-png.flaticon.com/512/1700/1700483.png"
-      />
-
-          <div className="chart-selection-container">
-            <div className="chart-selection">
-              <h5 className="headings">Chart Selection</h5>
-              <select onChange={(e) => handleCheckForTypes(e, e.target.value)}>
-                {VISUALIZATION_TYPES.map((option, index) => (
-                  <option key={index} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
+          <h1>Chart Selection</h1>
+          {VISUALIZATION_TYPES.map((option, index) => (
+            <div key={index}>
+              <input
+                type="radio"
+                name="table1"
+                onChange={(e) => handleCheckForTypes(e, option)}
+              />
+              {option}
             </div>
+          ))}
 
-            <div className="x-axis-selection">
-              <h5 className="headings">X-Axis Selection</h5>
-              <select onChange={(e) => handleCheckForYaxis(e, e.target.value)}>
-                {stringValueCols.map((option, index) => (
-                  <option key={index} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
+          <h1>Y-Axes Selection</h1>
+          {stringValueCols.map((option, index) => (
+            <div key={index}>
+              <input
+                type="radio"
+                name="table"
+                onChange={(e) => handleCheckForYaxis(e, option)}
+              />
+              {option}
             </div>
+          ))}
+          <br></br>
+          <h1>X-Axes Selection</h1>
+          {numericValueCols.map((option, index) => (
+            <div key={index}>
+              {chartType === "PieChart" ? (
+                <input
+                  type="radio"
+                  name="table1"
+                  onChange={(e) => handleCheckForXaxis(e, option)}
+                />
+              ) : (
+                <input
+                  type="checkbox"
+                  onChange={(e) => handleCheckForXaxis(e, option)}
+                />
+              )}
 
-            <div className="y-axis-selection">
-              <h5 className="headings">Y-Axis Selection</h5>
-              <select
-                multiple={chartType !== "PieChart"}
-                onChange={(e) =>
-                  handleCheckForXaxis(
-                    e,
-                    Array.from(e.target.selectedOptions).map(
-                      (option) => option.value
-                    )
-                  )
-                }
-              >
-                {numericValueCols.map((option, index) => (
-                  <option key={index} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
+              {option}
             </div>
-          </div>
+          ))}
         </>
-
-        <div className="button-render">
-          <button
-            onClick={handleButtonClick}
-            className="button-33"
-            role="button"
-          >
-            Render Component
-          </button>
-        </div>
-        </div>
-        
-          {isButtonClicked && renderComponent()}
-        
+        <button onClick={handleButtonClick}>Render Component</button>
+        {isButtonClicked && renderComponent()}
       </div>
     </>
   );
