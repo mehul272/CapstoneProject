@@ -82,7 +82,7 @@ export function ViewData({ data, numRows, columnNamesArray, fileName }) {
      
         <div className="icon-wrapper">
           <CSVLink className="csv-extract" {...csvLink}>
-            <FontAwesomeIcon icon={faFileCsv} size="1x" />
+            <FontAwesomeIcon icon={faFileCsv} size="3x" />
           </CSVLink>
         </div>
 
