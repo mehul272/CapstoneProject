@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Document, Page } from "react-pdf/dist/esm/entry.webpack";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import "../resources/css/DocPDF.css";
-import docPDF from '../B56_Capstone Project_ELT.pdf';
+import docPDF from '../Research_Papaer.pdf';
 import AppNavbar from './Navbar';
 
 const DocPDF = () => {

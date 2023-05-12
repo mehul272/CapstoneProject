@@ -1,12 +1,42 @@
 import { ViewData } from "./viewData";
 import axios from "axios";
 import { useState } from "react";
-import { Button, Modal } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { stringToOptions } from "./Extraction";
-import Select from "react-select";
-import { toast, ToastContainer } from "react-toastify";
+import ReactSelect from "react-select";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import HeaderPart from "./Header";
+import "../resources/css/Transformation.css";
+import * as React from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import {
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Checkbox,
+  ListItemText,
+} from "@material-ui/core";
+
+const useStyles = makeStyles((theme) => ({
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+    maxWidth: 300,
+  },
+  chips: {
+    display: "flex",
+    flexWrap: "wrap",
+  },
+  chip: {
+    margin: 2,
+  },
+  noLabel: {
+    marginTop: theme.spacing(3),
+  },
+}));
 
 const TRANSFORMATION_OPTION = [
   "1. Remove duplicate rows",
@@ -39,23 +69,18 @@ export function Transformation({
 
   let navigate = useNavigate();
 
-  const [showModal, setShowModal] = useState(false);
-
   const [column, setColumn] = useState([]);
 
   const [transformedData, setTransformedData] = useState([]);
 
   const [transformationOptions, setTransformationOptions] = useState([]);
 
+  const classes = useStyles();
+
   const [sort, setSort] = useState(false);
 
   const [sortColumn, setSortColumn] = useState("");
   const [startLoading, setStartLoading] = useState(false);
-
-  const handleClose = () => {
-    setShowModal(false);
-    startLoading(false);
-  };
 
   const handleTranformation = async () => {
     const result = await axios
@@ -69,7 +94,7 @@ export function Transformation({
       })
       .catch((err) => {
         toast.error(err);
-      })
+      });
 
     if (result) {
       try {
@@ -111,6 +136,8 @@ export function Transformation({
   };
 
   const handleFilteredTransformationOptions = (event, option) => {
+    console.log("Hi", option);
+
     const isChecked = event.target.checked;
     const isIncluded = transformationOptions.includes(option);
 
@@ -141,13 +168,11 @@ export function Transformation({
             },
           })
           .then((res) => {
-
             if (res.data.status === false) {
               toast.error(res.data.data);
             } else {
               toast.success(res.data.data);
               updateLoadComplete(res.data.status);
-              setShowModal(false);
               navigate("/load");
             }
           });
@@ -157,88 +182,128 @@ export function Transformation({
     }
   };
 
+  const handleSelectChange = (event) => {
+    const { value } = event.target;
+
+    console.log("Hello M: ", value);
+
+    value.forEach((item) => {
+      if (item[0] === "8") {
+        setSort(true);
+      } else {
+        setSort(false);
+      }
+    });
+
+    setTransformationOptions(value);
+    console.log(transformationOptions);
+  };
+
   return (
     <>
-      <h1>Hi Do Transformation</h1>
+      <HeaderPart
+        phaseNumber={2}
+        phaseName={"Transform"}
+        imgSource="https://www.unite.ai/wp-content/uploads/2023/01/etl-1-990x600.png"
+      />
 
-      <h1>Till Now the Data is saved in the File {`${fileName}.csv`}</h1>
-
-      <Button onClick={() => setShowModal(true)}>Start Transformation</Button>
-
-      <Modal
-        show={showModal}
-        centered
-        size="xl"
-        data-toggle="modal"
-        data-keyboard="false"
-        data-backdrop="static"
-        onHide={handleClose}
-      >
-        <Modal.Header>Transformation</Modal.Header>
-        <Modal.Body>
+      <div className="transform-body">
+        <div className="transform-page select-all-checkbox">
           <input type="checkbox" onChange={handleSelectAll} />
           <label>Select All</label>
           {removeDuplicates(columnNames).map((option, index) => (
             <div key={index}>
               <input
                 type="checkbox"
-                class="type2"
+                className="type2 indi-checkbox"
                 onChange={(e) => handleFilterColumnNames(e, option)}
               />
               {option}
             </div>
           ))}
-          <h2>Transformation Options</h2>
-          {TRANSFORMATION_OPTION.map((option, index) => (
-            <div key={index}>
-              <input
-                type="checkbox"
-                onChange={(e) => handleFilteredTransformationOptions(e, option)}
-              />
-              {option}
-            </div>
-          ))}
-          {sort ? (
-            <div>
-              <h3>Choose ColumnName</h3>
-              <Select
-                name="invoicePerPage"
-                onChange={(e) => setSortColumn(e.value)}
-                options={COLUMN_NAMES}
-                className="lg-my-0 w-1 h-25"
-              />
-            </div>
-          ) : null}
-          <Button
-            variant="primary"
-            onClick={handleTranformation}
-            disabled={column.length === 0}
-          >
-            Transformation
-          </Button>
-          {startLoading && (
-            <ViewData
-              data={transformedData}
-              numRows={numRows}
-              columnNamesArray={columnNames}
-              fileName={fileName}
+        </div>
+      </div>
+
+      <div className="options-tranform-checkbox">
+        <h5>Transformation Options: </h5>
+        {/* {TRANSFORMATION_OPTION.map((option, index) => (
+          <div key={index}>
+            <input
+              type="checkbox"
+              onChange={(e) => handleFilteredTransformationOptions(e, option)}
             />
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="bordered" onClick={handleClose}>
-            Cancel
-          </Button>
-          <Button
-            variant="bordered"
-            onClick={handleDoLoading}
-            disabled={!startLoading}
-          >
-            Start the Loading
-          </Button>
-        </Modal.Footer>
-      </Modal>
-      <ToastContainer />
+            {option}
+          </div>
+        ))} */}
+
+        <div>
+          <FormControl className={classes.formControl}>
+            <Select
+              labelId="demo-multiple-checkbox-label"
+              id="demo-multiple-checkbox"
+              multiple
+              value={transformationOptions}
+              onChange={handleSelectChange}
+              renderValue={(selected) => selected.join(", ")}
+            >
+              {TRANSFORMATION_OPTION.map((option) => (
+                <MenuItem key={option} value={option}>
+                  <Checkbox
+                    checked={transformationOptions.indexOf(option) > -1}
+                  />
+                  <ListItemText primary={option} />
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </div>
+      </div>
+      <div className="sort-dropdown">
+        {sort ? (
+          <div>
+            <h7>Choose ColumnName</h7>
+            <ReactSelect
+              name="optionPerPage"
+              onChange={(e) => setSortColumn(e.value)}
+              options={COLUMN_NAMES}
+              className="lg-my-0 w-1 h-25"
+            />
+          </div>
+        ) : null}
+      </div>
+
+      <div className="transform-button">
+        <Button
+          variant="primary"
+          onClick={handleTranformation}
+          disabled={column.length === 0}
+        >
+          Transformation
+        </Button>
+      </div>
+
+      <div className="view-tranform-data">
+        {startLoading && (
+          <ViewData
+            data={transformedData}
+            numRows={numRows}
+            columnNamesArray={columnNames}
+            fileName={fileName}
+          />
+        )}
+      </div>
+
+      <div className="load-button">
+        <Button
+          variant="bordered"
+          onClick={handleDoLoading}
+          disabled={!startLoading}
+          className="button-86"
+          role="button"
+        >
+          Start the Loading
+        </Button>
+      </div>
     </>
   );
 }

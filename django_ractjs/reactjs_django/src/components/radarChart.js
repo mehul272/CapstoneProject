@@ -3,6 +3,7 @@ import { Line } from "react-chartjs-2";
 import { useEffect } from "react";
 import { Chart } from "chart.js";
 import randomcolor from "randomcolor";
+import "../resources/css/AllFourCharts.css";
 
 function RadarChart({ heading, yaxis, xaxis, data }) {
   const filteredColumns = yaxis.concat(xaxis);
@@ -41,15 +42,15 @@ function RadarChart({ heading, yaxis, xaxis, data }) {
           ],
         },
         canvas: {
-          height: 800,
-          width: 800,
+          height: 600,
+          width: 600,
         },
       },
     });
   }, [yaxis, xaxis]);
 
   return (
-    <div>
+    <div className="four-chart">
       <canvas id="radar-chart"></canvas>
     </div>
   );
