@@ -23,7 +23,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth import logout
 
 DRIVER = "SQL Server"
-SERVER_NAME = "UTKRIST-AG\SQLEXPRESS"
+SERVER_NAME = "LAPTOP-H3TEL2C9\SQLEXPRESS"
 DATABASE_NAME = "database1"
 
 
@@ -398,7 +398,7 @@ def start_loading(request):
     # * Cheching if table already exists *
 
     tables = get_all_tables()
-    tables.insert("RegisterTable")
+    # tables.insert("RegisterTable")
 
     if tableName in tables:
         result = "Table already Exists"
