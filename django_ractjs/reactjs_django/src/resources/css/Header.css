@@ -13,6 +13,7 @@
   
   .header-heading {
     text-align: right;
+    /* margin-left: -27%; */
     
   }
   
@@ -21,6 +22,43 @@
     color: white;
     
   }
+  .header-links {
+    font-weight: 700;
+  }
+
+  .header-links a {
+    margin-left: 40px;
+    color: #e3e2e5;
+  }
+  
+  .header-links a:hover {
+    color: #0d6efd;
+  }
+
+  .space-between{
+    padding-left: 40%;
+  }
+
+  a {
+    text-decoration: none;
+    font-size: large;
+  }
+
+  .header-logout {
+    float: right;
+    
+  }
+  
+  .header-logout button {
+    background-color: red;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+  }
+
+  
+
 
   .tracking-in-expand{animation:tracking-in-expand 2s cubic-bezier(.215,.61,.355,1.000) both}
 
