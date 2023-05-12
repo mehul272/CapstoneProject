@@ -18,6 +18,11 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 
+function validateEmail(email) {
+  const regex = /^([a-zA-Z0-9._-]+)@([a-zA-Z0-9.-]+)\.([a-zA-Z]{2,5})$/;
+  return regex.test(email);
+}
+
 const EmptyLoginData = () => {
   cloneDeep({
     email: "",
@@ -43,7 +48,7 @@ function Login() {
 
   const [loginData, setLoginData] = useState(EmptyLoginData());
   const [registerData, setRegisterData] = useState(EmptyRegisterData());
-
+  const [checkEmail, setCheckEmail] = useState(true);
 
   const handleJustifyClick = (value) => {
     if (value === justifyActive) {
@@ -60,9 +65,19 @@ function Login() {
   };
 
   const handleDataChangeRegister = (key, register) => {
-    setRegisterData((data) => {
-      return { ...data, [key]: register };
-    });
+    if (key === "email") {
+      if (!validateEmail(register)) {
+        setCheckEmail(false);
+      } else {
+        setCheckEmail(true);
+      }
+    }
+
+    if (checkEmail) {
+      setRegisterData((data) => {
+        return { ...data, [key]: register };
+      });
+    }
   };
 
   const handleRegisterUser = async () => {
@@ -284,6 +299,7 @@ function Login() {
               label="Email"
               id="form1"
               type="email"
+              style={{ borderColor: checkEmail ? "" : "red" }}
               onChange={(event) => {
                 handleDataChangeRegister("email", event.target.value);
               }}
@@ -315,7 +331,11 @@ function Login() {
               />
             </div>
 
-            <MDBBtn onClick={handleRegisterUser} className="mb-4 w-100">
+            <MDBBtn
+              disabled={!checkEmail}
+              onClick={handleRegisterUser}
+              className="mb-4 w-100"
+            >
               Sign up
             </MDBBtn>
           </MDBTabsPane>

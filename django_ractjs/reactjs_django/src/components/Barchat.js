@@ -12,6 +12,8 @@ import { useEffect } from "react";
 import { Chart } from "chart.js";
 import randomcolor from "randomcolor";
 import "../resources/css/AllFourCharts.css";
+import { useRef } from "react";
+
 
 ChartJS.register(
   ChartDataLabels,
@@ -23,21 +25,18 @@ ChartJS.register(
   Legend
 );
 
-export default function BarChart({ heading, yaxis, xaxis, data }) {
-
+export default function BarChart({ heading, yaxis, xaxis, data,updateCanvas }) {
   const filteredColumns = yaxis.concat(xaxis);
-
-  console.log(xaxis)
-  console.log(yaxis)
 
   const colors = randomcolor({ count: data.length });
 
   useEffect(() => {
+
     const barChartCanvas = document
       .getElementById("bar-chart")
       .getContext("2d");
 
-    new Chart(barChartCanvas, {
+    const chart = new Chart(barChartCanvas, {
       type: "bar",
       data: {
         labels: data.map((item) => item[yaxis[0]]),
@@ -63,7 +62,8 @@ export default function BarChart({ heading, yaxis, xaxis, data }) {
         },
       },
     });
-  }, [yaxis,xaxis]);
+    updateCanvas(chart.canvas)
+  }, [yaxis, xaxis]);
 
   return (
     <div className="four-chart">

@@ -19,6 +19,7 @@ import {
   Checkbox,
   ListItemText,
 } from "@material-ui/core";
+import InputModal from "./InputModal";
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -82,6 +83,13 @@ export function Transformation({
   const [sortColumn, setSortColumn] = useState("");
   const [startLoading, setStartLoading] = useState(false);
 
+  const [tablename, setTableName] = useState("");
+  const [showModal, setShowModal] = useState(false);
+
+  const handleCloseModal = (confirmed) => {
+    setShowModal(false);
+  };
+
   const handleTranformation = async () => {
     const result = await axios
       .get(api + `/start-transformation/${title}`, {
@@ -135,36 +143,17 @@ export function Transformation({
     }
   };
 
-  const handleFilteredTransformationOptions = (event, option) => {
-    console.log("Hi", option);
-
-    const isChecked = event.target.checked;
-    const isIncluded = transformationOptions.includes(option);
-
-    if (isChecked && !isIncluded) {
-      if (option[0] === "8") {
-        setSort(true);
-      }
-      transformationOptions.push(option);
-    } else if (!isChecked) {
-      if (option[0] === "8") {
-        setSort(false);
-      }
-      transformationOptions.splice(transformationOptions.indexOf(option), 1);
-    }
-    setTransformationOptions(transformationOptions);
-  };
-
   const handleDoLoading = async () => {
-    let input = window.prompt("Enter the name of the table:");
+    setShowModal(true);
 
-    if (input !== null && input !== "") {
+    if (tablename !== null && tablename !== "") {
       if (window.confirm(`Are you sure you want to start the Loading?`)) {
+        setShowModal(false);
         await axios
           .get(api + `/start-loading`, {
             params: {
               stringArray: JSON.stringify(transformedData),
-              tableName: input,
+              tableName: tablename,
             },
           })
           .then((res) => {
@@ -177,6 +166,7 @@ export function Transformation({
             }
           });
       } else {
+        setShowModal(false);
         return;
       }
     }
@@ -184,8 +174,6 @@ export function Transformation({
 
   const handleSelectChange = (event) => {
     const { value } = event.target;
-
-    console.log("Hello M: ", value);
 
     value.forEach((item) => {
       if (item[0] === "8") {
@@ -230,15 +218,6 @@ export function Transformation({
 
         <div className="options-tranform-checkbox">
           <h5>Transformation Options: </h5>
-          {/* {TRANSFORMATION_OPTION.map((option, index) => (
-          <div key={index}>
-            <input
-              type="checkbox"
-              onChange={(e) => handleFilteredTransformationOptions(e, option)}
-            />
-            {option}
-          </div>
-        ))} */}
 
           <div>
             <FormControl className={classes.formControl}>
@@ -297,18 +276,37 @@ export function Transformation({
           )}
         </div>
 
-        <div className="load-button">
-          <Button
-            variant="bordered"
-            onClick={handleDoLoading}
-            disabled={!startLoading}
-            className="button-86"
-            role="button"
-          >
-            Start the Loading
-          </Button>
-        </div>
+        {tablename === "" ? (
+          <div className="load-button">
+            <Button
+              variant="bordered"
+              onClick={handleDoLoading}
+              disabled={!startLoading}
+              className="button-86"
+              role="button"
+            >
+              Table Name
+            </Button>
+          </div>
+        ) : (
+          <div className="load-button">
+            <Button
+              variant="bordered"
+              onClick={handleDoLoading}
+              disabled={!startLoading}
+              className="button-86"
+              role="button"
+            >
+              Start the Loading
+            </Button>
+          </div>
+        )}
       </div>
+      <InputModal
+        open={showModal}
+        onClose={handleCloseModal}
+        updateTableName={(value) => setTableName(value)}
+      />
     </>
   );
 }

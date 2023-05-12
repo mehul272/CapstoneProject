@@ -5,7 +5,7 @@ import { Chart } from "chart.js";
 import randomcolor from "randomcolor";
 import "../resources/css/AllFourCharts.css";
 
-function RadarChart({ heading, yaxis, xaxis, data }) {
+function RadarChart({ heading, yaxis, xaxis, data, updateCanvas }) {
   const filteredColumns = yaxis.concat(xaxis);
 
   const colors = randomcolor({ count: data.length });
@@ -15,7 +15,7 @@ function RadarChart({ heading, yaxis, xaxis, data }) {
       .getElementById("radar-chart")
       .getContext("2d");
 
-    new Chart(radarChartCanvas, {
+    const chart = new Chart(radarChartCanvas, {
       type: "radar",
       data: {
         labels: data.map((item) => item[yaxis[0]]),
@@ -47,6 +47,7 @@ function RadarChart({ heading, yaxis, xaxis, data }) {
         },
       },
     });
+    updateCanvas(chart.canvas);
   }, [yaxis, xaxis]);
 
   return (
