@@ -52,7 +52,8 @@
     align-items: center;
     justify-content: center;
     margin-bottom: 1%;
-    padding-bottom: 30px;
+ 
+    margin-top: 20px;
 }
 
 
@@ -84,12 +85,65 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    font: italic 1.2em "Fira Sans", serif;
+    padding-top: 3%;
   }
 
   .upper-body{
     background-color: #e498ed5e;;
     margin-bottom: 3%;
   }
+
+  .my-div {
+    width: 100%;
+    height: 100px;
+    
+  }
+  
+  .custom-options {
+    width: 30%;
+    float: left;
+    padding-top: 30px;
+    padding-left: 20px;
+    
+  }
+  
+  .visible-charts {
+    width: 70%;
+    float: right;
+  }
+
+  .part1{
+    background-color: #abfefe99;;
+    margin-bottom: 1%;
+  }
+
+  .part2 {
+    background-color: #f3da748a;
+    margin-bottom: 1%;
+    margin-top: 1%;
+  }
+
+  .part3{
+    background-color: #f08ee894;
+    margin-bottom: 1%;
+    margin-top: 1%;
+  }
+
+  .chart-custom-options {
+    padding-left: 15%;
+  }
+
+  .x-custom-options {
+    padding-left: 15%;
+  }
+
+  .y-custom-options {
+    padding-left: 15%;
+  }
+
+  
+  
  
 
   
