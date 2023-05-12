@@ -3,6 +3,7 @@ import { Line } from "react-chartjs-2";
 import { useEffect } from "react";
 import { Chart } from "chart.js";
 import randomcolor from "randomcolor";
+import "../resources/css/AllFourCharts.css";
 
 function LineChart({ heading, yaxis, xaxis, data }) {
   const filteredColumns = yaxis.concat(xaxis);
@@ -46,7 +47,7 @@ function LineChart({ heading, yaxis, xaxis, data }) {
   }, [yaxis,xaxis]);
 
   return (
-    <div>
+    <div className="four-chart">
       <canvas id="line-chart"></canvas>
     </div>
   );

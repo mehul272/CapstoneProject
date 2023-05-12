@@ -9,6 +9,13 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { isStringValue } from "./chartSelection";
 import ErrorModal from "./ErrorModal";
+import HeaderPart from "./Header";
+import "../resources/css/Load.css";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+import { Checkbox, ListItemText } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   backdrop: {
@@ -75,39 +82,77 @@ const Load = ({ loadComplete, updateTableData }) => {
     }
   };
 
-    const handleCloseModal = (confirmed) => {
+  const handleCloseModal = (confirmed) => {
     setShowModal(false);
     if (confirmed) {
-      navigate('/load')
+      navigate("/load");
     } else {
-      navigate('/end');
+      navigate("/end");
     }
   };
 
   return (
     <>
-      <h1>Loading...</h1>
-      {loadComplete ? (
+      <HeaderPart
+        phaseNumber={3}
+        phaseName={"Load"}
+        imgSource="https://st4.depositphotos.com/14846838/21750/v/600/depositphotos_217501562-stock-illustration-big-cogwheel-having-circuit-design.jpg"
+      />
+      <div className="load-body">
         <>
-          <h1>Done</h1>
-          <Button onClick={handleLoadTables}>Load Tables</Button>
-          <div>
-            {tables.map((table) => (
-              <div key={table}>
-                <input
-                  type="radio"
-                  name="table"
-                  value={table}
-                  checked={selectedTable === table}
-                  onChange={handleTableChange}
-                />
-                {table}
-              </div>
-            ))}
-            <p>You selected: {selectedTable}</p>
+          <div class="image-container">
+            <img
+              src="https://clipartix.com/wp-content/uploads/2019/03/success-clipart-2019-17.png"
+              alt="Image description"
+            />
           </div>
 
-          <Button onClick={handleVisualizeTables}>Visualize Tables</Button>
+          <div className="list-all-loaded-data">
+            <Button
+              onClick={handleLoadTables}
+              className="button-30"
+              role="button"
+            >
+              List the Loaded Tables
+            </Button>
+          </div>
+
+        <div className="listing-table">
+          {tables.length > 0 && (
+            <div>
+              <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+                <InputLabel id="demo-select-small-label">Table</InputLabel>
+                <Select
+                  labelId="demo-select-small-label"
+                  id="demo-select-small"
+                  value={selectedTable}
+                  label="tables"
+                  onChange={handleTableChange}
+                >
+                  {tables.map((option) => (
+                    <MenuItem key={option} value={option}>
+                      <ListItemText primary={option} />
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </div>
+          )}
+          </div>
+
+          <div className="visualize-button">
+          {selectedTable !== "" && (
+            <div className="visualisation">
+              <Button
+                onClick={handleVisualizeTables}
+                className="button-85 button-large"
+                role="button"
+              >
+                Visualize
+              </Button>
+            </div>
+          )}
+          </div>
 
           <ErrorModal
             open={showModal}
@@ -115,11 +160,7 @@ const Load = ({ loadComplete, updateTableData }) => {
             onClose={handleCloseModal}
           />
         </>
-      ) : (
-        <Backdrop className={classes.backdrop} open>
-          <CircularProgress color="inherit" />
-        </Backdrop>
-      )}
+      </div>
       <ToastContainer />
     </>
   );
