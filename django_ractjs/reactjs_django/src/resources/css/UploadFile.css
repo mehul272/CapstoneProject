@@ -17,6 +17,18 @@ margin-left: 2%;
     background-color: #2A2F4F;
 }
 
+.ckeck12345{
+  border-color: deepskyblue;
+    border-style: dashed;
+    border-width: 3px
+}
+
+.upload-page-table{
+  border-color: deepskyblue;
+    border-style: dashed;
+    border-width: 3px
+}
+
 
 .shake-top{animation:shake-top 0.8s cubic-bezier(.455,.03,.515,.955) both}
 
@@ -47,7 +59,10 @@ margin-left: 2%;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 3px;
+   
+    border-radius: 50px;
+    width: 60%;
+    margin: auto;
   }
   
   .buttons-animations button.btn2:before, .buttons-animations button.btn2:after {
@@ -195,3 +210,5 @@ margin-left: 2%;
   .buttons-animations button.btn2:focus {
     outline: 0;
   }
+
+ 

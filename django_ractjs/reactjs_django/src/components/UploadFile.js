@@ -193,8 +193,8 @@ function UploadFile({
           <div className="col-md-7 buttons-animations">
             {/* <h2 className="alert">List of Uploaded Files & Download </h2> */}
 
-            <table className="table table-bordered mt-4">
-              <thead>
+            <table className="table table-bordered mt-4 ckeck12345">
+              <thead className="upload-page-table">
                 <tr>
                   <th scope="col">File Title</th>
                   <th scope="col">Download</th>

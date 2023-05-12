@@ -16,50 +16,6 @@
     text-overflow: ellipsis;
   }
 
-  /* table {
-    border-collapse: separate;
-    border-spacing: 0;
-    width: 100%;
-    border: 2px solid #ccc;
-  }
-  
-  th,
-  td {
-    border: 1px solid #ccc;
-    padding: 12px;
-  }
-  
-  th {
-    background-color: #f2f2f2;
-    border-bottom: 2px solid #ccc;
-  }
-  
-  tr:first-child td {
-    border-top: 2px solid #ccc;
-  }
-  
-  tr:last-child td {
-    border-bottom: 2px solid #ccc;
-  }
-  
-  td:first-child {
-    border-left: 2px solid #ccc;
-  }
-  
-  td:last-child {
-    border-right: 2px solid #ccc;
-  }
-  
-  tr:nth-child(even) td {
-    background-color: #f2f2f2;
-  }
-  
-  tr:hover {
-    background-color: #f5f5f5;
-  } */
-
-
-
 table.roundedCorners thead {
   background-color: bisque;
 }
@@ -130,7 +86,7 @@ button.json-extract:not(:last-child),
 
 .icon-wrapper {
   margin: 0 10px;
-  font-size: 3rem;
+  font-size: 3.5rem;
   color: #007bff;
   cursor: pointer;
   transition: color 0.3s ease;
