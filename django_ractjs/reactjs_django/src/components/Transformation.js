@@ -211,11 +211,7 @@ export function Transformation({
         <div className="transform-page select-all-checkbox">
           <input type="checkbox" onChange={handleSelectAll} />
           <label>Select All</label>
-        </div>
-
-        <div class="container">
-        <div className="options-checkbox">
-          {columnNames.map((option, index) => (
+          {removeDuplicates(columnNames).map((option, index) => (
             <div key={index}>
               <input
                 type="checkbox"
@@ -226,11 +222,11 @@ export function Transformation({
             </div>
           ))}
         </div>
-        </div>
+      </div>
 
-        <div className="options-tranform-checkbox">
-          <h5>Transformation Options:  </h5>
-          {/* {TRANSFORMATION_OPTION.map((option, index) => (
+      <div className="options-tranform-checkbox">
+        <h5>Transformation Options: </h5>
+        {/* {TRANSFORMATION_OPTION.map((option, index) => (
           <div key={index}>
             <input
               type="checkbox"
@@ -240,77 +236,74 @@ export function Transformation({
           </div>
         ))} */}
 
-          <div>
-            <FormControl className={classes.formControl}>
-              <Select
-                labelId="demo-multiple-checkbox-label"
-                id="demo-multiple-checkbox"
-                multiple
-                value={transformationOptions}
-                onChange={handleSelectChange}
-                renderValue={(selected) => selected.join(", ")}
-              >
-                {TRANSFORMATION_OPTION.map((option) => (
-                  <MenuItem key={option} value={option}>
-                    <Checkbox
-                      checked={transformationOptions.indexOf(option) > -1}
-                    />
-                    <ListItemText primary={option} />
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </div>
-       
-        </div>
-        <div className="sort-dropdown">
-          {sort ? (
-            <div>
-              <h7>Choose ColumnName</h7>
-              <ReactSelect
-                name="optionPerPage"
-                onChange={(e) => setSortColumn(e.value)}
-                options={COLUMN_NAMES}
-                className="lg-my-0 w-1 h-25"
-              />
-            </div>
-          ) : null}
-          </div>
-
-        <div className="transform-button">
-          <Button
-            variant="primary"
-            onClick={handleTranformation}
-            disabled={column.length === 0}
-          >
-            Transformation
-          </Button>
-        </div>
-
-        <div className="view-tranform-data">
-          {startLoading && (
-            <ViewData
-              data={transformedData}
-              numRows={numRows}
-              columnNamesArray={columnNames}
-              fileName={fileName}
-            />
-          )}
-          </div>
-          
-        <div className="load-button">
-          <Button
-            variant="bordered"
-            onClick={handleDoLoading}
-            disabled={!startLoading}
-            className="button-86" 
-            role="button"
-          >
-            Start the Loading
-          </Button>
+        <div>
+          <FormControl className={classes.formControl}>
+            <Select
+              labelId="demo-multiple-checkbox-label"
+              id="demo-multiple-checkbox"
+              multiple
+              value={transformationOptions}
+              onChange={handleSelectChange}
+              renderValue={(selected) => selected.join(", ")}
+            >
+              {TRANSFORMATION_OPTION.map((option) => (
+                <MenuItem key={option} value={option}>
+                  <Checkbox
+                    checked={transformationOptions.indexOf(option) > -1}
+                  />
+                  <ListItemText primary={option} />
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </div>
       </div>
-        
+      <div className="sort-dropdown">
+        {sort ? (
+          <div>
+            <h7>Choose ColumnName</h7>
+            <ReactSelect
+              name="optionPerPage"
+              onChange={(e) => setSortColumn(e.value)}
+              options={COLUMN_NAMES}
+              className="lg-my-0 w-1 h-25"
+            />
+          </div>
+        ) : null}
+      </div>
+
+      <div className="transform-button">
+        <Button
+          variant="primary"
+          onClick={handleTranformation}
+          disabled={column.length === 0}
+        >
+          Transformation
+        </Button>
+      </div>
+
+      <div className="view-tranform-data">
+        {startLoading && (
+          <ViewData
+            data={transformedData}
+            numRows={numRows}
+            columnNamesArray={columnNames}
+            fileName={fileName}
+          />
+        )}
+      </div>
+
+      <div className="load-button">
+        <Button
+          variant="bordered"
+          onClick={handleDoLoading}
+          disabled={!startLoading}
+          className="button-86"
+          role="button"
+        >
+          Start the Loading
+        </Button>
+      </div>
     </>
   );
 }

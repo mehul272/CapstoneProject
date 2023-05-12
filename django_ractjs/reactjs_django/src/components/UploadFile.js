@@ -40,11 +40,11 @@ function UploadFile({
         toast.error(err);
       })
       .then((response) => {
-        toast.success("File Uploaded Successfully");
+        if (response) {
+          toast.success("File Uploaded Successfully");
+          window.location.reload();
+        }
       })
-      .then((res) => {
-        window.location.reload();
-      });
   };
 
   const getFiles = () => {
