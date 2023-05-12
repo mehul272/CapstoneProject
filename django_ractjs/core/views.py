@@ -398,7 +398,8 @@ def start_loading(request):
     # * Cheching if table already exists *
 
     tables = get_all_tables()
-    # tables.insert("RegisterTable")
+    tables.append('RegisterTable')
+    
 
     if tableName in tables:
         result = "Table already Exists"

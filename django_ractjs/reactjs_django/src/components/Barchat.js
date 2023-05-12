@@ -27,6 +27,9 @@ export default function BarChart({ heading, yaxis, xaxis, data }) {
 
   const filteredColumns = yaxis.concat(xaxis);
 
+  console.log(xaxis)
+  console.log(yaxis)
+
   const colors = randomcolor({ count: data.length });
 
   useEffect(() => {
