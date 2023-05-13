@@ -23,7 +23,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth import logout
 
 DRIVER = "SQL Server"
-SERVER_NAME = "UTKRIST-AG\SQLEXPRESS"
+SERVER_NAME = "LAPTOP-H3TEL2C9\SQLEXPRESS"
 DATABASE_NAME = "database1"
 
 

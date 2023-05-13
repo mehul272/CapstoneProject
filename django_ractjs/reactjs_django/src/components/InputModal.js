@@ -5,6 +5,7 @@ import Backdrop from "@material-ui/core/Backdrop";
 import Fade from "@material-ui/core/Fade";
 import Button from "@material-ui/core/Button";
 import { useState } from "react";
+import "../resources/css/inputModal.css"
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -53,13 +54,13 @@ function InputModal(props) {
         <div className={classes.paper}>
           <h2 id="transition-modal-title">
             <label>
-              Input The Table Name:
+              Provide Table Name: 
+            </label>
               <input
                 type="text"
                 value={inputValue}
                 onChange={handleInputChange}
               />
-            </label>
           </h2>
           <div>
             <Button

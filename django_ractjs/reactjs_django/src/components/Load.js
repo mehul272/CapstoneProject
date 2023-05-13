@@ -1,8 +1,5 @@
 import React, { useState } from "react";
-import Backdrop from "@material-ui/core/Backdrop";
-import CircularProgress from "@material-ui/core/CircularProgress";
 import Button from "@material-ui/core/Button";
-import { makeStyles } from "@material-ui/core/styles";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
@@ -14,18 +11,11 @@ import "../resources/css/Load.css";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
-import { Checkbox, ListItemText } from "@material-ui/core";
+import Select from "@mui/material/Select";
+import { ListItemText } from "@material-ui/core";
 
-const useStyles = makeStyles((theme) => ({
-  backdrop: {
-    zIndex: theme.zIndex.drawer + 1,
-    color: "#fff",
-  },
-}));
 
 const Load = ({ loadComplete, updateTableData }) => {
-  const classes = useStyles();
 
   let navigate = useNavigate();
 
@@ -117,41 +107,41 @@ const Load = ({ loadComplete, updateTableData }) => {
             </Button>
           </div>
 
-        <div className="listing-table">
-          {tables.length > 0 && (
-            <div>
-              <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-                <InputLabel id="demo-select-small-label">Table</InputLabel>
-                <Select
-                  labelId="demo-select-small-label"
-                  id="demo-select-small"
-                  value={selectedTable}
-                  label="tables"
-                  onChange={handleTableChange}
-                >
-                  {tables.map((option) => (
-                    <MenuItem key={option} value={option}>
-                      <ListItemText primary={option} />
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </div>
-          )}
+          <div className="listing-table">
+            {tables.length > 0 && (
+              <div>
+                <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+                  <InputLabel id="demo-select-small-label">Table</InputLabel>
+                  <Select
+                    labelId="demo-select-small-label"
+                    id="demo-select-small"
+                    value={selectedTable}
+                    label="tables"
+                    onChange={handleTableChange}
+                  >
+                    {tables.map((option) => (
+                      <MenuItem key={option} value={option}>
+                        <ListItemText primary={option} />
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </div>
+            )}
           </div>
 
           <div className="visualize-button">
-          {selectedTable !== "" && (
-            <div className="visualisation">
-              <Button
-                onClick={handleVisualizeTables}
-                className="button-85 button-large"
-                role="button"
-              >
-                Visualize
-              </Button>
-            </div>
-          )}
+            {selectedTable !== "" && (
+              <div className="visualisation">
+                <Button
+                  onClick={handleVisualizeTables}
+                  className="button-85 button-large"
+                  role="button"
+                >
+                  Visualize
+                </Button>
+              </div>
+            )}
           </div>
 
           <ErrorModal
