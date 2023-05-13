@@ -201,7 +201,7 @@ export function Transformation({
           <label>Select All</label>
         </div>
 
-        <div class="container">
+        <div class="container-transform">
           <div className="options-checkbox">
             {columnNames.map((option, index) => (
               <div key={index}>
