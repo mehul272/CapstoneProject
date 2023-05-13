@@ -63,7 +63,7 @@ export function ViewData({ data, numRows, columnNamesArray, fileName }) {
         <thead>
           <tr>
             {Array.from(columnNames).map((column) => (
-              <th>{column}</th>
+              <th className="custom123">{column}</th>
             ))}
           </tr>
         </thead>
@@ -71,7 +71,7 @@ export function ViewData({ data, numRows, columnNamesArray, fileName }) {
           {tableData.map((row) => (
             <tr>
               {Array.from(columnNames).map((column) => (
-                <td>{row[column]}</td>
+               <td className="custom123">{row[column]}</td>
               ))}
             </tr>
           ))}
@@ -82,7 +82,7 @@ export function ViewData({ data, numRows, columnNamesArray, fileName }) {
      
         <div className="icon-wrapper">
           <CSVLink className="csv-extract" {...csvLink}>
-            <FontAwesomeIcon icon={faFileCsv} size="1x" />
+          <FontAwesomeIcon icon={faFileCsv} size="3x" />
           </CSVLink>
         </div>
 

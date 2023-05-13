@@ -10,6 +10,11 @@
   margin-top: 50px; /* Change this value to adjust the vertical spacing */
 }
 
+.load-body {
+  background-color: #ffff0066;
+    padding-bottom: 8%;
+}
+
 .list-all-loaded-data {
   display: flex;
   align-items: center;
