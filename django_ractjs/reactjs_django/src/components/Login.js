@@ -18,6 +18,7 @@ import {
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
+import { Button } from "react-bootstrap";
 
 function validateEmail(email) {
   const regex = /^([a-zA-Z0-9._-]+)@([a-zA-Z0-9.-]+)\.([a-zA-Z]{2,5})$/;
@@ -82,47 +83,56 @@ function Login() {
   };
 
   const handleRegisterUser = async () => {
-    await axios
-      .get(api + `/register-user`, {
-        params: {
-          username: registerData.username,
-          email: registerData.email,
-          password: registerData.password,
-          cpassword: registerData.cpassword,
-        },
-      })
-      .then((res) => {
-        if (res.data.status) {
-          toast.success(res.data.data);
-          navigate("/extract");
-        } else {
-          toast.error(res.data.data);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    if (registerData === undefined) {
+      toast.warning("Please Enter the Details to Register");
+    } else {
+      await axios
+        .get(api + `/register-user`, {
+          params: {
+            username: registerData.username,
+            email: registerData.email,
+            password: registerData.password,
+            cpassword: registerData.cpassword,
+          },
+        })
+        .then((res) => {
+          if (res.data.status) {
+            toast.success(res.data.data);
+            navigate("/extract");
+          } else {
+            toast.error(res.data.data);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   };
 
   const handleLoginUser = async () => {
-    await axios
-      .get(api + `/login-user`, {
-        params: {
-          email: loginData.email,
-          password: loginData.password,
-        },
-      })
-      .then((res) => {
-        if (res.data.status) {
-          toast.success(res.data.data);
-          navigate("/extract");
-        } else {
-          toast.error(res.data.data);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    console.log(loginData);
+    if (loginData === undefined) {
+      toast.warning("Please Enter the Details to Login");
+    } else {
+      await axios
+        .get(api + `/login-user`, {
+          params: {
+            email: loginData.email,
+            password: loginData.password,
+          },
+        })
+        .then((res) => {
+          if (res.data.status) {
+            toast.success(res.data.data);
+            navigate("/extract");
+          } else {
+            toast.error(res.data.data);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   };
 
   return (
@@ -225,14 +235,15 @@ function Login() {
                 }}
               />
 
-              <button
+              <Button
+                disabled={!checkEmail}
                 className="button-9"
                 role="button"
                 onClick={handleRegisterUser}
               >
                 {" "}
                 Sign up
-              </button>
+              </Button>
             </MDBTabsPane>
           </MDBTabsContent>
         </MDBContainer>
