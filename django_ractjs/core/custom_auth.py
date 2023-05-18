@@ -1,6 +1,7 @@
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth import get_user_model
 import pypyodbc as odbc
+import hashlib
 
 
 
@@ -25,6 +26,7 @@ class MSSQLAuthBackend(ModelBackend):
         conn = odbc.connect(connection_string(DRIVER, SERVER_NAME, DATABASE_NAME))
 
         try:
+            password = hashlib.sha256(password.encode('utf-8')).hexdigest()
             cursor = conn.cursor()
             cursor.execute(f'''SELECT * FROM RegisterTable WHERE username='{username}' AND password='{password}';''')
             row = cursor.fetchall()

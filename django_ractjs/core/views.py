@@ -21,6 +21,7 @@ from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model
 from django.contrib.auth import logout
+import hashlib 
 
 DRIVER = "SQL Server"
 SERVER_NAME = "LAPTOP-H3TEL2C9\SQLEXPRESS"
@@ -495,7 +496,8 @@ def register_user(request):
         returnObj['data'] = "Password not matched"
         returnObj['status'] = False
     else:
-        sql_insert = f'''INSERT INTO RegisterTable VALUES('{username}','{email}','{password}','{cpassword}');'''
+        password = hashlib.sha256(password.encode('utf-8')).hexdigest()
+        sql_insert = f'''INSERT INTO RegisterTable VALUES('{username}','{email}','{password}');'''
         cursor.execute(sql_insert)
         cursor.commit()
 
